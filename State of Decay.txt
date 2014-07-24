@@ -167,8 +167,12 @@ Nimble Fingers - 20% faster attacking speed.
 Survival Instincts - 20% increased regeneration and repair speed.
 Keen Eye - 10% increase in weapon speciality activation rate.
 Fortuitous Growth - 20% chance to gain an additional free skill point on level up.
-Ancestral Wisdom - Grants 10% of your current stats to the next run.
+Fast Learner - Increases experience gain per battle by 20%
 Brutal Strikes - 20% increased damage with melee weapons.
 Sniper Training - 20% increased damage with ranged weapons.
 Unleashed Elements - 20% increased damage with magic weapons.
+Stoneskin - 20% reduced damage taken from melee weapons.
+Iron Carapace - 20% reduced damage taken from ranged weapons.
+Aetheric Resilience - 20% reduced damage taken from magic weapons.
 Flurry - 20% chance of performing a second attack on each combat tick.
+Divine Shield - 10% chance to reduce damage taken to 0 in a combat round.
