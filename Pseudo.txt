@@ -1,0 +1,53 @@
+Functions
+=========
+
+init 
+	Define constants
+		STATE_IDLE
+		STATE_COMBAT
+		STATE_REPAIR
+	call loading function
+	if no save
+		sets initial values to start the game:
+		Repair Counter = 0
+		Repairing = 0
+	end if
+	start the game
+	
+regenTick
+	If stateFlag != STATE_COMBAT
+		Increase HP by Con/5
+		If stateFlag == STATE_REPAIR
+			repair counter -= 1
+			if repair counter == 0
+				set weapon's decay value to maximum
+				set stateFlag = STATE_IDLE
+			end if
+		end if
+	end if
+	
+enterCombat
+	If repairing == 1
+		end function
+	end if
+	stateFlag = STATE_COMBAT
+	If player level > 5
+		gen random between 1 and 100
+		if random is 1
+			generate boss
+		else 
+			generate enemy
+		end if
+	Else
+		generate an enemy
+	end if
+	do a virtual coin flip
+	if heads
+		//Player goes first
+		call combatLoop(player,enemy)
+		setTimeout(combatLoop(enemy,player),1000)
+	else
+		//enemy goes first
+		call combatLoop(enemy,player)
+		setTimeout(combatLoop(player,enemy),1000)
+	end if

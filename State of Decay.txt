@@ -108,7 +108,7 @@ Enemies
 
 Randomly generated, with level equal to the player's level and a random weapon of any type, of the same level or up to 2 levels higher.
 Upon defeat, the player can, at their option, take the enemy weapon as their own.
-Experience granted upon defeat equals 20 + (5*level) to (6*level)
+Experience granted upon defeat equals 20 + ((4*level) - (5*level))
 
 Bosses
 ------
@@ -148,22 +148,27 @@ Combat Flow
 
 Once combat begins, the first attacker is randomly decided, and the second attacker starts one second later. 
 Each combatant then attacks at the interval decided by their weapon speed, dealing weapon damage plus half the relevant stat (Str for melee, Dex for ranged, Int for magic) every interval, rounded down.
-The fight ends when either combatant is reduced to 0 HP (or lower)
+After each attack by the player, there is a 20% chance to apply the weapon's speciality effect, which stacks indefinitely.
+The player can also activate a special ability, again depending on weapon type. This will apply instantly, regardless of weapon attack speed.
+The fight ends when either combatant is reduced to 0 HP
 
 Levelling Up
 ------------
 
 When the player gains a level, they gain additional stat points by default, plus they are granted an additional free stat point to allocate wherever they wish. 
+Weapons do not level with the player.
 
 Prestige Options (possible)
 ----------------
+Unlock one prestige option per 5 levels. Each one can only be selected once.
 
 High Maintenance - Doubles the amount of allowed weapon uses before a weapon decays.
-Nimble Fingers - 20% weapon haste
-Survival Instincts - 20% increased regeneration and repair speed
-Fortunes of the Bold - 10% increase in weapon speciality activate rate
-Fortuitous Growth - 20% chance to gain an additional free skill point on level up
-Ancestral Wisdom - Grants 10% of your current stats to the next run
-Brutal Strikes - 20% increased damage with melee weapons
-Sniper Training - 20% increased damage with ranged weapons
-Unleashed Elements - 20% increased damage with magic weapons
+Nimble Fingers - 20% faster attacking speed.
+Survival Instincts - 20% increased regeneration and repair speed.
+Keen Eye - 10% increase in weapon speciality activation rate.
+Fortuitous Growth - 20% chance to gain an additional free skill point on level up.
+Ancestral Wisdom - Grants 10% of your current stats to the next run.
+Brutal Strikes - 20% increased damage with melee weapons.
+Sniper Training - 20% increased damage with ranged weapons.
+Unleashed Elements - 20% increased damage with magic weapons.
+Flurry - 20% chance of performing a second attack on each combat tick.
