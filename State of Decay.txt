@@ -18,7 +18,7 @@ Player:
 		5-7 + 1-2 per level
 	Experience (EXP): Required to not suck. 
 		Starts at 0
-		Exp curve is 100 * 1.2^n where N = level - 1
+		Exp curve is 100 * 1.116^n where N = level - 1
 
 Enemy:
 	Level:
@@ -158,9 +158,9 @@ Levelling Up
 When the player gains a level, they gain additional stat points by default, plus they are granted an additional free stat point to allocate wherever they wish. 
 Weapons do not level with the player.
 
-Prestige Options (possible)
-----------------
-Unlock one prestige option per 5 levels. Each one can only be selected once.
+Power Points
+------------
+Unlock one power point per 5 levels. Each one can only be selected once.
 
 High Maintenance - Doubles the amount of allowed weapon uses before a weapon decays.
 Nimble Fingers - 20% faster attacking speed.
