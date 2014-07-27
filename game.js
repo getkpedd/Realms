@@ -34,14 +34,15 @@ Game.init = function() {
 	this.p_Str = 0; this.p_Dex = 0;
 	this.p_Int = 0; this.p_Con = 0;
 	this.p_EXP = 0; this.p_SkillPoints = 0;
-	this.p_PP = 0; // Power points.
+	this.p_Level = 0; this.p_PP = 0; // Power points.
 	this.p_Powers = []; // Selected powers.
 	this.p_Weapon = Game.makeWeapon(1); // Player weapon.
-	this.p_State = Game.STATE_IDLE // Player states
+	this.p_State = Game.STATE_IDLE; // Player states
 }
 
 Game.initPlayer = function() {
-	// Set the base values
+	Game.p_MaxHP = Game.RNG(25,30);
+	Game.p_HP = Game.p_MaxHP;
 }
 
 Game.load = function() {
@@ -87,16 +88,16 @@ Game.makeWeapon = function(level) {
 	}
 	switch(sType) {
 		case Game.WSPEED_FAST:
-			speed = Game.RNG(100,200); 
+			speed = Game.RNG(10,20); 
 			break;
 		case Game.WSPEED_MID:
-			speed = Game.RNG(200,300); 
+			speed = Game.RNG(20,30); 
 			break;
 		case Game.WSPEED_SLOW:
-			speed = Game.RNG(300,400); 
+			speed = Game.RNG(30,40); 
 			break;
 	}
-	speed = speed/100;
+	speed = speed/10;
 	if(type == Game.WEAPON_MAGIC) { decay = -1; }
 	return new Array(level,type,speed,damage,decay);
 }
