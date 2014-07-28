@@ -100,6 +100,8 @@ Game.displayStats = function() {
 	var w_DPS = document.getElementById("w_DPS");
 	w_DPS.innerHTML = Math.floor(Game.p_Weapon[4]/Game.p_Weapon[3]*100)/100;
 	var w_decay = document.getElementById("w_Decay");
+	var pp = document.getElementById("p_PP");
+	pp.innerHTML = Game.p_PP;
 	if(Game.p_Weapon[5] >= 0) { w_decay.innerHTML = Game.p_Weapon[5]; }
 	else { w_Decay.innerHTML = "N/A"; }
 }
