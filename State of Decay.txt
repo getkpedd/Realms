@@ -7,8 +7,8 @@ Player:
 	Level: The more of these you have, the bigger your e-peen is.
 		1 + 1 per level (duh)
 	HP: Having some of this makes you not dead. 
-		25-30 + 4-7 per level
-	Strength (Str): Affects melee weapon damage (sword, axe, mace). 
+		50-60 + 15-20 per level
+	Strength (Str): Affects melee weapon damage (sword, axe, flail). 
 		5-7 + 1-2 per level
 	Dexterity (Dex): Affects ranged weapon damage (bow, crossbow, thrown).
 		5-7 + 1-2 per level
@@ -24,8 +24,8 @@ Enemy:
 	Level:
 		Same as player
 	HP: 
-		20-25 + 3-6 per level
-	Strength (Str): Affects melee weapon damage (sword, axe, mace). 
+		50-60 + 15-20 per level
+	Strength (Str): Affects melee weapon damage (sword, axe, flail). 
 		4-6 + 0-1 per level
 	Dexterity (Dex): Affects ranged weapon damage (bow, crossbow, thrown).
 		4-6 + 0-1 per level
@@ -50,7 +50,7 @@ Melee:
 		Names: 
 			AS 2 to 2.5: Hand Axe
 			AS 2.5 to 3: Broad Axe
-	Flail
+	Flails
 		Attack Delay: 3 - 4 seconds.
 		Damage: 9 - 12 per weapon level.
 		Names: 
@@ -58,13 +58,13 @@ Melee:
 			AS 3.5 to 4: Morningstar
 
 Ranged: 
-	Bow
+	Bows
 		Attack Delay: 3 - 4 seconds.
 		Damage: 9 - 12 per weapon level.
 		Names: 
 			AS 3 to 3.5: Shortbow
 			AS 3.5 to 4: Longbow
-	Crossbow
+	Crossbows
 		Attack Delay: 2 - 3 seconds.
 		Damage: 6 - 9 per weapon level.
 		Names: 
@@ -94,19 +94,19 @@ Magic:
 Weapon Specialities
 -------------------
 
-Melee: 'Deep Wound' - Deals (level) additional damage per strike, per stack.
+Melee: 'Deep Wound' - Deals (weapon level) additional damage per strike, per stack.
 	Special: 'Bloodthirst' - Heals you for 10% of your health per stack of 'Bleeding' on the target.
 
-Ranged: 'Infected Wound' - Reduces the damage done by the target by (level) per stack.
-	Special: 'Power Shot' - Consumes all stacks of 'Infected Wound' to deal 25% health damage per stack.
+Ranged: 'Infected Wound' - Reduces the damage done by the target by (weapon level) per stack.
+	Special: 'Power Shot' - Consumes all stacks of 'Infected Wound' to deal 10% health damage per stack, rounded down.
 
-Magic: 'Residual Burn' - Increases the target's damage taken by (level) per stack.
-	Special: 'Wild Magic' - Instantly fires 1 attack per stack of 'Residual Burn', after which all stacks are removed.
+Magic: 'Residual Burn' - Increases the target's damage taken by (weapon level) per stack.
+	Special: 'Wild Magic' - Instantly fires 1 attack per stack of 'Residual Burn', after which all stacks are removed. These attacks may add 'Residual Burn' stacks, but any additional stacks do not trigger another extra attack from 'Wild Magic'.
 
 Enemies
 -------
 
-Randomly generated, with level equal to the player's level and a random weapon of any type, of the same level or up to 2 levels higher.
+Randomly generated, with level equal to the player's level and a random weapon of any type, of the same level or one level higher.
 Upon defeat, the player can, at their option, take the enemy weapon as their own.
 Experience granted upon defeat equals 20 + ((4*level) - (5*level))
 
@@ -131,7 +131,7 @@ Decay
 -----
 
 Each weapon hit in combat contributes to weapon decay. Faster weapons will decay more quickly than slower weapons.
-Weapons can deal 50 hits in combat before decaying completely and needing repair.
+Weapons can deal 100+5*(level-1) hits in combat before decaying completely and needing repair.
 A decayed weapon will only function at half effectiveness until it is repaired. The repair process takes one regen tick per weapon level, during which time the player is unable to initiate combat.
 A partially damaged weapon can also be repaired, as above. 
 Magical weapons do not decay, but have lower damage to compensate.
@@ -140,8 +140,9 @@ Game Flow
 ---------
 
 At the start of the game, the player is given a randomly generated level 1 weapon.
-When not in combat, there is a once per second regen tick which restores health equal to 20% of your constitution, rounded down.
+When not in combat, there is a once per second regen tick which restores health equal to your constitution.
 Combat can be initiated with the 'Look for something to kill' button. 
+There will be an 'auto-combat' button for idlers that will trigger combat whenever your player's health fills to maximum.
 
 Combat Flow
 -----------
@@ -162,6 +163,7 @@ Power Points
 ------------
 Unlock one power point per 5 levels. Each one can only be selected once.
 
+Proper Care - 20% chance per hit for weapon decay to not apply.
 High Maintenance - Doubles the amount of allowed weapon uses before a weapon decays.
 Nimble Fingers - 20% faster attacking speed.
 Survival Instincts - 20% increased regeneration and repair speed.

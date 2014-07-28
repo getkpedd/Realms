@@ -1,16 +1,103 @@
 <html>
 	<head>
 		<title>State of Decay</title>
+		<script type="text/javascript" src="game.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css"></link>
 	</head>
-	<body>
+	<body onload="Game.init(); Game.initPlayer();">
 		<div id="main">
 			<table width="100%">
-				<tr>
-					<td width="25%" align="left">This is the left column</td>
-					<td width="50%" align="center">This is the middle column</td>
-					<td width="25%" align="right">This is the right column</td>
+				<tr valign="top">
+					<td width="200px" class="playerPanel" align="left">
+						<table width="100%">
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Player Statistics:<td>
+							</tr>
+							<tr>
+								<td align="right">Level: </td>
+								<td width="80%"><div id="p_Level"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Experience: </td>
+								<td width="80%"><div id="XPOut"><span id="p_EXP"></span>/<span id="p_NextEXP"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Health: </td>
+								<td width="80%"><div id="HPOut"><span id="p_HP"></span>/<span id="p_MaxHP"></span></div></td>
+							</tr>
+							<tr>
+								<td align="right">Strength: </td>
+								<td width="80%"><div id="p_Str"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Dexterity: </td>
+								<td width="80%"><div id="p_Dex"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Intelligence: </td>
+								<td width="80%"><div id="p_Int"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Constitution: </td>
+								<td width="80%"><div id="p_Con"></div></td>
+							</tr>
+							<tr><td>&nbsp;</td></tr>
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Weapon Statistics:</td>
+							</tr>
+							<tr align="center">
+								<td colspan="2"><div id="w_Name"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Type: </td>
+								<td width="80%"><div id="w_Type"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Speed: </td>
+								<td width="80%"><div id="w_Speed"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Damage: </td>
+								<td width="80%"><div id="w_Damage"></div></td>
+							</tr>
+							<tr>
+								<td align="right">DPS: </td>
+								<td width="80%"><div id="w_DPS"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Durability: </td>
+								<td width="80%"><div id="w_Decay"></div></td>
+							</tr>
+						</table>
+					</td>
+					<td width="100%" class="centerPanel" align="center">
+						<table class="topPanel">
+							<tr>
+								<td>State Of Decay</td>
+							</tr>
+						</table>
+						<br />
+						<table class="buttonPanel">
+							<tr>
+								<td width="80%">Reset Game:<br/>Clears your save, allowing you to start again from scratch.</td>
+								<td width="20%"><input type="button" onClick="Game.reset();" value="Reset Game"></td>
+							<tr>
+						</table>
+					<td width="200px" class="enemyPanel" align="right">
+						<table id="right_NC" valign="top">
+							<tr align="center">
+								<td colspan="2">No Enemies Nearby</td>
+							</tr>
+						</table>
+						<table id="right_C" style="display:none;" valign="top">
+							<tr align="center">
+								<td colspan="2">Current Enemy</td>
+							</tr>
+						</table>
+					</td>
 				</tr>
 			</table>
 		</div>
+		<div class="footer">State of Decay &copy; Martin Hayward 2014</div>
 	</body>
 </html>
