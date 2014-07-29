@@ -1,5 +1,11 @@
 Game = {};
 
+/*
+State of Decay - An RPG Incremental
+Copyright Martin Hayward 2014
+Version 0.1 pre-Alpha
+*/
+
 Game.init = function() {
 	//Define some constants we can use later
 	this.XP_MULT = 1.116;
@@ -41,29 +47,23 @@ Game.init = function() {
 	this.p_Powers = []; // Selected powers.
 	this.p_Weapon = []; // Player weapon.
 	this.p_State = Game.STATE_IDLE; // Player states
-	if(!Game.load()) {
-		Game.initPlayer();
-		Game.save();
+	this.p_RepairInterval; this.p_RepairValue = 0;
+	this.p_IdleInterval;
+	// Enemy variables
+	this.e_HP = 0; this.e_MaxHP = 0;
+	this.e_Str = 0; this.e_Dex = 0;
+	this.e_Int = 0; this.e_Level = 0;
+	this.e_Weapon = []; // Enemy weapon
+	if(!this.load()) {
+		this.initPlayer(1);
+		this.save();
 	}
-	Game.displayStats();
-}
-
-Game.initPlayer = function() {
-	Game.p_MaxHP = Game.RNG(50,60);
-	Game.p_HP = Game.p_MaxHP;
-	Game.p_Str = Game.RNG(5,7);
-	Game.p_Dex = Game.RNG(5,7);
-	Game.p_Int = Game.RNG(5,7);
-	Game.p_Con = Game.RNG(5,7);
-	Game.p_EXP = 0;
-	Game.p_NextEXP = 100;
-	Game.p_SkillPoints = 0;
-	Game.p_Level = 1;
-	Game.p_PP = 0;
-	Game.p_Weapon = Game.makeWeapon(1);
+	if(Game.p_State != Game.STATE_COMBAT) { Game.idleHeal(); }
+	this.displayStats();
 }
 
 Game.displayStats = function() {
+	// Player stats
 	var lv = document.getElementById("p_Level");
 	lv.innerHTML = Game.p_Level;
 	var exp = document.getElementById("p_EXP");
@@ -82,6 +82,7 @@ Game.displayStats = function() {
 	intel.innerHTML = Game.p_Int;
 	var con = document.getElementById("p_Con");
 	con.innerHTML = Game.p_Con;
+	// Player weapon
 	var w_name = document.getElementById("w_Name");
 	w_name.innerHTML = Game.getWeaponName(Game.p_Weapon);
 	var w_type = document.getElementById("w_Type");
@@ -104,6 +105,185 @@ Game.displayStats = function() {
 	pp.innerHTML = Game.p_PP;
 	if(Game.p_Weapon[5] >= 0) { w_decay.innerHTML = Game.p_Weapon[5]; }
 	else { w_Decay.innerHTML = "N/A"; }
+	// Right Panel
+	switch(Game.p_State) {
+		case Game.STATE_IDLE:
+			// Vis
+			var r_Idle = document.getElementById("right_Idle");
+			r_Idle.style.display = "block";
+			var r_Combat = document.getElementById("right_Combat");
+			r_Combat.style.display = "none";
+			var r_Repair = document.getElementById("right_Repair");
+			r_Repair.style.display = "none";
+			break;
+		case Game.STATE_COMBAT: 
+			// Vis
+			var r_Idle = document.getElementById("right_Idle");
+			r_Idle.style.display = "none";
+			var r_Combat = document.getElementById("right_Combat");
+			r_Combat.style.display = "block";
+			var r_Repair = document.getElementById("right_Repair");
+			r_Repair.style.display = "none";
+			// Enemy stat panel
+			var e_lv = document.getElementById("e_Level");
+			e_lv.innerHTML = Game.e_Level;
+			var e_hp = document.getElementById("e_HP");
+			e_hp.innerHTML = Game.e_HP;
+			var e_maxhp = document.getElementById("e_MaxHP");
+			e_maxhp.innerHTML = Game.e_MaxHP;
+			var e_str = document.getElementById("e_Str");
+			e_str.innerHTML = Game.e_Str;
+			var e_dex = document.getElementById("e_Dex");
+			e_dex.innerHTML = Game.e_Dex;
+			var e_intel = document.getElementById("e_Int");
+			e_intel.innerHTML = Game.e_Int;
+			// Enemy weapon
+			var ew_name = document.getElementById("ew_Name");
+			ew_name.innerHTML = Game.getWeaponName(Game.e_Weapon);
+			var ew_type = document.getElementById("ew_Type");
+			switch(Game.e_Weapon[1]) {
+				case Game.WEAPON_MELEE:
+					ew_type.innerHTML = "Melee"; break;
+				case Game.WEAPON_RANGE:
+					ew_type.innerHTML = "Ranged"; break;
+				case Game.WEAPON_MAGIC:
+					ew_type.innerHTML = "Magic"; break;
+			}
+			var ew_speed = document.getElementById("ew_Speed");
+			ew_speed.innerHTML = Game.e_Weapon[3];
+			var ew_damage = document.getElementById("ew_Damage");
+			ew_damage.innerHTML = Game.e_Weapon[4];
+			var ew_DPS = document.getElementById("ew_DPS");
+			ew_DPS.innerHTML = Math.floor(Game.e_Weapon[4]/Game.e_Weapon[3]*100)/100;
+			break;
+		case Game.STATE_REPAIR:
+			// Vis
+			var r_Idle = document.getElementById("right_Idle");
+			r_Idle.style.display = "none";
+			var r_Combat = document.getElementById("right_Combat");
+			r_Combat.style.display = "none";
+			var r_Repair = document.getElementById("right_Repair");
+			r_Repair.style.display = "block";
+			break;
+	}
+	if(Game.e_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) { 
+		var lastWep = document.getElementById("lastEnemyWeapon");
+		lastWep.style.display = "";
+	}
+	else {
+		var lastWep = document.getElementById("lastEnemyWeapon");
+		lastWep.style.display = "none";
+	}
+}
+
+Game.startRepair = function() {
+	if(Game.p_Weapon[5] == (100 + 5*(Game.p_Weapon[0]-1)) || Game.p_Weapon[5] == -1) {
+		// Repair not required, do nothing
+	}
+	else {
+		Game.p_State = Game.STATE_REPAIR;
+		Game.p_RepairValue = Game.p_Weapon[0];
+		if(Game.p_Powers.indexOf(Game.BOOST_REPAIR) >= 0) {
+			Game.p_RepairInterval = window.setInterval(Game.repairTick,800);
+		}
+		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
+	}
+}
+
+Game.repairTick = function() {
+	if(Game.p_RepairValue == 0) {
+		Game.p_Weapon[5] = 100 + 5*(Game.p_Weapon[0]-1);
+		Game.p_State = Game.STATE_IDLE;
+		window.clearInterval(Game.p_RepairInterval);
+	}
+	else {
+		Game.p_RepairValue-=1; 
+		Game.p_State = Game.STATE_REPAIR;
+		var repTimer = document.getElementById("repairTime");
+		repTimer.innerHTML = Game.p_RepairValue;
+	}
+	Game.displayStats();
+}
+
+Game.idleHeal = function() {
+	if(Game.p_State != Game.STATE_COMBAT) {
+		Game.p_HP = Math.min(Game.p_HP + Game.p_Con,Game.p_MaxHP);
+	}
+	if(Game.p_Powers.indexOf(Game.BOOST_HEAL) >= 0) {
+		Game.p_IdleInterval = window.setTimeout(Game.idleHeal,800);
+	}
+	else { Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000); }
+	Game.displayStats();
+}
+
+Game.startCombat = function() {
+	// Generate an enemy
+	// Do a check to see who goes first
+	// Initialise the timers for combat ticks
+}
+
+Game.playerCombatTick = function() {
+	// Deal damage to enemy
+	// Determine whether to add a debuff stack
+}
+
+Game.enemyCombatTick = function() {
+	// Damage logic here
+}
+
+Game.specialAttack = function() {
+	// Perform a special function based on weapon type and debuff stacks.
+}
+
+Game.endCombat = function(winner) {
+	// Kill both the combat intervals
+	// If player wins award XP
+}
+
+Game.levelUp = function() {
+	// add to player stats
+}
+
+Game.takeWeapon = function() {
+	// Copy the enemy's weapon over our weapon
+	// Blank the enemy weapon
+	// Update the panels to remove enemy weapon info
+}
+
+Game.initPlayer = function(level) {
+	Game.p_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.p_HP = Game.p_MaxHP;
+	Game.p_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.p_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.p_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.p_Con = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.p_EXP = 0;
+	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,level-1));
+	Game.p_SkillPoints = level;
+	Game.p_Level = level;
+	Game.p_PP = 0;
+	Game.p_Weapon = Game.makeWeapon(level);
+}
+
+Game.makeEnemy = function(level) {
+	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_HP = Game.e_MaxHP;
+	Game.e_Str = Game.RNG(4,6) + Game.RNG(0,level-1);
+	Game.e_Dex = Game.RNG(4,6) + Game.RNG(0,level-1);
+	Game.e_Int = Game.RNG(4,6) + Game.RNG(0,level-1);
+	Game.e_Level = level;
+	Game.e_Weapon = Game.makeWeapon(level);
+}
+
+Game.makeBoss = function(level) {
+	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_MaxHP *= 2;
+	Game.e_HP = Game.e_MaxHP;
+	Game.e_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Level = level;
+	Game.e_Weapon = Game.makeWeapon(level+3);
 }
 
 Game.reset = function() {

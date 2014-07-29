@@ -113,7 +113,7 @@ Experience granted upon defeat equals 20 + ((4*level) - (5*level))
 Bosses
 ------
 
-Starting at player level 5, there is a 1% chance that a generated enemy will be a boss enemy - this enemy is guaranteed to have a weapon 3 levels higher than them, and their stats are generated using the player algorithm (higher across the board)
+Starting at player level 5, there is a 1% chance that a generated enemy will be a boss enemy - this enemy is guaranteed to have a weapon 3 levels higher than them, and their stats are generated using the player algorithm (higher across the board) and their health is doubled.
 Bosses give double the highest possible XP from a normal encounter of the same level.
 
 Fleeing

@@ -4,7 +4,7 @@
 		<script type="text/javascript" src="game.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"></link>
 	</head>
-	<body onload="Game.init(); Game.initPlayer();">
+	<body onload="Game.init();">
 		<div id="main">
 			<table width="100%">
 				<tr valign="top">
@@ -19,7 +19,11 @@
 							</tr>
 							<tr>
 								<td align="right">Experience: </td>
-								<td width="80%"><div id="XPOut"><span id="p_EXP"></span>/<span id="p_NextEXP"></div></td>
+								<td width="80%"><div id="p_EXP"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Next Level: </td>
+								<td width="80%"><div id="p_NextEXP"></div></td>
 							</tr>
 							<tr>
 								<td align="right">Health: </td>
@@ -143,7 +147,7 @@
 								<td width="20%"><input type="button" id="buy_Shield" onClick="" value="Activate"></td>
 							</tr>
 						</table>
-						<table class="availablePowersPanel">
+						<table class="availablePowersPanel" style="display:none;">
 							<tr>
 								<td colspan="2" class="powerHeader">
 									Special Powers (<span id="p_PP"></span> point(s) available)
@@ -230,10 +234,10 @@
 								<td><input type="button" onClick="" value="Look for Something to Kill"></td>
 							</tr>
 							<tr align="center" id="repairWeapon">
-								<td><input type="button" onClick="" value="Repair your Weapon"></td>
+								<td><input type="button" onClick="Game.startRepair();" value="Repair your Weapon"></td>
 							</tr>
 						</table>
-						<table id="right_Repair" align="center" valign="top">
+						<table id="right_Repair" align="center" style="display:none" valign="top">
 							<tr>
 								<td class="blockHeader">Repairing Weapon</td>
 							</tr>
@@ -241,9 +245,76 @@
 								<td>Time Remaining: <span id="repairTime"></span></td>
 							</tr>
 						</table>
-						<table id="right_Combat" style="display:none;" valign="top">
+						<table id="right_Combat" align="center" valign="top">
 							<tr align="center">
-								<td colspan="2">Current Enemy:</td>
+								<td colspan="2" class="blockHeader">Current Enemy</td>
+							</tr>
+							<tr>
+								<td align="right">Level:</td>
+								<td><span id="e_Level"></span></td>
+							</tr>
+							<tr>
+								<td align="right">HP:</td>
+								<td><div id="e_HPOut"><span id="e_HP"></span>/<span id="e_MaxHP"></span></div></td>
+							</tr>
+							<tr>
+								<td align="right">Strength: </td>
+								<td width="80%"><div id="e_Str"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Dexterity: </td>
+								<td width="80%"><div id="e_Dex"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Intelligence: </td>
+								<td width="80%"><div id="e_Int"></div></td>
+							</tr>
+							<tr><td>&nbsp;</td></tr>
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Enemy Weapon</td>
+							</tr>
+							<tr align="center">
+								<td colspan="2"><div id="ew_Name"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Type: </td>
+								<td width="80%"><div id="ew_Type"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Speed: </td>
+								<td width="80%"><div id="ew_Speed"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Damage: </td>
+								<td width="80%"><div id="ew_Damage"></div></td>
+							</tr>
+							<tr>
+								<td align="right">DPS: </td>
+								<td width="80%"><div id="ew_DPS"></div></td>
+							</tr>
+						</table>
+						<table id="lastEnemyWeapon" style="display:none;">
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Enemy Weapon</td>
+							</tr>
+							<tr align="center">
+								<td colspan="2"><div id="ew_Name"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Type: </td>
+								<td width="80%"><div id="ew_Type"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Speed: </td>
+								<td width="80%"><div id="ew_Speed"></div></td>
+							</tr>
+							<tr>
+								<td align="right">Damage: </td>
+								<td width="80%"><div id="ew_Damage"></div></td>
+							</tr>
+							<tr>
+								<td align="right">DPS: </td>
+								<td width="80%"><div id="ew_DPS"></div></td>
 							</tr>
 						</table>
 					</td>

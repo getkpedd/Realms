@@ -34,7 +34,7 @@ body * {
 .playerPanel {
 	width:200px;
 }
-.playerPanel td {
+.playerPanel td, .enemyPanel td, .lastEnemyWeapon td {
 	width:50%;
 }
 .topPanel td{
