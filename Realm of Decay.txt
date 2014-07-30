@@ -1,4 +1,4 @@
-State of Decay (an incremental RPG)
+Realm of Decay (an incremental RPG)
 ==============
 
 Core Stats
