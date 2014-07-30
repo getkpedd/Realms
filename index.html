@@ -73,6 +73,26 @@
 								<td width="80%"><div id="w_Decay"></div></td>
 							</tr>
 						</table>
+						<table id="levelUpPanel" style="display:none;">
+							<tr>
+								<td class="blockHeader">Use Stat Points</td>
+							</tr>
+							<tr>
+								<td><span id="skillPoints"></span> point(s) available</td>
+							</tr>
+							<tr>
+								<td><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></td>
+							</tr>
+							<tr>
+								<td><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></td>
+							</tr>
+							<tr>
+								<td><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></td>
+							</tr>
+							<tr>
+								<td><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></td>
+							</tr>
+						</table>
 					</td>
 					<td width="100%" class="centerPanel" align="center">
 						<table class="topPanel">
@@ -80,74 +100,68 @@
 								<td>State Of Decay</td>
 							</tr>
 						</table>
-						<table class="selectedPowersPanel"  style="display:none">
+						<table width="100%" id="combatLog" class="combatLog" style="">
+							<tr>
+								<td class="blockHeader">Combat Log</td>
+							</tr>
+							<tr id="logBodyWrapper">
+								<td id="logBody">
+								</td>
+							</tr>
+						</table>
+						<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
 							<tr id="selected_header">
-								<td colspan="2" class="powerHeader">
+								<td class="powerHeader">
 									Selected Powers
 								</td>
 							</tr>
 							<tr id="selected_conserve" style="display:none">
 								<td width="80%"><div class="powerName">Proper Care</div>Grants a 20% chance per hit for weapon decay to be ignored.</td>
-								<td width="20%"><input type="button" id="buy_Conserve" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_repair" style="display:none">
 								<td width="80%"><div class="powerName">High Maintenance</div>Doubles the durability of all weapons.</td>
-								<td width="20%"><input type="button" id="buy_Repair" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_aspd" style="display:none">
 								<td width="80%"><div class="powerName">Nimble Fingers</div>Grants a 20% faster attack speed with all weapons.</td>
-								<td width="20%"><input type="button" id="buy_ASPD" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_heal" style="display:none">
 								<td width="80%"><div class="powerName">Survival Instincts</div>Grants a 20% increased repair and regeneration speed.</td>
-								<td width="20%"><input type="button" id="buy_Heal" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_wspec" style="display:none">
 								<td width="80%"><div class="powerName">Keen Eye</div>Grants a 10% increase in weapon speciality activation rate.</td>
-								<td width="20%"><input type="button" id="buy_WSpec" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_skillpt" style="display:none">
 								<td width="80%"><div class="powerName">Fortuitous Growth</div>Grants a 20% chance to gain an additional free skill point per level.</td>
-								<td width="20%"><input type="button" id="buy_SkillPT" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_xp" style="display:none">
 								<td width="80%"><div class="powerName">Fast Learner</div>Grants a 20% increase to all experience gained.</td>
-								<td width="20%"><input type="button" id="buy_XP" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_meleedmg" style="display:none">
 								<td width="80%"><div class="powerName">Brutal Strikes</div>Grants a 20% increase to melee damage.</td>
-								<td width="20%"><input type="button" id="buy_MeleeDMG" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_rangedmg" style="display:none">
 								<td width="80%"><div class="powerName">Sniper Training</div>Grants a 20% increase to ranged damage.</td>
-								<td width="20%"><input type="button" id="buy_RangeDMG" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_magicdmg" style="display:none">
 								<td width="80%"><div class="powerName">Unleashed Elements</div>Grants a 20% increase to magic damage.</td>
-								<td width="20%"><input type="button" id="buy_MagicDMG" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_meleedef" style="display:none">
 								<td width="80%"><div class="powerName">Stoneskin</div>Grants a 20% reduction in melee damage taken.</td>
-								<td width="20%"><input type="button" id="buy_MeleeDEF" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_rangedef" style="display:none">
 								<td width="80%"><div class="powerName">Iron Carapace</div>Grants a 20% reduction in ranged damage taken.</td>
-								<td width="20%"><input type="button" id="buy_RangeDEF" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_magicdef" style="display:none">
 								<td width="80%"><div class="powerName">Aetheric Resilience</div>Grants a 20% reduction in magic damage taken.</td>
-								<td width="20%"><input type="button" id="buy_MagicDEF" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_double" style="display:none">
 								<td width="80%"><div class="powerName">Flurry</div>Grants a 20% chance to perform a second attack on each combat tick.</td>
-								<td width="20%"><input type="button" id="buy_Double" onClick="" value="Activate"></td>
 							</tr>
 							<tr id="selected_shield" style="display:none">
 								<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
-								<td width="20%"><input type="button" id="buy_Shield" onClick="" value="Activate"></td>
 							</tr>
 						</table>
-						<table class="availablePowersPanel" style="display:none;">
+						<table id="availablePowers" class="availablePowersPanel" style="display:none;">
 							<tr>
 								<td colspan="2" class="powerHeader">
 									Special Powers (<span id="p_PP"></span> point(s) available)
@@ -231,10 +245,13 @@
 								<td class="blockHeader">No Enemies Nearby</td>
 							</tr>
 							<tr align="center" id="seekCombat">
-								<td><input type="button" onClick="" value="Look for Something to Kill"></td>
+								<td><input type="button" onClick="Game.startCombat();" value="Look for Something to Kill"></td>
 							</tr>
 							<tr align="center" id="repairWeapon">
 								<td><input type="button" onClick="Game.startRepair();" value="Repair your Weapon"></td>
+							</tr>
+							<tr align="center" id="takeWeapon" style="display:none;">
+								<td><input type="button" onClick="" value="Take Enemy Weapon"></td>
 							</tr>
 						</table>
 						<table id="right_Repair" align="center" style="display:none" valign="top">
@@ -269,6 +286,10 @@
 								<td align="right">Intelligence: </td>
 								<td width="80%"><div id="e_Int"></div></td>
 							</tr>
+							<tr id="debuffStackFrame">
+								<td>Debuff Stacks:</td>
+								<td id="debuffStackOutput"></td>
+							</tr>						
 							<tr><td>&nbsp;</td></tr>
 							<tr align="center">
 								<td class="blockHeader" colspan="2">Enemy Weapon</td>
@@ -298,29 +319,29 @@
 								<td class="blockHeader" colspan="2">Enemy Weapon</td>
 							</tr>
 							<tr align="center">
-								<td colspan="2"><div id="ew_Name"></div></td>
+								<td colspan="2"><div id="lastw_Name"></div></td>
 							</tr>
 							<tr>
 								<td align="right">Type: </td>
-								<td width="80%"><div id="ew_Type"></div></td>
+								<td width="80%"><div id="lastw_Type"></div></td>
 							</tr>
 							<tr>
 								<td align="right">Speed: </td>
-								<td width="80%"><div id="ew_Speed"></div></td>
+								<td width="80%"><div id="lastw_Speed"></div></td>
 							</tr>
 							<tr>
 								<td align="right">Damage: </td>
-								<td width="80%"><div id="ew_Damage"></div></td>
+								<td width="80%"><div id="lastw_Damage"></div></td>
 							</tr>
 							<tr>
 								<td align="right">DPS: </td>
-								<td width="80%"><div id="ew_DPS"></div></td>
+								<td width="80%"><div id="lastw_DPS"></div></td>
 							</tr>
 						</table>
 					</td>
 				</tr>
 			</table>
 		</div>
-		<div class="footer">State of Decay &copy; Martin Hayward 2014</div>
+		<div class="footer">State of Decay &copy; Martin Hayward 2014 - Version 0.15 pre-alpha</div>
 	</body>
 </html>

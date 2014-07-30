@@ -40,7 +40,7 @@ Naming convention: Level X (weapon name string)
 Melee:
 	Swords
 		Attack Delay: 1 - 2 seconds.
-		Damage: 3 - 6 per weapon level.
+		Damage: 3 - 4 per weapon level.
 		Names: 
 			AS 1 to 1.5: Shortsword
 			AS 1.5 to 2: Longsword
@@ -52,7 +52,7 @@ Melee:
 			AS 2.5 to 3: Broad Axe
 	Flails
 		Attack Delay: 3 - 4 seconds.
-		Damage: 9 - 12 per weapon level.
+		Damage: 10 - 15 per weapon level.
 		Names: 
 			AS 3 to 3.5: Flail
 			AS 3.5 to 4: Morningstar
@@ -60,7 +60,7 @@ Melee:
 Ranged: 
 	Bows
 		Attack Delay: 3 - 4 seconds.
-		Damage: 9 - 12 per weapon level.
+		Damage: 10 - 15 per weapon level.
 		Names: 
 			AS 3 to 3.5: Shortbow
 			AS 3.5 to 4: Longbow
@@ -72,7 +72,7 @@ Ranged:
 			AS 2.5 to 3: Crossbow
 	Thrown
 		Attack Delay: 1 - 2 seconds.
-		Damage: 3 - 6 per weapon level.
+		Damage: 3 - 4 per weapon level.
 		Names: 
 			AS 1 to 1.5: Throwing Knife
 			AS 1.5 to 2: Throwing Axe
@@ -80,15 +80,15 @@ Ranged:
 Magic:
 	Fire
 		Attack Delay: 2 - 3 seconds.
-		Damage: 4 - 6 per weapon level.
+		Damage: 4 - 7 per weapon level.
 		Name: Staff of Flame
 	Ice
 		Attack Delay: 3 - 4 seconds.
-		Damage: 6 - 8 per weapon level.
+		Damage: 8 - 12 per weapon level.
 		Name: Staff of Frost
 	Lightning
 		Attack Delay: 1 - 2 seconds.
-		Damage: 2 - 4 per weapon level.
+		Damage: 2 - 3 per weapon level.
 		Name: Staff of Thunder
 		
 Weapon Specialities

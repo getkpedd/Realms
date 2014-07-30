@@ -23,6 +23,15 @@ body * {
 .centerPanel td {
 	padding-bottom:3px;
 }
+.combatLog {
+	padding:0px 10px;
+}
+.combatLog div.player {
+	text-align:left;
+}
+.combatLog div.enemy {
+	text-align:right;
+}
 .powerName {
 	font-size:14px;
 	font-weight:bold;
