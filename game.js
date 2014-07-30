@@ -466,7 +466,7 @@ Game.initPlayer = function(level) {
 }
 
 Game.makeEnemy = function(level) {
-	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_MaxHP = Game.RNG(25,30) + Game.RNG(15*(level-1),20*(level-1));
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(4,6) + Game.RNG(0,level-1);
 	Game.e_Dex = Game.RNG(4,6) + Game.RNG(0,level-1);
@@ -477,7 +477,7 @@ Game.makeEnemy = function(level) {
 }
 
 Game.makeBoss = function(level) {
-	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_MaxHP = Game.RNG(25,30) + Game.RNG(15*(level-1),20*(level-1));
 	Game.e_MaxHP *= 2;
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
