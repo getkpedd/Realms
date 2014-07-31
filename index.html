@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>State of Decay</title>
+		<title>Realm of Decay 0.25a</title>
 		<script type="text/javascript" src="game.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"></link>
 	</head>
@@ -97,7 +98,7 @@
 					<td width="100%" class="centerPanel" align="center">
 						<table class="topPanel">
 							<tr>
-								<td>State Of Decay</td>
+								<td>Realm Of Decay</td>
 							</tr>
 						</table>
 						<table width="100%" id="combatLog" class="combatLog" style="">
@@ -105,8 +106,7 @@
 								<td class="blockHeader">Combat Log</td>
 							</tr>
 							<tr id="logBodyWrapper">
-								<td id="logBody">
-								</td>
+								<td id="logBody"></td>
 							</tr>
 						</table>
 						<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
@@ -169,63 +169,63 @@
 							</tr>
 							<tr id="conserve">
 								<td width="80%"><div class="powerName">Proper Care</div>Grants a 20% chance per hit for weapon decay to be ignored.</td>
-								<td width="20%"><input type="button" id="buy_Conserve" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_Conserve" onClick="Game.buyPower(Game.BOOST_CONSERVE);" value="Activate"></td>
 							</tr>
 							<tr id="repair">
 								<td width="80%"><div class="powerName">High Maintenance</div>Doubles the durability of all weapons.</td>
-								<td width="20%"><input type="button" id="buy_Repair" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_Repair" onClick="Game.buyPower(Game.BOOST_REPAIR);" value="Activate"></td>
 							</tr>
 							<tr id="aspd">
 								<td width="80%"><div class="powerName">Nimble Fingers</div>Grants a 20% faster attack speed with all weapons.</td>
-								<td width="20%"><input type="button" id="buy_ASPD" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_ASPD" onClick="Game.buyPower(Game.BOOST_ASPD);" value="Activate"></td>
 							</tr>
 							<tr id="heal">
 								<td width="80%"><div class="powerName">Survival Instincts</div>Grants a 20% increased repair and regeneration speed.</td>
-								<td width="20%"><input type="button" id="buy_Heal" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_Heal" onClick="Game.buyPower(Game.BOOST_HEAL);" value="Activate"></td>
 							</tr>
 							<tr id="wspec">
 								<td width="80%"><div class="powerName">Keen Eye</div>Grants a 10% increase in weapon speciality activation rate.</td>
-								<td width="20%"><input type="button" id="buy_WSpec" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_WSpec" onClick="Game.buyPower(Game.BOOST_WSPEC);" value="Activate"></td>
 							</tr>
 							<tr id="skillpt">
 								<td width="80%"><div class="powerName">Fortuitous Growth</div>Grants a 20% chance to gain an additional free skill point per level.</td>
-								<td width="20%"><input type="button" id="buy_SkillPT" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_SkillPT" onClick="Game.buyPower(Game.BOOST_SKILLPT);" value="Activate"></td>
 							</tr>
 							<tr id="xp">
 								<td width="80%"><div class="powerName">Fast Learner</div>Grants a 20% increase to all experience gained.</td>
-								<td width="20%"><input type="button" id="buy_XP" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_XP" onClick="Game.buyPower(Game.BOOST_XP);" value="Activate"></td>
 							</tr>
 							<tr id="meleedmg">
 								<td width="80%"><div class="powerName">Brutal Strikes</div>Grants a 20% increase to melee damage.</td>
-								<td width="20%"><input type="button" id="buy_MeleeDMG" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_MeleeDMG" onClick="Game.buyPower(Game.BOOST_MELEEDMG);" value="Activate"></td>
 							</tr>
 							<tr id="rangedmg">
 								<td width="80%"><div class="powerName">Sniper Training</div>Grants a 20% increase to ranged damage.</td>
-								<td width="20%"><input type="button" id="buy_RangeDMG" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_RangeDMG" onClick="Game.buyPower(Game.BOOST_RANGEDMG);" value="Activate"></td>
 							</tr>
 							<tr id="magicdmg">
 								<td width="80%"><div class="powerName">Unleashed Elements</div>Grants a 20% increase to magic damage.</td>
-								<td width="20%"><input type="button" id="buy_MagicDMG" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_MagicDMG" onClick="Game.buyPower(Game.BOOST_MAGICDMG);" value="Activate"></td>
 							</tr>
 							<tr id="meleedef">
 								<td width="80%"><div class="powerName">Stoneskin</div>Grants a 20% reduction in melee damage taken.</td>
-								<td width="20%"><input type="button" id="buy_MeleeDEF" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_MeleeDEF" onClick="Game.buyPower(Game.BOOST_MELEEDEF);" value="Activate"></td>
 							</tr>
 							<tr id="rangedef">
 								<td width="80%"><div class="powerName">Iron Carapace</div>Grants a 20% reduction in ranged damage taken.</td>
-								<td width="20%"><input type="button" id="buy_RangeDEF" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_RangeDEF" onClick="Game.buyPower(Game.BOOST_RANGEDEF);" value="Activate"></td>
 							</tr>
 							<tr id="magicdef">
 								<td width="80%"><div class="powerName">Aetheric Resilience</div>Grants a 20% reduction in magic damage taken.</td>
-								<td width="20%"><input type="button" id="buy_MagicDEF" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_MagicDEF" onClick="Game.buyPower(Game.BOOST_MAGICDEF);" value="Activate"></td>
 							</tr>
 							<tr id="double">
 								<td width="80%"><div class="powerName">Flurry</div>Grants a 20% chance to perform a second attack on each combat tick.</td>
-								<td width="20%"><input type="button" id="buy_Double" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_Double" onClick="Game.buyPower(Game.BOOST_DOUBLE);" value="Activate"></td>
 							</tr>
 							<tr id="shield">
 								<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
-								<td width="20%"><input type="button" id="buy_Shield" onClick="" value="Activate"></td>
+								<td width="20%"><input type="button" id="buy_Shield" onClick="Game.buyPower(Game.BOOST_SHIELD);" value="Activate"></td>
 							</tr>
 						</table>
 						<table class="buttonPanel">
@@ -251,7 +251,7 @@
 								<td><input type="button" onClick="Game.startRepair();" value="Repair your Weapon"></td>
 							</tr>
 							<tr align="center" id="takeWeapon" style="display:none;">
-								<td><input type="button" onClick="" value="Take Enemy Weapon"></td>
+								<td><input type="button" onClick="Game.takeWeapon();" value="Take Enemy Weapon"></td>
 							</tr>
 						</table>
 						<table id="right_Repair" align="center" style="display:none" valign="top">
@@ -342,6 +342,6 @@
 				</tr>
 			</table>
 		</div>
-		<div class="footer">State of Decay &copy; Martin Hayward 2014 - Version 0.15 pre-alpha</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward 2014 - Version 0.25 pre-alpha</div>
 	</body>
 </html>

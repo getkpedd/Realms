@@ -1,36 +1,53 @@
 Game = {};
 
-/*
-State of Decay - An RPG Incremental
+/* Comments
+Realm of Decay - An RPG Incremental
 Copyright Martin Hayward 2014
-Version 0.15 pre-Alpha
+Version 0.25 pre-Alpha
 
 Changes in this version:
-	Adjusted weapon DPS so slower weapons are viable
-	Separate out display update sections to reduce DOM load.
-	Skill points can now be assigned.
-	Basic combat (including debuff stacks)
-	Combat log
+	Lowered enemy base HP to make lower level fights easier.
+	Losing battle now costs 25% of current xp.
+	Weapons now decay on each hit.
+	Enemy weapons can now be taken on their defeat.
+	Powers: 
+		High Maintenance
+		Survival Instincts
+		Proper Care
+		Nimble Fingers
+		Keen Eye
+		Brutal Strikes
+		Sniper Training
+		Unleashed Elements
+		Fast Learner
+		Stoneskin
+		Iron Carapace
+		Aetheric Resilience
+		Fortuitous Growth
+		Divine Shield
+		Flurry
+	Powers can now be bought.
+	Exception handling on save loading code.
 TODO: 
 	Combat stuff:
 		Fleeing
-		Losing
-		Weapon decay
 		Weapon specials
-		Take enemy weapon
 		Output debuff stacks
+		Combat logging - after-combat messages
 	Available powers display
 	Selected powers display
 	Autosave when out of combat (or once combat is over if called in combat)
 	Autobattle system (initiate combat at full HP, repair if durability falls below 10 maybe)
 	A way to get a new weapon if current weapon level is too low
-	Balance problem: Currently almost impossible to win a fight at level 2 with a level 1 weapon.
-		May be solved by weapon specials.
+	  -- Ability to fight lower level targets (or even set the level of the target)
 */
 
 Game.init = function() {
 	//Define some constants we can use later
 	this.XP_MULT = 1.116;
+	this.XP_RANGEMIN = 1.7;
+	this.XP_RANGEMAX = 2.2;
+	this.XP_BASE = 15;
 	//Player states
 	this.STATE_IDLE = 0;
 	this.STATE_REPAIR = 1;
@@ -59,7 +76,7 @@ Game.init = function() {
 	this.WSPEED_SLOW = 211;
 	this.WSPEED_MID = 212;
 	this.WSPEED_FAST = 213;
-	// Point assigment stats
+	// Point assignment stats
 	this.STAT_STR = 301;
 	this.STAT_DEX = 302;
 	this.STAT_INT = 303;
@@ -250,6 +267,7 @@ Game.updateCentrePanel = function() {
 	var ppp = document.getElementById("availablePowers");
 	if(Game.p_PP > 0) {
 		ppp.style.display = "";
+		// Logic to display only powers that are not selected. MESSY.
 	} else { ppp.style.display = "none"; }
 	//Selected Powers Panel
 	var spp = document.getElementById("selectedPowers");
@@ -257,6 +275,11 @@ Game.updateCentrePanel = function() {
 		spp.style.display = "";
 		// Logic to only display powers that are selected. MESSY.
 	} else { spp.style.display = "none"; }
+	// Combat log panel
+	var cb = document.getElementById("logBody");
+	var cbFrame = document.getElementById("combatLog");
+	if(cb.innerHTML == "") { cbFrame.style.display = "none"; }
+	else { cbFrame.style.display = ""; }
 }
 
 Game.combatLog = function(combatant, message) {
@@ -266,16 +289,17 @@ Game.combatLog = function(combatant, message) {
 	d.appendChild(x);
 	var logBox = document.getElementById("logBody");
 	logBox.appendChild(d);
+	Game.updateCentrePanel();
 }
 
 Game.startRepair = function() {
-	if(Game.p_Weapon[5] == (100 + 5*(Game.p_Weapon[0]-1)) || Game.p_Weapon[5] == -1) {
+	if(Game.p_Weapon[5] == (50 + 5*(Game.p_Weapon[0]-1)) || Game.p_Weapon[5] == -1) {
 		// Repair not required, do nothing
 	}
 	else {
 		Game.p_State = Game.STATE_REPAIR;
 		Game.p_RepairValue = Game.p_Weapon[0];
-		if(Game.hasPower(Game.BOOST_REPAIR)) {
+		if(Game.hasPower(Game.BOOST_HEAL)) {
 			Game.p_RepairInterval = window.setInterval(Game.repairTick,800);
 		}
 		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
@@ -285,7 +309,8 @@ Game.startRepair = function() {
 
 Game.repairTick = function() {
 	if(Game.p_RepairValue == 0) {
-		Game.p_Weapon[5] = 100 + 5*(Game.p_Weapon[0]-1);
+		Game.p_Weapon[5] = 50 + 5*(Game.p_Weapon[0]-1);
+		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Weapon[5]*=2; }
 		Game.p_State = Game.STATE_IDLE;
 		window.clearInterval(Game.p_RepairInterval);
 	}
@@ -337,34 +362,51 @@ Game.playerCombatTick = function() {
 	switch(Game.p_Weapon[1]) {
 		case Game.WEAPON_MAGIC:
 			playerDMG += Math.floor(Game.p_Int/2);
+			if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
 			break;
 		case Game.WEAPON_RANGE:
 			playerDMG += Math.floor(Game.p_Dex/2);
+			if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
 			break;
 		case Game.WEAPON_MELEE:
 			playerDMG += Math.floor(Game.p_Str/2);
+			if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
 			break;
 	}
 	// Decay handling
-	if(Game.e_Weapon[5]<0) {
+	if(Game.p_Weapon[5]<0) {
 		Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
 	}
 	else {
-		if(Game.e_Weapon[5]>0) {
-			Game.e_Weapon[5]--;
+		if(Game.p_Weapon[5]>0) {
+			if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
+				Game.combatLog("player","<strong>Proper Care</strong> prevented weapon decay.");
+			} 
+			else { Game.p_Weapon[5]--; }
 		}
 		else {
 			playerDMG = Math.floor(playerDMG/2);
 		}
 		Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
 	}
+	Game.updatePlayerPanel();
 	Game.combatLog("player","You hit the enemy with your " + Game.getWeaponName(Game.p_Weapon) + " for " + playerDMG + " damage.");
-	if(Game.RNG(1,5) == 1) {
+	var debuffApplyChance = 2;
+	if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
+	if(Game.RNG(1,10) <= debuffApplyChance) {
 		Game.e_DebuffStacks++;
 		Game.combatLog("player","Your attack applied a debuff.");
 		// Todo: Add debuff stack name here
 	}
-	if(Game.e_HP > 0) { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,1000*Game.p_Weapon[3]); }
+	if(Game.e_HP > 0) { 
+		var timerLength = 1000*Game.p_Weapon[3];
+		if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
+		if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
+			Game.combatLog("player","<strong>Flurry</strong> activated for an additional strike!");
+			Game.playerCombatTick();
+		}
+		else { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength); }
+	}
 	else { Game.endCombat(); }
 	Game.updateEnemyPanel();
 }
@@ -374,16 +416,25 @@ Game.enemyCombatTick = function() {
 	switch(Game.e_Weapon[1]) {
 		case Game.WEAPON_MAGIC:
 			enemyDMG += Math.floor(Game.e_Int/2);
+			if(Game.hasPower(Game.BOOST_MAGICDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
 			break;
 		case Game.WEAPON_RANGE:
 			enemyDMG += Math.floor(Game.e_Dex/2);
+			if(Game.hasPower(Game.BOOST_RANGEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
 			break;
 		case Game.WEAPON_MELEE:
 			enemyDMG += Math.floor(Game.e_Str/2);
+			if(Game.hasPower(Game.BOOST_MELEEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
 			break;
 	}
-	Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
-	Game.combatLog("enemy","The enemy hits you with their " + Game.getWeaponName(Game.e_Weapon) + " for " + enemyDMG + " damage.");
+	if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
+		Game.combatLog("player","Your <strong>Divine Shield</strong> absorbed the damage.");
+	} 
+	else {
+		Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
+		Game.combatLog("enemy","The enemy hits you with their " + Game.getWeaponName(Game.e_Weapon) + " for " + enemyDMG + " damage.");
+	}
+
 	if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
 	else { Game.endCombat(); }
 	Game.updatePlayerPanel();
@@ -398,17 +449,26 @@ Game.endCombat = function() {
 	window.clearTimeout(Game.combat_enemyInterval);
 	Game.p_State = Game.STATE_IDLE;
 	if(Game.p_HP > 0) {
-		// Player won
+		// Player won, give xp and maybe, just maybe, a level.
+		Game.combatLog("","You won!");
 		Game.last_Weapon = Game.e_Weapon.slice();
-		Game.p_EXP += 20+(Game.RNG(4*Game.e_Level,5*Game.e_Level));
+		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
+		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
+		Game.combatLog("","You gained " + xpToAdd + " experience.");
+		Game.p_EXP += xpToAdd;
 		if(Game.p_EXP > Game.p_NextEXP) {
-			// OMGAR A Level
 			Game.levelUp();
 		}
 	}
+	else {
+		// Enemy won, dock XP
+		Game.combatLog("","You lost...");
+		var xpDrop = Math.floor(Game.p_EXP/4);
+		Game.combatLog("","You lose " + xpDrop + " experience...");
+		Game.p_EXP -= xpDrop;
+		Game.p_HP = Game.p_MaxHP;
+	}
 	Game.drawAllTheThings();
-	// If player wins award XP
-	// possibly call a level up
 }
 
 Game.levelUp = function() {
@@ -422,15 +482,25 @@ Game.levelUp = function() {
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
 	Game.p_SkillPoints += 1;
+	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) { Game.p_SkillPoints++; }
 	if(Game.p_Level % 5 == 0) {
 		Game.p_PP += 1;
 	}
 }
-
+Game.buyPower = function(power) {
+	if(Game.p_PP > 0) {
+		if(!Game.hasPower(power)) {
+			Game.p_Powers.push(power);
+			Game.p_PP--;
+		}
+	}
+	Game.updateCentrePanel();
+}
 Game.takeWeapon = function() {
-	// Copy the enemy's weapon over our weapon
-	// Blank the enemy weapon
-	// Update the panels to remove enemy weapon info
+	Game.p_Weapon = Game.last_Weapon.slice(0);
+	Game.last_Weapon = [];
+	Game.updatePlayerPanel();
+	Game.updateEnemyPanel();
 }
 
 Game.addStat = function(stat) {
@@ -500,7 +570,14 @@ Game.save = function() {
 
 Game.load = function() {
 	//localStorage yeeeeee
-	var g = JSON.parse(window.localStorage.getItem("gameSave"));
+	var g;
+	try {
+		g = JSON.parse(window.localStorage.getItem("gameSave"));
+	}
+	catch(x) {
+		g = null;
+		console.log("Failed to load save. Is localStorage a thing on this browser?");
+	}
 	if(g !== null) { 
 		Game.p_HP = g.p_HP;
 		Game.p_MaxHP = g.p_MaxHP;
@@ -579,7 +656,7 @@ Game.makeWeapon = function(level) {
 	sType += 210; // Brings it in line with weapon speed constants
 	var speed = 0; 
 	var damage = 0;
-	var decay = 100 + 5*(level-1);
+	var decay = 50 + 5*(level-1);
 	switch(type) {
 		case Game.WEAPON_MAGIC:
 			switch(sType) {
