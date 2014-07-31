@@ -7,7 +7,7 @@ Player:
 	Level: The more of these you have, the bigger your e-peen is.
 		1 + 1 per level (duh)
 	HP: Having some of this makes you not dead. 
-		50-60 + 15-20 per level
+		100-120 + 25-30 per level
 	Strength (Str): Affects melee weapon damage (sword, axe, flail). 
 		5-7 + 1-2 per level
 	Dexterity (Dex): Affects ranged weapon damage (bow, crossbow, thrown).
@@ -24,7 +24,7 @@ Enemy:
 	Level:
 		Same as player
 	HP: 
-		50-60 + 15-20 per level
+		50-60 + 25-30 per level
 	Strength (Str): Affects melee weapon damage (sword, axe, flail). 
 		4-6 + 0-1 per level
 	Dexterity (Dex): Affects ranged weapon damage (bow, crossbow, thrown).

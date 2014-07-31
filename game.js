@@ -402,7 +402,7 @@ Game.playerCombatTick = function() {
 		var timerLength = 1000*Game.p_Weapon[3];
 		if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
 		if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
-			Game.combatLog("player","<strong>Flurry</strong> activated for an additional strike!");
+			Game.combatLog("player","Flurry activated for an additional strike!");
 			Game.playerCombatTick();
 		}
 		else { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength); }
@@ -428,7 +428,7 @@ Game.enemyCombatTick = function() {
 			break;
 	}
 	if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
-		Game.combatLog("player","Your <strong>Divine Shield</strong> absorbed the damage.");
+		Game.combatLog("player","Your Divine Shield absorbed the damage.");
 	} 
 	else {
 		Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
@@ -472,7 +472,7 @@ Game.endCombat = function() {
 }
 
 Game.levelUp = function() {
-	Game.p_MaxHP += Game.RNG(15,20);
+	Game.p_MaxHP += Game.RNG(25,30);
 	Game.p_HP = Game.p_MaxHP;
 	Game.p_Str += Game.RNG(0,2);
 	Game.p_Dex += Game.RNG(0,2);
@@ -521,7 +521,7 @@ Game.addStat = function(stat) {
 }
 
 Game.initPlayer = function(level) {
-	Game.p_MaxHP = Game.RNG(50,60) + Game.RNG(15*(level-1),20*(level-1));
+	Game.p_MaxHP = Game.RNG(100,120) + Game.RNG(25*(level-1),30*(level-1));
 	Game.p_HP = Game.p_MaxHP;
 	Game.p_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
 	Game.p_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
@@ -536,7 +536,7 @@ Game.initPlayer = function(level) {
 }
 
 Game.makeEnemy = function(level) {
-	Game.e_MaxHP = Game.RNG(25,30) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(4,6) + Game.RNG(0,level-1);
 	Game.e_Dex = Game.RNG(4,6) + Game.RNG(0,level-1);
@@ -547,7 +547,7 @@ Game.makeEnemy = function(level) {
 }
 
 Game.makeBoss = function(level) {
-	Game.e_MaxHP = Game.RNG(25,30) + Game.RNG(15*(level-1),20*(level-1));
+	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MaxHP *= 2;
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
@@ -593,6 +593,7 @@ Game.load = function() {
 		Game.p_PP = g.p_PP;
 		Game.p_SkillPoints = g.p_SkillPoints;
 		Game.p_Weapon = g.p_Weapon;
+		Game.last_Weapon = g.last_Weapon;
 		return true;
 	}
 	else { return false; }
