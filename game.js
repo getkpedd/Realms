@@ -3,43 +3,24 @@ Game = {};
 /* Comments
 Realm of Decay - An RPG Incremental
 Copyright Martin Hayward 2014
-Version 0.25 pre-Alpha
+Version 0.3 pre-Alpha
 
 Changes in this version:
-	Lowered enemy base HP to make lower level fights easier.
-	Losing battle now costs 25% of current xp.
-	Weapons now decay on each hit.
-	Enemy weapons can now be taken on their defeat.
-	Powers: 
-		High Maintenance
-		Survival Instincts
-		Proper Care
-		Nimble Fingers
-		Keen Eye
-		Brutal Strikes
-		Sniper Training
-		Unleashed Elements
-		Fast Learner
-		Stoneskin
-		Iron Carapace
-		Aetheric Resilience
-		Fortuitous Growth
-		Divine Shield
-		Flurry
-	Powers can now be bought.
-	Exception handling on save loading code.
+	Available powers display.
+	Selected powers display.
+	Add stat panel hidden when in combat.
+	Debuff names and stacks now appear.
+	Players can now flee from a fight.
+	Debuffs:
+		Blood Siphon
+		Infected Wound
+		Residual Burn
 TODO: 
-	Combat stuff:
-		Fleeing
-		Weapon specials
-		Output debuff stacks
-		Combat logging - after-combat messages
-	Available powers display
-	Selected powers display
+	Weapon specials
 	Autosave when out of combat (or once combat is over if called in combat)
-	Autobattle system (initiate combat at full HP, repair if durability falls below 10 maybe)
+	Autobattle system (initiate combat at full HP, repair if durability falls to 0)
 	A way to get a new weapon if current weapon level is too low
-	  -- Ability to fight lower level targets (or even set the level of the target)
+	  - Allow expenditure of a skill point to upgrade current weapon to match current level?
 */
 
 Game.init = function() {
@@ -158,7 +139,7 @@ Game.updatePlayerPanel = function() {
 	pp.innerHTML = Game.p_PP;
 	if(Game.p_Weapon[5] >= 0) { w_decay.innerHTML = Game.p_Weapon[5]; }
 	else { w_Decay.innerHTML = "N/A"; }
-	if(Game.p_SkillPoints > 0) {
+	if(Game.p_SkillPoints > 0 && Game.p_State != Game.STATE_COMBAT) {
 		var lvPanel = document.getElementById("levelUpPanel");
 		lvPanel.style.display = "";
 		var spDisp = document.getElementById("skillPoints");
@@ -202,6 +183,8 @@ Game.updateEnemyPanel = function() {
 			e_dex.innerHTML = Game.e_Dex;
 			var e_intel = document.getElementById("e_Int");
 			e_intel.innerHTML = Game.e_Int;
+			var e_Debuff = document.getElementById("debuffStackOutput");
+			e_Debuff.innerHTML = Game.e_DebuffStacks;
 			// Enemy weapon
 			var ew_name = document.getElementById("ew_Name");
 			ew_name.innerHTML = Game.getWeaponName(Game.e_Weapon);
@@ -229,6 +212,8 @@ Game.updateEnemyPanel = function() {
 			r_Combat.style.display = "none";
 			var r_Repair = document.getElementById("right_Repair");
 			r_Repair.style.display = "";
+			var repTimer = document.getElementById("repairTime");
+			repTimer.innerHTML = Game.p_RepairValue;
 			break;
 	}
 	if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) { 
@@ -267,13 +252,113 @@ Game.updateCentrePanel = function() {
 	var ppp = document.getElementById("availablePowers");
 	if(Game.p_PP > 0) {
 		ppp.style.display = "";
-		// Logic to display only powers that are not selected. MESSY.
+		for(var x = 0; x < Game.p_Powers.length; x++) {
+			var targetControl;
+			switch(Game.p_Powers[x]) {
+				case Game.BOOST_REPAIR: // High Maintenance
+					targetControl = document.getElementById("repair");
+					break;
+				case Game.BOOST_ASPD: // Nimble Fingers
+					targetControl = document.getElementById("aspd");
+					break;
+				case Game.BOOST_HEAL: // Survival Instincts
+					targetControl = document.getElementById("heal");
+					break;
+				case Game.BOOST_WSPEC: // Keen Eye
+					targetControl = document.getElementById("wspec");
+					break;
+				case Game.BOOST_SKILLPT: // Fortuitous Growth
+					targetControl = document.getElementById("skillpt");
+					break;
+				case Game.BOOST_XP: // Fast Learner
+					targetControl = document.getElementById("xp");
+					break;
+				case Game.BOOST_MELEEDMG: // Brutal Strikes
+					targetControl = document.getElementById("meleedmg");
+					break;
+				case Game.BOOST_RANGEDMG: // Sniper Training
+					targetControl = document.getElementById("rangedmg");
+					break;
+				case Game.BOOST_MAGICDMG:// Unleashed Elements
+					targetControl = document.getElementById("magicdmg");
+					break;
+				case Game.BOOST_MELEEDEF: // Stoneskin
+					targetControl = document.getElementById("meleedef");
+					break;
+				case Game.BOOST_RANGEDEF: // Iron Carapace
+					targetControl = document.getElementById("rangedef");
+					break;
+				case Game.BOOST_MAGICDEF: // Aetheric Resilience
+					targetControl = document.getElementById("magicdef");
+					break;
+				case Game.BOOST_DOUBLE: // Flurry
+					targetControl = document.getElementById("double");
+					break;
+				case Game.BOOST_SHIELD:// Divine Shield
+					targetControl = document.getElementById("shield");
+					break;
+				case Game.BOOST_CONSERVE: // Proper Care
+					targetControl = document.getElementById("conserve");
+					break;
+			}
+			targetControl.style.display = "none";
+		}	
 	} else { ppp.style.display = "none"; }
 	//Selected Powers Panel
 	var spp = document.getElementById("selectedPowers");
 	if(Game.p_Powers.length > 0) {
 		spp.style.display = "";
-		// Logic to only display powers that are selected. MESSY.
+		for(var x = 0; x < Game.p_Powers.length; x++) {
+			var targetControl;
+			switch(Game.p_Powers[x]) {
+				case Game.BOOST_REPAIR: // High Maintenance
+					targetControl = document.getElementById("selected_repair");
+					break;
+				case Game.BOOST_ASPD: // Nimble Fingers
+					targetControl = document.getElementById("selected_aspd");
+					break;
+				case Game.BOOST_HEAL: // Survival Instincts
+					targetControl = document.getElementById("selected_heal");
+					break;
+				case Game.BOOST_WSPEC: // Keen Eye
+					targetControl = document.getElementById("selected_wspec");
+					break;
+				case Game.BOOST_SKILLPT: // Fortuitous Growth
+					targetControl = document.getElementById("selected_skillpt");
+					break;
+				case Game.BOOST_XP: // Fast Learner
+					targetControl = document.getElementById("selected_xp");
+					break;
+				case Game.BOOST_MELEEDMG: // Brutal Strikes
+					targetControl = document.getElementById("selected_meleedmg");
+					break;
+				case Game.BOOST_RANGEDMG: // Sniper Training
+					targetControl = document.getElementById("selected_rangedmg");
+					break;
+				case Game.BOOST_MAGICDMG:// Unleashed Elements
+					targetControl = document.getElementById("selected_magicdmg");
+					break;
+				case Game.BOOST_MELEEDEF: // Stoneskin
+					targetControl = document.getElementById("selected_meleedef");
+					break;
+				case Game.BOOST_RANGEDEF: // Iron Carapace
+					targetControl = document.getElementById("selected_rangedef");
+					break;
+				case Game.BOOST_MAGICDEF: // Aetheric Resilience
+					targetControl = document.getElementById("selected_magicdef");
+					break;
+				case Game.BOOST_DOUBLE: // Flurry
+					targetControl = document.getElementById("selected_double");
+					break;
+				case Game.BOOST_SHIELD:// Divine Shield
+					targetControl = document.getElementById("selected_shield");
+					break;
+				case Game.BOOST_CONSERVE: // Proper Care
+					targetControl = document.getElementById("selected_conserve");
+					break;
+			}
+			targetControl.style.display = "";
+		}	
 	} else { spp.style.display = "none"; }
 	// Combat log panel
 	var cb = document.getElementById("logBody");
@@ -317,8 +402,6 @@ Game.repairTick = function() {
 	else {
 		Game.p_RepairValue-=1; 
 		Game.p_State = Game.STATE_REPAIR;
-		var repTimer = document.getElementById("repairTime");
-		repTimer.innerHTML = Game.p_RepairValue;
 	}
 	Game.updateEnemyPanel();
 }
@@ -358,90 +441,135 @@ Game.startCombat = function() {
 }
 
 Game.playerCombatTick = function() {
-	var playerDMG = Game.p_Weapon[4];
-	switch(Game.p_Weapon[1]) {
-		case Game.WEAPON_MAGIC:
-			playerDMG += Math.floor(Game.p_Int/2);
-			if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
-			break;
-		case Game.WEAPON_RANGE:
-			playerDMG += Math.floor(Game.p_Dex/2);
-			if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
-			break;
-		case Game.WEAPON_MELEE:
-			playerDMG += Math.floor(Game.p_Str/2);
-			if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
-			break;
-	}
-	// Decay handling
-	if(Game.p_Weapon[5]<0) {
-		Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
-	}
-	else {
-		if(Game.p_Weapon[5]>0) {
-			if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
-				Game.combatLog("player","<strong>Proper Care</strong> prevented weapon decay.");
-			} 
-			else { Game.p_Weapon[5]--; }
+	if(Game.p_State == Game.STATE_COMBAT) {
+		var playerDMG = Game.p_Weapon[4];
+		switch(Game.p_Weapon[1]) {
+			case Game.WEAPON_MAGIC:
+				playerDMG += Math.floor(Game.p_Int/2);
+				if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				break;
+			case Game.WEAPON_RANGE:
+				playerDMG += Math.floor(Game.p_Dex/2);
+				if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				break;
+			case Game.WEAPON_MELEE:
+				playerDMG += Math.floor(Game.p_Str/2);
+				if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				break;
+		}
+		// Decay handling
+		if(Game.p_Weapon[5]<0) {
+			Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
 		}
 		else {
-			playerDMG = Math.floor(playerDMG/2);
+			if(Game.p_Weapon[5]>0) {
+				if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
+					Game.combatLog("player","<strong>Proper Care</strong> prevented weapon decay.");
+				} 
+				else { Game.p_Weapon[5]--; }
+			}
+			else {
+				playerDMG = Math.floor(playerDMG/2);
+			}
+			Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
 		}
-		Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
-	}
-	Game.updatePlayerPanel();
-	Game.combatLog("player","You hit the enemy with your " + Game.getWeaponName(Game.p_Weapon) + " for " + playerDMG + " damage.");
-	var debuffApplyChance = 2;
-	if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
-	if(Game.RNG(1,10) <= debuffApplyChance) {
-		Game.e_DebuffStacks++;
-		Game.combatLog("player","Your attack applied a debuff.");
-		// Todo: Add debuff stack name here
-	}
-	if(Game.e_HP > 0) { 
-		var timerLength = 1000*Game.p_Weapon[3];
-		if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
-		if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
-			Game.combatLog("player","Flurry activated for an additional strike!");
-			Game.playerCombatTick();
+		Game.updatePlayerPanel();
+		Game.combatLog("player","You hit the enemy with your " + Game.getWeaponName(Game.p_Weapon) + " for " + playerDMG + " damage.");
+		// Debuff effect for melee
+		if(Game.p_Weapon[1] == Game.WEAPON_MELEE && Game.e_DebuffStacks > 0) {
+			var selfHeal = Game.e_DebuffStacks * Game.p_Weapon[0];
+			Game.p_HP = Math.min(Game.p_HP + selfHeal, Game.p_MaxHP);
+			Game.combatLog("player","You regain " + selfHeal + " health from Blood Siphon.");
 		}
-		else { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength); }
+		// Debuff effect for magic
+		if(Game.p_Weapon[1] == Game.WEAPON_MAGIC && Game.e_DebuffStacks > 0) {
+			var bonusDMG = Game.e_DebuffStacks * Game.p_Weapon[0];
+			Game.e_HP = Math.max(Game.e_HP - bonusDMG, 0);
+			Game.combatLog("player","The enemy suffers " + bonusDMG + " damage from your Residual Burn.");
+		}
+		var debuffApplyChance = 2;
+		if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
+		if(Game.RNG(1,10) <= debuffApplyChance) {
+			Game.e_DebuffStacks++;
+			switch(Game.p_Weapon[1]) {
+				case Game.WEAPON_MAGIC:
+					Game.combatLog("player","The enemy suffers from Residual Burn.");
+					break;
+				case Game.WEAPON_RANGE:
+					Game.combatLog("player","The enemy suffers from Infected Wound.");
+					break;
+				case Game.WEAPON_MELEE:
+					Game.combatLog("player","The enemy suffers from Blood Siphon.");
+					break;
+			}
+		}
+		if(Game.e_HP > 0) { 
+			var timerLength = 1000*Game.p_Weapon[3];
+			if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
+			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
+				Game.combatLog("player","Flurry activated for an additional strike!");
+				Game.playerCombatTick();
+			}
+			else { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength); }
+		}
+		else { Game.endCombat(); }
 	}
-	else { Game.endCombat(); }
+	else { window.clearInterval(Game.combat_playerInterval); }
 	Game.updateEnemyPanel();
 }
 
 Game.enemyCombatTick = function() {
-	var enemyDMG = Game.e_Weapon[4];
-	switch(Game.e_Weapon[1]) {
-		case Game.WEAPON_MAGIC:
-			enemyDMG += Math.floor(Game.e_Int/2);
-			if(Game.hasPower(Game.BOOST_MAGICDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
-			break;
-		case Game.WEAPON_RANGE:
-			enemyDMG += Math.floor(Game.e_Dex/2);
-			if(Game.hasPower(Game.BOOST_RANGEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
-			break;
-		case Game.WEAPON_MELEE:
-			enemyDMG += Math.floor(Game.e_Str/2);
-			if(Game.hasPower(Game.BOOST_MELEEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
-			break;
-	}
-	if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
-		Game.combatLog("player","Your Divine Shield absorbed the damage.");
-	} 
-	else {
-		Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
-		Game.combatLog("enemy","The enemy hits you with their " + Game.getWeaponName(Game.e_Weapon) + " for " + enemyDMG + " damage.");
-	}
+	if(Game.p_State == Game.STATE_COMBAT) {
+		var enemyDMG = Game.e_Weapon[4];
+		switch(Game.e_Weapon[1]) {
+			case Game.WEAPON_MAGIC:
+				enemyDMG += Math.floor(Game.e_Int/2);
+				if(Game.hasPower(Game.BOOST_MAGICDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+				break;
+			case Game.WEAPON_RANGE:
+				enemyDMG += Math.floor(Game.e_Dex/2);
+				if(Game.hasPower(Game.BOOST_RANGEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+				break;
+			case Game.WEAPON_MELEE:
+				enemyDMG += Math.floor(Game.e_Str/2);
+				if(Game.hasPower(Game.BOOST_MELEEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+				break;
+		}
+		if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
+			Game.combatLog("player","Your Divine Shield absorbed the damage.");
+		} 
+		else {
+			// Debuff effect for range
+			if(Game.p_Weapon[1] == Game.WEAPON_RANGE && Game.e_DebuffStacks > 0) {
+				var damageDown = Game.e_DebuffStacks * Game.p_Weapon[0];
+				enemyDMG = Math.max(enemyDMG - damageDown,0);
+				Game.combatLog("enemy","The Infected Wound prevented a total of " + damageDown + " damage.");
+			}
+			Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
+			Game.combatLog("enemy","The enemy hits you with their " + Game.getWeaponName(Game.e_Weapon) + " for " + enemyDMG + " damage.");
+		}
 
-	if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
-	else { Game.endCombat(); }
+		if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
+		else { Game.endCombat(); }
+	}
+	else { window.clearTimeout(Game.combat_enemyInterval); }
 	Game.updatePlayerPanel();
 }
 
 Game.specialAttack = function() {
+	switch(Game.p_Weapon[1]) {
+		case Game.WEAPON_MELEE:
+			// Bloodthirst: Heal 10% per stack
+			
+	}
 	// Perform a special function based on weapon type and debuff stacks.
+}
+Game.fleeCombat = function() {
+	window.clearTimeout(Game.combat_playerInterval);
+	window.clearTimeout(Game.combat_enemyInterval);
+	Game.p_State = Game.STATE_IDLE;
+	Game.combatLog("","You fled from the battle.");
+	Game.drawAllTheThings();
 }
 
 Game.endCombat = function() {
@@ -456,7 +584,7 @@ Game.endCombat = function() {
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
 		Game.combatLog("","You gained " + xpToAdd + " experience.");
 		Game.p_EXP += xpToAdd;
-		if(Game.p_EXP > Game.p_NextEXP) {
+		if(Game.p_EXP >= Game.p_NextEXP) {
 			Game.levelUp();
 		}
 	}
@@ -472,19 +600,35 @@ Game.endCombat = function() {
 }
 
 Game.levelUp = function() {
-	Game.p_MaxHP += Game.RNG(25,30);
+	Game.combatLog("","Level up! You are now level " + (Game.p_Level+1) + ".");
+	var hpUp = Game.RNG(25,30);
+	Game.p_MaxHP += hpUp
 	Game.p_HP = Game.p_MaxHP;
-	Game.p_Str += Game.RNG(0,2);
-	Game.p_Dex += Game.RNG(0,2);
-	Game.p_Int += Game.RNG(0,2);
-	Game.p_Con += Game.RNG(0,2);
+	Game.combatLog("","You gained " + hpUp + " HP.")
+	var strUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	Game.p_Str += strUp;
+	Game.combatLog("","You gained " + strUp + " Strength.")
+	var dexUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	Game.p_Dex += dexUp;
+	Game.combatLog("","You gained " + dexUp + " Dexterity.")
+	var intUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	Game.p_Dnt += intUp;
+	Game.combatLog("","You gained " + intUp + " Intelligence.")
+	var conUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	Game.p_Con += conUp;
+	Game.combatLog("","You gained " + conUp + " Constitution.")
 	Game.p_Level += 1;
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
 	Game.p_SkillPoints += 1;
-	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) { Game.p_SkillPoints++; }
+	Game.combatLog("","You gained a skill point.");
+	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) { 
+		Game.p_SkillPoints++; 
+		Game.combatLog("","Your Fortuitous Growth granted another skill point!");
+	}
 	if(Game.p_Level % 5 == 0) {
 		Game.p_PP += 1;
+		Game.combatLog("","You gained a Power point.");
 	}
 }
 Game.buyPower = function(power) {
@@ -538,22 +682,24 @@ Game.initPlayer = function(level) {
 Game.makeEnemy = function(level) {
 	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_HP = Game.e_MaxHP;
-	Game.e_Str = Game.RNG(4,6) + Game.RNG(0,level-1);
-	Game.e_Dex = Game.RNG(4,6) + Game.RNG(0,level-1);
-	Game.e_Int = Game.RNG(4,6) + Game.RNG(0,level-1);
+	Game.e_Str = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
+	Game.e_Dex = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
+	Game.e_Int = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
 	Game.e_Level = level;
+	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = false;
-	Game.e_Weapon = Game.makeWeapon(level);
+	Game.e_Weapon = Game.makeWeapon(Game.RNG(1,5) == 1 ? level+1 : level);
 }
 
 Game.makeBoss = function(level) {
 	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MaxHP *= 2;
 	Game.e_HP = Game.e_MaxHP;
-	Game.e_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
-	Game.e_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
-	Game.e_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Str = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
+	Game.e_Dex = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
+	Game.e_Int = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
 	Game.e_Level = level;
+	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = true;
 	Game.e_Weapon = Game.makeWeapon(level+3);
 }

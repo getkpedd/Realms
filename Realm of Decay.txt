@@ -94,14 +94,14 @@ Magic:
 Weapon Specialities
 -------------------
 
-Melee: 'Deep Wound' - Deals (weapon level) additional damage per strike, per stack.
+Melee: 'Blood Siphon' - Restores (weapon level) health per hit, per stack.
 	Special: 'Bloodthirst' - Heals you for 10% of your health per stack of 'Bleeding' on the target.
 
 Ranged: 'Infected Wound' - Reduces the damage done by the target by (weapon level) per stack.
 	Special: 'Power Shot' - Consumes all stacks of 'Infected Wound' to deal 10% health damage per stack, rounded down.
 
-Magic: 'Residual Burn' - Increases the target's damage taken by (weapon level) per stack.
-	Special: 'Wild Magic' - Instantly fires 1 attack per stack of 'Residual Burn', after which all stacks are removed. These attacks may add 'Residual Burn' stacks, but any additional stacks do not trigger another extra attack from 'Wild Magic'.
+Magic: 'Residual Burn' - Deals (weapon level) additional damage per strike, per stack.
+	Special: 'Wild Magic' - Instantly fires 1 attack per stack of 'Residual Burn', after which all stacks are removed. These attacks may add 'Residual Burn' stacks, which may trigger additional instant attacks from Wild Magic.
 
 Enemies
 -------
