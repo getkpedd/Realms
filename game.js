@@ -612,7 +612,7 @@ Game.levelUp = function() {
 	Game.p_Dex += dexUp;
 	Game.combatLog("","You gained " + dexUp + " Dexterity.")
 	var intUp = Game.RNG(1,5) == 1 ? 2 : 1;
-	Game.p_Dnt += intUp;
+	Game.p_Int += intUp;
 	Game.combatLog("","You gained " + intUp + " Intelligence.")
 	var conUp = Game.RNG(1,5) == 1 ? 2 : 1;
 	Game.p_Con += conUp;
