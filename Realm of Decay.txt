@@ -95,13 +95,13 @@ Weapon Specialities
 -------------------
 
 Melee: 'Blood Siphon' - Restores (weapon level) health per hit, per stack.
-	Special: 'Bloodthirst' - Heals you for 10% of your health per stack of 'Bleeding' on the target.
+	Special: 'Bloodthirst' - Heals you for 10% of your health per stack of 'Blood Siphon' on the target.
 
 Ranged: 'Infected Wound' - Reduces the damage done by the target by (weapon level) per stack.
 	Special: 'Power Shot' - Consumes all stacks of 'Infected Wound' to deal 10% health damage per stack, rounded down.
 
 Magic: 'Residual Burn' - Deals (weapon level) additional damage per strike, per stack.
-	Special: 'Wild Magic' - Instantly fires 1 attack per stack of 'Residual Burn', after which all stacks are removed. These attacks may add 'Residual Burn' stacks, which may trigger additional instant attacks from Wild Magic.
+	Special: 'Wild Magic' - Instantly fires an attack for each stack of Residual Burn. These attacks may add stacks of Residual Burn (or proc Flurry), but these stacks will not cause additional attacks and will be lost when Wild Magic ends.
 
 Enemies
 -------

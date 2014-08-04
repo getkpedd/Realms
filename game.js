@@ -3,24 +3,20 @@ Game = {};
 /* Comments
 Realm of Decay - An RPG Incremental
 Copyright Martin Hayward 2014
-Version 0.3 pre-Alpha
+Version 0.1 beta
 
 Changes in this version:
-	Available powers display.
-	Selected powers display.
-	Add stat panel hidden when in combat.
-	Debuff names and stacks now appear.
-	Players can now flee from a fight.
-	Debuffs:
-		Blood Siphon
-		Infected Wound
-		Residual Burn
+	Weapon Specials:
+		Bloodthirst
+		Power Shot
+		Wild Magic
+	Indicator now appears when the game saves.
+	Game auto-saves (after a battle, when the player reaches full health)
 TODO: 
-	Weapon specials
-	Autosave when out of combat (or once combat is over if called in combat)
-	Autobattle system (initiate combat at full HP, repair if durability falls to 0)
-	A way to get a new weapon if current weapon level is too low
-	  - Allow expenditure of a skill point to upgrade current weapon to match current level?
+	A way to idle:
+		Initiate a battle at full health
+		After a battle, take enemy weapon if it has better DPS
+		Don't assign skill or power points
 */
 
 Game.init = function() {
@@ -72,6 +68,8 @@ Game.init = function() {
 	this.p_Powers = []; // Selected powers.
 	this.p_Weapon = []; // Player weapon.
 	this.p_State = Game.STATE_IDLE; // Player states
+	this.p_specUsed = false;
+	this.p_autoSaved = false;
 	this.p_RepairInterval; this.p_RepairValue = 0;
 	this.p_IdleInterval;
 	this.combat_enemyInterval; this.combat_playerInterval;
@@ -370,7 +368,8 @@ Game.updateCentrePanel = function() {
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
-	var x = document.createTextNode(message);
+	var x = document.createElement("span");
+	x.innerHTML = message;
 	d.appendChild(x);
 	var logBox = document.getElementById("logBody");
 	logBox.appendChild(d);
@@ -409,6 +408,10 @@ Game.repairTick = function() {
 Game.idleHeal = function() {
 	if(Game.p_State != Game.STATE_COMBAT) {
 		Game.p_HP = Math.min(Game.p_HP + Game.p_Con,Game.p_MaxHP);
+		if(!Game.p_autoSaved && Game.p_HP == Game.p_MaxHP) {
+			Game.p_autoSaved = true;
+			Game.save();
+		}
 	}
 	if(Game.hasPower(Game.BOOST_HEAL)) {
 		Game.p_IdleInterval = window.setTimeout(Game.idleHeal,800);
@@ -474,18 +477,18 @@ Game.playerCombatTick = function() {
 			Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
 		}
 		Game.updatePlayerPanel();
-		Game.combatLog("player","You hit the enemy with your " + Game.getWeaponName(Game.p_Weapon) + " for " + playerDMG + " damage.");
+		Game.combatLog("player","You hit the enemy with your <strong>" + Game.getWeaponName(Game.p_Weapon) + "</strong> for <strong>" + playerDMG + "</strong> damage.");
 		// Debuff effect for melee
 		if(Game.p_Weapon[1] == Game.WEAPON_MELEE && Game.e_DebuffStacks > 0) {
 			var selfHeal = Game.e_DebuffStacks * Game.p_Weapon[0];
 			Game.p_HP = Math.min(Game.p_HP + selfHeal, Game.p_MaxHP);
-			Game.combatLog("player","You regain " + selfHeal + " health from Blood Siphon.");
+			Game.combatLog("player","Healed <strong>" + selfHeal + "</strong> from Blood Siphon.");
 		}
 		// Debuff effect for magic
 		if(Game.p_Weapon[1] == Game.WEAPON_MAGIC && Game.e_DebuffStacks > 0) {
 			var bonusDMG = Game.e_DebuffStacks * Game.p_Weapon[0];
 			Game.e_HP = Math.max(Game.e_HP - bonusDMG, 0);
-			Game.combatLog("player","The enemy suffers " + bonusDMG + " damage from your Residual Burn.");
+			Game.combatLog("player","&nbsp;Dealt <strong>" + bonusDMG + "</strong> damage from Residual Burn.");
 		}
 		var debuffApplyChance = 2;
 		if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
@@ -493,13 +496,13 @@ Game.playerCombatTick = function() {
 			Game.e_DebuffStacks++;
 			switch(Game.p_Weapon[1]) {
 				case Game.WEAPON_MAGIC:
-					Game.combatLog("player","The enemy suffers from Residual Burn.");
+					Game.combatLog("player","The enemy suffers from <strong>Residual Burn.</strong>");
 					break;
 				case Game.WEAPON_RANGE:
-					Game.combatLog("player","The enemy suffers from Infected Wound.");
+					Game.combatLog("player","The enemy suffers from <strong>Infected Wound.</strong>");
 					break;
 				case Game.WEAPON_MELEE:
-					Game.combatLog("player","The enemy suffers from Blood Siphon.");
+					Game.combatLog("player","The enemy suffers from <strong>Blood Siphon.</strong>");
 					break;
 			}
 		}
@@ -507,10 +510,13 @@ Game.playerCombatTick = function() {
 			var timerLength = 1000*Game.p_Weapon[3];
 			if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
 			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
-				Game.combatLog("player","Flurry activated for an additional strike!");
+				Game.combatLog("player","<strong>Flurry</strong> activated for an additional strike!");
 				Game.playerCombatTick();
 			}
-			else { Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength); }
+			else {
+				window.clearTimeout(Game.combat_playerInterval);
+				Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength);
+			}
 		}
 		else { Game.endCombat(); }
 	}
@@ -536,17 +542,17 @@ Game.enemyCombatTick = function() {
 				break;
 		}
 		if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
-			Game.combatLog("player","Your Divine Shield absorbed the damage.");
+			Game.combatLog("player","Your <strong>Divine Shield</strong> absorbed the damage.");
 		} 
 		else {
 			// Debuff effect for range
 			if(Game.p_Weapon[1] == Game.WEAPON_RANGE && Game.e_DebuffStacks > 0) {
 				var damageDown = Game.e_DebuffStacks * Game.p_Weapon[0];
 				enemyDMG = Math.max(enemyDMG - damageDown,0);
-				Game.combatLog("enemy","The Infected Wound prevented a total of " + damageDown + " damage.");
+				Game.combatLog("enemy","<strong>" + damageDown + "</strong> prevented by Infected Wound.");
 			}
 			Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
-			Game.combatLog("enemy","The enemy hits you with their " + Game.getWeaponName(Game.e_Weapon) + " for " + enemyDMG + " damage.");
+			Game.combatLog("enemy","The enemy hits you with their <strong>" + Game.getWeaponName(Game.e_Weapon) + "</strong> for <strong>" + enemyDMG + "</strong> damage.");
 		}
 
 		if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
@@ -557,11 +563,30 @@ Game.enemyCombatTick = function() {
 }
 
 Game.specialAttack = function() {
+	Game.p_specUsed = true;
 	switch(Game.p_Weapon[1]) {
 		case Game.WEAPON_MELEE:
 			// Bloodthirst: Heal 10% per stack
-			
+			var healAmount = Math.floor(Game.p_MaxHP/10)*Game.e_DebuffStacks;
+			Game.p_HP = Math.min(Game.p_MaxHP, Game.p_HP + healAmount);
+			Game.combatLog("player","<strong>Bloodthirst</strong> healed for <strong>" + healAmount + "</strong>.");
+			break;
+		case Game.WEAPON_RANGE:
+			// Power Shot: Deal 10% per stack
+			var dmgAmount = Math.floor(Game.e_MaxHP/10)*Game.e_DebuffStacks;
+			Game.e_HP = Math.max(0, Game.e_HP - dmgAmount);
+			Game.combatLog("player","<strong>Power Shot</strong> hit for <strong>" + dmgAmount + "</strong>.");
+			if(Game.e_HP <= 0) { Game.endCombat(); }
+			break;
+		case Game.WEAPON_MAGIC:
+			// Wild Magic: Fire one attack per stack 
+			Game.combatLog("player","<strong>Wild Magic</strong> activated!");
+			for(var x = Game.e_DebuffStacks; x > 0; x--) { Game.playerCombatTick(); }
+			if(Game.e_HP > 0) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); } 
+			break;
 	}
+	Game.e_DebuffStacks = 0;
+	Game.p_specUsed = false;
 	// Perform a special function based on weapon type and debuff stacks.
 }
 Game.fleeCombat = function() {
@@ -576,13 +601,14 @@ Game.endCombat = function() {
 	window.clearTimeout(Game.combat_playerInterval);
 	window.clearTimeout(Game.combat_enemyInterval);
 	Game.p_State = Game.STATE_IDLE;
+	if(Game.p_specUsed && Game.p_Weapon[1] == Game.WEAPON_MAGIC) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); }
 	if(Game.p_HP > 0) {
 		// Player won, give xp and maybe, just maybe, a level.
 		Game.combatLog("","You won!");
 		Game.last_Weapon = Game.e_Weapon.slice();
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
-		Game.combatLog("","You gained " + xpToAdd + " experience.");
+		Game.combatLog("","You gained <strong>" + xpToAdd + "</strong> experience.");
 		Game.p_EXP += xpToAdd;
 		if(Game.p_EXP >= Game.p_NextEXP) {
 			Game.levelUp();
@@ -592,31 +618,32 @@ Game.endCombat = function() {
 		// Enemy won, dock XP
 		Game.combatLog("","You lost...");
 		var xpDrop = Math.floor(Game.p_EXP/4);
-		Game.combatLog("","You lose " + xpDrop + " experience...");
+		Game.combatLog("","You lose <strong>" + xpDrop + "</strong> experience...");
 		Game.p_EXP -= xpDrop;
 		Game.p_HP = Game.p_MaxHP;
 	}
+	Game.p_autoSaved = false;
 	Game.drawAllTheThings();
 }
 
 Game.levelUp = function() {
-	Game.combatLog("","Level up! You are now level " + (Game.p_Level+1) + ".");
+	Game.combatLog("","Level up! You are now level <strong>" + (Game.p_Level+1) + "</strong>.");
 	var hpUp = Game.RNG(25,30);
 	Game.p_MaxHP += hpUp
 	Game.p_HP = Game.p_MaxHP;
-	Game.combatLog("","You gained " + hpUp + " HP.")
+	Game.combatLog("","You gained <strong>" + hpUp + "</strong> HP.")
 	var strUp = Game.RNG(1,5) == 1 ? 2 : 1;
 	Game.p_Str += strUp;
-	Game.combatLog("","You gained " + strUp + " Strength.")
+	Game.combatLog("","You gained <strong>" + strUp + "</strong> Strength.")
 	var dexUp = Game.RNG(1,5) == 1 ? 2 : 1;
 	Game.p_Dex += dexUp;
-	Game.combatLog("","You gained " + dexUp + " Dexterity.")
+	Game.combatLog("","You gained <strong>" + dexUp + "</strong> Dexterity.")
 	var intUp = Game.RNG(1,5) == 1 ? 2 : 1;
 	Game.p_Int += intUp;
-	Game.combatLog("","You gained " + intUp + " Intelligence.")
+	Game.combatLog("","You gained <strong>" + intUp + "</strong> Intelligence.")
 	var conUp = Game.RNG(1,5) == 1 ? 2 : 1;
 	Game.p_Con += conUp;
-	Game.combatLog("","You gained " + conUp + " Constitution.")
+	Game.combatLog("","You gained <strong>" + conUp + "</strong> Constitution.")
 	Game.p_Level += 1;
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
@@ -624,7 +651,7 @@ Game.levelUp = function() {
 	Game.combatLog("","You gained a skill point.");
 	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) { 
 		Game.p_SkillPoints++; 
-		Game.combatLog("","Your Fortuitous Growth granted another skill point!");
+		Game.combatLog("","Your <strong>Fortuitous Growth</strong> granted another skill point!");
 	}
 	if(Game.p_Level % 5 == 0) {
 		Game.p_PP += 1;
@@ -705,13 +732,18 @@ Game.makeBoss = function(level) {
 }
 
 Game.reset = function() {
-	window.localStorage.removeItem("gameSave");
-	window.location.reload();
+	if(confirm("Are you sure you wish to erase your save? It will be lost permanently...")) {
+		window.localStorage.removeItem("gameSave");
+		window.location.reload();
+	}
 }
 
 Game.save = function() {
 	var g = JSON.stringify(Game);
 	window.localStorage.setItem("gameSave",g);
+	var saveToast = document.getElementById("saveToast");
+	saveToast.style.display = "";
+	window.setTimeout(function() { 	var saveToast = document.getElementById("saveToast"); saveToast.style.display = "none"; },3000);
 }
 
 Game.load = function() {
