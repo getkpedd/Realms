@@ -2,7 +2,7 @@ Game = {};
 
 /* Comments
 Realm of Decay - An RPG Incremental
-Copyright Martin Hayward 2014
+Copyright Martin Hayward (Psychemaster) 2014
 Version 0.1 beta
 
 Changes in this version:
