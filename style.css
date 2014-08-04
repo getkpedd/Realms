@@ -6,6 +6,9 @@ body * {
 	font-size:12px;
 }
 #main {
+	width:900px;
+	margin-left:auto;
+	margin-right:auto;
 	padding-bottom:20px;
 }
 .playerPanel table, .enemyPanel table, .centerPanel table {

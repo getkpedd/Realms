@@ -1,0 +1,35 @@
+Future Updates
+--------------
+
+Armour System
+ - Armour can resist damage from one weapon type, but take more damage from another.
+ - Enemies drop armour in the same way they drop weapons, it is at the player's option to take it.
+ - Armour has randomly determined resistance/weakness levels.
+ - Typeless armour will appear rarely that blocks a certain level of all damage.
+ - Damage absorption will be capped at a percentage of damage taken.
+ - Armour can decay like weapons do.
+
+Currency
+ - Could be coins or something more post-apocalyptic (think bottle caps in Fallout).
+ - Prices should be such that each level you gain enough currency to upgrade either your weapon or armour.
+ - Gold gained from combat, and also from selling dropped enemy weapons and armour.
+
+Naming
+ - The following things should be named:
+   - The player (decide on game start, can be changed at any time)
+   - Enemies
+     - Selected from a list based on weapon type and boss status
+     - Rarely choose from a list of special names (including contributing Redditors)
+   - Weapons
+     - Depending on level, speed tier and weapon type
+     - Named weapons are rare (and as such should command higher stats)
+
+Layout
+ - A single column layout which contains a number of tabs:
+   - Main tab, which contains the actions a player can take
+   - Store tab, which allows the player to upgrade their items
+   - Combat tab, which contains the player/enemy stat outputs and combat log
+ - Consider bootstrap (thanks /u/seiyria)
+
+Story (low priority)
+ - Some way of motivating the player to actually play the game.
