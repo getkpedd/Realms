@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Realm of Decay</title>
+		<script type="text/javascript" src="game.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css"></link>
+	</head>
+	<body>
+		<div id="main">
+			<table class="titleBar">
+				<tr>
+					<td>Realm of Decay</td>
+				</tr>
+			</table>
+			<div class="tabBar">
+				<span class="tabButton">Character</span>
+				<span class="tabButton">Combat</span>
+				<span class="tabButton">Inventory</span>
+				<span class="tabButton">Store</span>
+				<span class="tabButton">Misc</span>
+				<span class="tabButton">Help</span>
+			</div>
+			<table id="coreTable">
+				<tr>
+					<td>
+						<table class="playerInfo" style="float:left;">
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Player Statistics</td>
+							</tr>
+							<tr>
+								<td>Level: </td>
+								<td><div id="p_Level"></div></td>
+							</tr>
+							<tr>
+								<td>Experience: </td>
+								<td><div id="p_EXP"></div></td>
+							</tr>
+							<tr>
+								<td>Next Level: </td>
+								<td><div id="p_NextEXP"></div></td>
+							</tr>
+							<tr>
+								<td>Health: </td>
+								<td><div id="HPOut"><span id="p_HP"></span>/<span id="p_MaxHP"></span></div></td>
+							</tr>
+							<tr>
+								<td>Strength: </td>
+								<td><div id="p_Str"></div></td>
+							</tr>
+							<tr>
+								<td>Dexterity: </td>
+								<td><div id="p_Dex"></div></td>
+							</tr>
+							<tr>
+								<td>Intelligence: </td>
+								<td><div id="p_Int"></div></td>
+							</tr>
+							<tr>
+								<td>Constitution: </td>
+								<td><div id="p_Con"></div></td>
+							</tr>
+						</table>
+						<table class="weaponInfo" style="float:left;">
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Weapon Statistics</td>
+							</tr>
+							<tr align="center">
+								<td colspan="2"><div id="w_Name"></div></td>
+							</tr>
+							<tr>
+								<td>Type: </td>
+								<td><div id="w_Type"></div></td>
+							</tr>
+							<tr>
+								<td>Speed: </td>
+								<td><div id="w_Speed"></div></td>
+							</tr>
+							<tr>
+								<td>Damage: </td>
+								<td><div id="w_Damage"></div></td>
+							</tr>
+							<tr>
+								<td>DPS: </td>
+								<td><div id="w_DPS"></div></td>
+							</tr>
+							<tr>
+								<td>Durability: </td>
+								<td><div id="w_Decay"></div></td>
+							</tr>
+							<tr>
+								<td colspan="2">Weapon Bonuses
+									<div id="w_Bonuses"></div>
+								</td>
+							</tr>
+						</table>
+						<table class="armourInfo" style="float:left;">
+							<tr align="center">
+								<td class="blockHeader" colspan="2">Armour Statistics</td>
+							</tr>
+							<tr>
+								<td>Type: </td>
+								<td><div id="w_Type"></div></td>
+							</tr>
+							<tr>
+								<td>Reduction: </td>
+								<td><div id="w_Speed"></div></td>
+							</tr>
+							<tr>
+								<td>Amplification: </td>
+								<td><div id="w_Speed"></div></td>
+							</tr>
+							<tr>
+								<td>Durability: </td>
+								<td><div id="w_Decay"></div></td>
+							</tr>
+							<tr>
+								<td colspan="2">Armour Bonuses
+									<div id="w_Bonuses"></div>
+								</td>
+							</tr>
+						</table>
+				</tr>
+			</table>
+			<table id="combatTable"></table>
+			<table id="inventoryTable"></table>
+			<table id="storeTable"></table>
+			<table id="miscTable"></table>
+			<table id="helpTable"></table>
+		</div>
+		<div class="savePopup"><span>Game saved.</span></div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
+	</body>
+</html>
