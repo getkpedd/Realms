@@ -886,3 +886,16 @@ Game.hasPower = function(power) {
 Game.RNG = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+Game.showPanel = function(panelID) {
+	window.console.log(panelID);
+	var panelList = document.getElementsByTagName("table");
+	for(var x = 0; x < panelList.length; x++) {
+		if(panelList[x].id == panelID) {
+			panelList[x].style.display = "";
+		}
+		else if(panelList[x].id.match(/(\w+)Table/g) !== null) {
+			panelList[x].style.display = "none";
+		}
+	}
+}
