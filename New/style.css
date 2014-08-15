@@ -12,31 +12,16 @@ body * {
 	margin-right:auto;
 	padding-bottom:20px;
 }
-#main > table {
+#leftPanel > table, #rightPanel > table, .titleBar{
 	background: #660000;
 	border-radius: 10px 10px 10px 10px;
 	-moz-border-radius: 10px 10px 10px 10px;
 	-webkit-border-radius: 10px 10px 10px 10px;
 	border: 5px outset #666666;
 	min-width:200px;
-	width:100%;
 	text-align:center;
 	color:#b0b0b0;
 	margin-bottom:15px;
-	margin-top:5px;
-	position: relative;
-	z-index: 0;
-}
-table {
-	float:left;
-	background: #660000;
-	border-radius: 10px 10px 10px 10px;
-	-moz-border-radius: 10px 10px 10px 10px;
-	-webkit-border-radius: 10px 10px 10px 10px;
-	border: 5px outset #666666;
-	width:200px;
-	text-align:center;
-	color:#b0b0b0;
 	position: relative;
 	z-index: 0;
 }
@@ -80,8 +65,8 @@ table {
 .playerInfo td:only-child, .weaponInfo td:only-child, .armourInfo td:only-child{
 	text-align:center;
 }
-.titleBar td{
-	font-size:40px;
+.titleBar {
+	width:100%;
 }
 .blockHeader {
 	font-size:16px;
