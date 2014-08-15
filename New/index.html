@@ -13,13 +13,13 @@
 				</tr>
 			</table>
 			<div class="tabBar" style="padding-left:215px;">
-				<span class="tabButton">Character</span>
-				<span class="tabButton">Combat</span>
-				<span class="tabButton">Powers</span>
-				<span class="tabButton">Inventory</span>
-				<span class="tabButton">Store</span>
-				<span class="tabButton">Misc</span>
-				<span class="tabButton">Help</span>
+				<span class="tabButton" onclick="Game.showPanel(""coreTable"")">Core</span>
+				<span class="tabButton" onclick="Game.showPanel(""combatTable"")">Combat</span>
+				<span class="tabButton" onclick="Game.showPanel(""powersTable"")">Powers</span>
+				<span class="tabButton" onclick="Game.showPanel(""inventoryTable"")">Inventory</span>
+				<span class="tabButton" onclick="Game.showPanel(""storeTable"")">Store</span>
+				<span class="tabButton" onclick="Game.showPanel(""miscTable"")">Misc</span>
+				<span class="tabButton" onclick="Game.showPanel(""helpTable"")">Help</span>
 			</div>
 			<table width="900px">
 				<tr>
@@ -128,7 +128,7 @@
 						<table>
 							<tr>
 								<td>
-									<table id="coreTable">
+									<table id="coreTable" style="display:none">
 										<tr>
 											<td>
 												<div class="powerHeader">Available Actions:</div>
@@ -152,7 +152,7 @@
 											</td>
 										</tr>
 									</table>
-									<table id="powersTable">
+									<table id="powersTable" style="display:none">
 										<tr>
 											<td>
 												<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
@@ -209,8 +209,8 @@
 												</table>
 												<table id="availablePowers" class="availablePowersPanel">
 													<tr>
-														<td colspan="2" class="powerHeader">
-															Available Powers (<span id="p_PP"></span> point(s) available)
+														<td class="powerHeader">
+															Special Powers (<span id="p_PP"></span> point(s) available)
 														</td>
 													</tr>
 													<tr id="conserve">
