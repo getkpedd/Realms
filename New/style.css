@@ -32,6 +32,9 @@ input {
 #rightPanel table{ 
 	width:100%;
 }
+.tabBar {
+	z-index:-2;
+}
 .tabButton {
 	background: #660000;
 	border-radius: 15px 15px 0px 0px;
