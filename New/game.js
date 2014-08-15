@@ -3,15 +3,13 @@ Game = {};
 /* Comments
 Realm of Decay - An RPG Incremental
 Copyright Martin Hayward (Psychemaster) 2014
-Version 0.1 beta
+Version 0.2 beta
 
 Changes in this version:
-	Weapon Specials:
-		Bloodthirst
-		Power Shot
-		Wild Magic
-	Indicator now appears when the game saves.
-	Game auto-saves (after a battle, when the player reaches full health)
+	New Interface: Tabs
+		Core
+		Combat
+		Powers
 TODO: 
 	A way to idle:
 		Initiate a battle at full health
@@ -21,10 +19,11 @@ TODO:
 
 Game.init = function() {
 	//Define some constants we can use later
-	this.XP_MULT = 1.116;
-	this.XP_RANGEMIN = 1.7;
-	this.XP_RANGEMAX = 2.2;
-	this.XP_BASE = 15;
+	this.XP_MULT = 1.1;
+	this.XP_RANGEMIN = 2.3;
+	this.XP_RANGEMAX = 3.0;
+	this.XP_BASE = 40;
+	this.XP_INIT = 100;
 	//Player states
 	this.STATE_IDLE = 0;
 	this.STATE_REPAIR = 1;
@@ -81,6 +80,7 @@ Game.init = function() {
 	this.e_Weapon = []; // Enemy weapon
 	this.e_DebuffStacks = 0;
 	this.last_Weapon = []; // Weapon to take 
+	this.showPanel("coreTable");
 	if(!this.load()) {
 		this.initPlayer(1);
 		this.save();
@@ -91,8 +91,8 @@ Game.init = function() {
 
 Game.drawAllTheThings = function() {
 	Game.updatePlayerPanel();
-	Game.updateEnemyPanel();
-	Game.updateCentrePanel();
+	//Game.updateEnemyPanel();
+	//Game.updateCentrePanel();
 }
 
 Game.updatePlayerPanel = function() {
@@ -699,7 +699,7 @@ Game.initPlayer = function(level) {
 	Game.p_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
 	Game.p_Con = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
 	Game.p_EXP = 0;
-	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,level-1));
+	Game.p_NextEXP = Math.floor(Game.XP_INIT*Math.pow(Game.XP_MULT,level-1));
 	Game.p_SkillPoints = level;
 	Game.p_Level = level;
 	Game.p_PP = 0;

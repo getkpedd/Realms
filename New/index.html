@@ -5,22 +5,21 @@
 		<script type="text/javascript" src="game.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"></link>
 	</head>
-	<body>
+	<body onload="Game.init()">
 		<div id="main">
 			<table class="titleBar">
 				<tr>
 					<td class="powerHeader">Realm of Decay v0.2a</td>
 				</tr>
 			</table>
-			<div class="tabBar" style="padding-left:215px;">
-				<span class="tabButton" onclick="Game.showPanel(""coreTable"")">Core</span>
-				<span class="tabButton" onclick="Game.showPanel(""combatTable"")">Combat</span>
-				<span class="tabButton" onclick="Game.showPanel(""powersTable"")">Powers</span>
-				<span class="tabButton" onclick="Game.showPanel(""inventoryTable"")">Inventory</span>
-				<span class="tabButton" onclick="Game.showPanel(""storeTable"")">Store</span>
-				<span class="tabButton" onclick="Game.showPanel(""miscTable"")">Misc</span>
-				<span class="tabButton" onclick="Game.showPanel(""helpTable"")">Help</span>
-			</div>
+				<span class="tabBar" style="padding-left:215px;">&nbsp;</span>
+				<span class="tabButton" onclick="Game.showPanel('coreTable')">Core</span>
+				<span class="tabButton" onclick="Game.showPanel('combatTable')">Combat</span>
+				<span class="tabButton" onclick="Game.showPanel('powersTable')">Powers</span>
+				<span class="tabButton" onclick="Game.showPanel('inventoryTable')">Inventory</span>
+				<span class="tabButton" onclick="Game.showPanel('storeTable')">Store</span>
+				<span class="tabButton" onclick="Game.showPanel('miscTable')">Misc</span>
+				<span class="tabButton" onclick="Game.showPanel('helpTable')">Help</span>
 			<table width="900px">
 				<tr>
 					<td id="leftPanel" width="200px" valign="top">
@@ -137,6 +136,14 @@
 													<input id="repairGear" type="button" value="Repair your Equipment">
 													<input id="takeWeapon" type="button" value="Take the enemy's weapon">
 													<input id="takeArmour" type="button" value="Take the enemy's armour">
+												</div>
+												<div id="levelUpPanel">
+													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
+													<br />
+													<span><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
 												</div>
 												<div class="powerHeader">Autobattle Options:</div>
 												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
@@ -288,7 +295,7 @@
 				</tr>
 			</table>
 		</div>
-		<div class="savePopup"><span>Game saved.</span></div>
+		<div id="saveToast" class="savePopup"><span>Game saved.</span></div>
 		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
 	</body>
 </html>
