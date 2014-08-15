@@ -6,6 +6,9 @@ body * {
 	font-size:12px;
 	color:#b0b0b0;
 }
+input {
+	color:#000000;
+}
 #main {
 	width:900px;
 	margin-left:auto;
