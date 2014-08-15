@@ -9,21 +9,22 @@
 		<div id="main">
 			<table class="titleBar">
 				<tr>
-					<td>Realm of Decay</td>
+					<td class="powerHeader">Realm of Decay v0.2a</td>
 				</tr>
 			</table>
-			<div class="tabBar">
+			<div class="tabBar" style="padding-left:210px;">
 				<span class="tabButton">Character</span>
 				<span class="tabButton">Combat</span>
+				<span class="tabButton">Powers</span>
 				<span class="tabButton">Inventory</span>
 				<span class="tabButton">Store</span>
 				<span class="tabButton">Misc</span>
 				<span class="tabButton">Help</span>
 			</div>
-			<table id="coreTable">
+			<table>
 				<tr>
-					<td>
-						<table class="playerInfo" style="float:left;">
+					<td id="leftPanel">
+						<table class="playerInfo">
 							<tr align="center">
 								<td class="blockHeader" colspan="2">Player Statistics</td>
 							</tr>
@@ -60,7 +61,7 @@
 								<td><div id="p_Con"></div></td>
 							</tr>
 						</table>
-						<table class="weaponInfo" style="float:left;">
+						<table class="weaponInfo">
 							<tr align="center">
 								<td class="blockHeader" colspan="2">Weapon Statistics</td>
 							</tr>
@@ -93,25 +94,28 @@
 								</td>
 							</tr>
 						</table>
-						<table class="armourInfo" style="float:left;">
+						<table class="armourInfo">
 							<tr align="center">
 								<td class="blockHeader" colspan="2">Armour Statistics</td>
 							</tr>
+							<tr align="center">
+								<td colspan="2"><div id="a_Name"></div></td>
+							</tr>
 							<tr>
 								<td>Type: </td>
-								<td><div id="w_Type"></div></td>
+								<td><div id="a_Type"></div></td>
 							</tr>
 							<tr>
 								<td>Reduction: </td>
-								<td><div id="w_Speed"></div></td>
+								<td><div id="a_Str"></div></td>
 							</tr>
 							<tr>
 								<td>Amplification: </td>
-								<td><div id="w_Speed"></div></td>
+								<td><div id="a_Weak"></div></td>
 							</tr>
 							<tr>
 								<td>Durability: </td>
-								<td><div id="w_Decay"></div></td>
+								<td><div id="a_Decay"></div></td>
 							</tr>
 							<tr>
 								<td colspan="2">Armour Bonuses
@@ -119,13 +123,43 @@
 								</td>
 							</tr>
 						</table>
+					</td>
+					<td id="rightPanel" valign="top">
+						<table>
+							<tr>
+								<td>
+									<table id="coreTable">
+										<tr>
+											<td valign="top">
+												<div class="powerHeader">Available Actions:</div>
+												<div>
+													<input id="enterCombat" type="button" value="Look for Something to Kill">
+													<input id="repairGear" type="button" value="Repair your Equipment">
+													<input id="takeWeapon" type="button" value="Take the enemy's weapon">
+													<input id="takeArmour" type="button" value="Take the enemy's armour">
+												</div>
+												<div class="powerHeader">Autobattle Options:</div>
+												<div class="blockHeader">Toggle Autobattle Activation: <span id="autoToggle">Enable / Disable</span></div>
+												<div></div>
+												<div>
+											</td>
+										</tr>
+									</table>
+									<table id="combatTable">
+										<tr>
+											<td></td>
+										</tr>
+									</table>
+									<table id="inventoryTable"></table>
+									<table id="storeTable"></table>
+									<table id="miscTable"></table>
+									<table id="helpTable"></table>
+								</td>
+							</tr>
+						</table>
+					</td>
 				</tr>
 			</table>
-			<table id="combatTable"></table>
-			<table id="inventoryTable"></table>
-			<table id="storeTable"></table>
-			<table id="miscTable"></table>
-			<table id="helpTable"></table>
 		</div>
 		<div class="savePopup"><span>Game saved.</span></div>
 		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
