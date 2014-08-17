@@ -12,7 +12,7 @@
 					<td class="powerHeader">Realm of Decay v0.2a</td>
 				</tr>
 			</table>
-				<span class="tabBar" style="padding-left:215px;">&nbsp;</span>
+				<span class="tabBar" style="padding-left:205px;">&nbsp;</span>
 				<span class="tabButton" onclick="Game.showPanel('coreTable')">Core</span>
 				<span class="tabButton" onclick="Game.showPanel('combatTable')">Combat</span>
 				<span class="tabButton" onclick="Game.showPanel('powersTable')">Powers</span>
@@ -156,6 +156,12 @@
 									<table id="combatTable">
 										<tr>
 											<td>
+												<div class="playerHPBorder">
+													<img id="playerHPBar" class="playerHPBar" src="Clear.gif"></img>
+												</div>
+												<div class="enemyHPBorder">
+													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif"></img>
+												</div>
 											</td>
 										</tr>
 									</table>
@@ -164,7 +170,7 @@
 											<td>
 												<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
 													<tr id="selected_header">
-														<td class="powerHeader">
+														<td colspan="2" class="powerHeader">
 															Selected Powers
 														</td>
 													</tr>
@@ -216,7 +222,7 @@
 												</table>
 												<table id="availablePowers" class="availablePowersPanel">
 													<tr>
-														<td class="powerHeader">
+														<td colspan="2" class="powerHeader">
 															Special Powers (<span id="p_PP"></span> point(s) available)
 														</td>
 													</tr>
@@ -295,7 +301,7 @@
 				</tr>
 			</table>
 		</div>
-		<div id="saveToast" class="savePopup"><span>Game saved.</span></div>
+		<div id="saveToast" class="savePopup" style="display:none;"><span>Game saved.</span></div>
 		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
 	</body>
 </html>
