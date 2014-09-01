@@ -127,7 +127,7 @@
 						<table>
 							<tr>
 								<td>
-									<table id="coreTable" style="display:none">
+									<table id="coreTable" style="display:none;">
 										<tr>
 											<td>
 												<div class="powerHeader">Available Actions:</div>
@@ -148,24 +148,46 @@
 												<div class="powerHeader">Autobattle Options:</div>
 												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
 												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
-												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span>
-												<div>
+												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>
 											</td>
 										</tr>
 									</table>
-									<table id="combatTable">
+									<table id="combatTable" style="display:none;">
 										<tr>
 											<td>
 												<div class="playerHPBorder">
 													<img id="playerHPBar" class="playerHPBar" src="Clear.gif"></img>
+													<span id="playerHPBarText">Player: 100/100</span>
 												</div>
 												<div class="enemyHPBorder">
 													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif"></img>
+													<span id="enemyHPBarText">Enemy: 100/100</span>
 												</div>
 											</td>
 										</tr>
+										<tr>
+											<td>
+												<div><span id="enemyName" style="float:left;"></span><span id="enemyHealth" style="float:right;"></span></div>
+												<div><span id="enemyLevel" style="float:left;"></span><span id="enemyMainStat" style="float:right;"></span></div>
+												<!-- 
+												Enemy Information Panel 
+												+--------------------------------------------------+
+												| Enemy: <Enemy Name>       Health: <Enemy Health> |
+												| Level: <LVL>                  Main Stat: <Value> |
+												+--------------------------------------------------+
+												| Weapon: <Name>, <Type>, <Damage>, <Delay>, <DPS> |
+												| Armor: <Name>, <Type>, <Resistance>, <Weakness>  |
+												+--------------------------------------------------+
+												-->
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<!-- Current Combat Log -->
+											</td>
+										</tr>
 									</table>
-									<table id="powersTable" style="display:none">
+									<table id="powersTable" style="display:none;">
 										<tr>
 											<td>
 												<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">

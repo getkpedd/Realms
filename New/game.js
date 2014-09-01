@@ -7,9 +7,17 @@ Version 0.2 beta
 
 Changes in this version:
 	New Interface: Tabs
-		Core
+		Player Info panel on left side
+		Core tab
+			Contains game actions (for now)
+			Contains auto-battle options (NYI)
+			Contains skill point allocation
 		Combat
+			HP bar frames
 		Powers
+			Lists selected powers
+			Lists all available powers
+	New weapon creation algorithm!!!
 TODO: 
 	A way to idle:
 		Initiate a battle at full health
@@ -52,6 +60,13 @@ Game.init = function() {
 	this.WSPEED_SLOW = 211;
 	this.WSPEED_MID = 212;
 	this.WSPEED_FAST = 213;
+	// Item Quality
+	this.QUALITY_DREADFUL = 220;
+	this.QUALITY_POOR = 221;
+	this.QUALITY_NORMAL = 222;
+	this.QUALITY_GOOD = 223;
+	this.QUALITY_GREAT = 224;
+	this.QUALITY_AMAZING = 225;
 	// Point assignment stats
 	this.STAT_STR = 301;
 	this.STAT_DEX = 302;
@@ -825,7 +840,74 @@ Game.getWeaponName = function(weapon) {
 	}
 	return ret;
 }
-
+Game.makeWeaponNew = function(level) {
+	// Returns a weapon as an array with the form
+	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay]
+	var type = Game.RNG(Game.WEAPON_MELEE,Game.WEAPON_MAGIC);
+	var sType = Game.RNG(Game.WSPEED_SLOW, Game.WSPEED_FAST);
+	var speed = 0;
+	var minDmg = 0; var maxDmg = 0;
+	var dps = 0;
+	var decay = 50 + 5*(level-1);
+	var qualityMult = 1; var qualityID = Game.QUALITY_NORMAL;
+	// Quality generator
+	var qT = Game.RNG(1,100);
+	if(qT == 1) {
+		qualityMult = 1.3;
+		qualityID = Game.QUALITY_AMAZING;
+	} else if(qT < 6) {
+		qualityMult = 1.2;
+		qualityID = Game.QUALITY_GREAT;
+	} else if(qT < 16) {
+		qualityMult = 1.1;
+		qualityID = Game.QUALITY_GOOD;
+	} else if(qT < 26) {
+		qualityMult = 0.9;
+		qualityID = Game.QUALITY_POOR;
+	} else if(qT < 31) {
+		qualityMult = 0.8;
+		qualityID = Game.QUALITY_DREADFUL;
+	} else {
+		qualityMult = 1;
+		qualityID = Game.QUALITY_NORMAL;
+	} 
+	// Weapon speed
+	switch(sType) {
+		case Game.WSPEED_FAST:
+			speed = Game.RNG(16,20); 
+			break;
+		case Game.WSPEED_MID:
+			speed = Game.RNG(21,25); 
+			break;
+		case Game.WSPEED_SLOW:
+			speed = Game.RNG(26,30); 
+			break;
+	}
+	speed = speed/10;
+	// Function to generate weapon name??!??!
+	var base = 0; var variance = 0; var perLv = 0;
+	switch(sType) {
+		case Game.WSPEED_FAST:
+			base = Game.RNG(8,9);
+			perLv = 2;
+			variance = 0.3;
+			break;
+		case Game.WSPEED_MID:
+			base = Game.RNG(10,12);
+			perLv = 2.5;
+			variance = 0.4;
+			break;
+		case Game.WSPEED_SLOW:
+			base = Game.RNG(12,15);
+			perLv = 3;
+			variance = 0.5;
+			break; 
+	}
+	minDmg = Math.floor((base + ((level-1)*perLv)*qualityMult)-(1+(variance*(level-1)/2)));
+	maxDmg = Math.ceil((base + ((level-1)*perLv)*qualityMult)+(1+(variance*(level-1)/2)));
+	var dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
+	return new Array("Generic Name",level,type,speed,minDmg,maxDmg,dps,qualityID,decay);
+}
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array in the format
 	// [level,type,speedBracket,speed,damage,decay]
