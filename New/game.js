@@ -101,7 +101,7 @@ Game.init = function() {
 // 		this.initPlayer(1);
 // 		this.save();
 // 	}
-  this.initPlayer(1);
+  this.initPlayer(20);
 	if(Game.p_State != Game.STATE_COMBAT) { Game.idleHeal(); }
 	this.drawAllTheThings();
 }
@@ -133,9 +133,22 @@ Game.updatePlayerPanel = function() {
 	con.innerHTML = Game.p_Con;
 	// Player weapon
 	var w_name = document.getElementById("w_Name");
-	w_name.innerHTML = Game.getWeaponName(Game.p_Weapon);
+  w_name.className = "q" + Game.p_Weapon[7];
+  var w_flavourHandle = document.getElementById("w_flavourTextHandle");
+  if(Game.p_Weapon[7] >= Game.QUALITY_GREAT) {
+    var wepText = Game.p_Weapon[0].split("|");
+    w_name.innerHTML = wepText[0];
+    var w_flavour = document.getElementById("w_flavourText");
+    w_flavour.innerHTML = wepText[1];
+    w_flavourHandle.style.display = "";
+  } else {
+    w_name.innerHTML = Game.p_Weapon[0];
+    w_flavourHandle.style.display = "none";
+  }
+  var w_level = document.getElementById("w_Level");
+  w_level.innerHTML = Game.p_Weapon[1];
 	var w_type = document.getElementById("w_Type");
-	switch(Game.p_Weapon[1]) {
+	switch(Game.p_Weapon[2]) {
 		case Game.WEAPON_MELEE:
 			w_type.innerHTML = "Melee"; break;
 		case Game.WEAPON_RANGE:
@@ -145,15 +158,16 @@ Game.updatePlayerPanel = function() {
 	}
 	var w_speed = document.getElementById("w_Speed");
 	w_speed.innerHTML = Game.p_Weapon[3];
-	var w_damage = document.getElementById("w_Damage");
-	w_damage.innerHTML = Game.p_Weapon[4];
+	var w_mindamage = document.getElementById("w_minDamage");
+	w_mindamage.innerHTML = Game.p_Weapon[4];
+  var w_maxdamage = document.getElementById("w_maxDamage");
+	w_maxdamage.innerHTML = Game.p_Weapon[5];
 	var w_DPS = document.getElementById("w_DPS");
-	w_DPS.innerHTML = Math.floor(Game.p_Weapon[4]/Game.p_Weapon[3]*100)/100;
+	w_DPS.innerHTML = Game.p_Weapon[6];
 	var w_decay = document.getElementById("w_Decay");
 	var pp = document.getElementById("p_PP");
 	pp.innerHTML = Game.p_PP;
-	if(Game.p_Weapon[5] >= 0) { w_decay.innerHTML = Game.p_Weapon[5]; }
-	else { w_Decay.innerHTML = "N/A"; }
+	w_decay.innerHTML = Game.p_Weapon[8];
 	if(Game.p_SkillPoints > 0 && Game.p_State != Game.STATE_COMBAT) {
 		var lvPanel = document.getElementById("levelUpPanel");
 		lvPanel.style.display = "";
@@ -788,55 +802,7 @@ Game.load = function() {
 	else { return false; }
 }
 
-Game.getWeaponName = function(weapon) {
-	var ret = "Level " + weapon[0] + " ";
-	switch(weapon[1]) {
-		case Game.WEAPON_MELEE:
-			switch(weapon[2]) {
-				case Game.WSPEED_FAST:
-					if(weapon[3] < 1.5) { ret += "Shortsword"; }
-					else { ret += "Longsword"; }
-					break;
-				case Game.WSPEED_MID:
-					if(weapon[3] < 2.5) { ret += "Hand Axe"; }
-					else { ret += "Broad Axe"; }
-					break;
-				case Game.WSPEED_SLOW:
-					if(weapon[3] < 3.5) { ret += "Flail"; }
-					else { ret += "Morningstar"; }
-					break;
-			}
-			break;
-		case Game.WEAPON_RANGE:
-			switch(weapon[2]) {
-				case Game.WSPEED_FAST:
-					if(weapon[3] < 1.5) { ret += "Throwing Knife"; }
-					else { ret += "Throwing Axe"; }
-					break;
-				case Game.WSPEED_MID:
-					if(weapon[3] < 2.5) { ret += "Repeater"; }
-					else { ret += "Crossbow"; }
-					break;
-				case Game.WSPEED_SLOW:
-					if(weapon[3] < 3.5) { ret += "Shortbow"; }
-					else { ret += "Longbow"; }
-					break;
-			}
-			break;
-		case Game.WEAPON_MAGIC:
-			switch(weapon[2]) {
-				case Game.WSPEED_FAST:
-					ret += "Staff of Thunder"; break;
-				case Game.WSPEED_MID:
-					ret += "Staff of Flame"; break;
-				case Game.WSPEED_SLOW:
-					ret += "Staff of Frost"; break;
-			}
-			break;
-	}
-	return ret;
-}
-Game.makeWeaponNew = function(level) {
+Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
 	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay]
 	var type = Game.RNG(Game.WEAPON_MELEE,Game.WEAPON_MAGIC);
@@ -895,13 +861,13 @@ Game.makeWeaponNew = function(level) {
 			variance = 0.5;
 			break;
 	}
-  var name = Game.getWeaponNameNew(type,qualityID,sType);
+  var name = Game.getWeaponName(type,qualityID,sType);
 	minDmg = Math.floor((base + ((level-1)*perLv)*qualityMult)-(1+(variance*(level-1)/2)));
 	maxDmg = Math.ceil((base + ((level-1)*perLv)*qualityMult)+(1+(variance*(level-1)/2)));
 	dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
 	return new Array(name,level,type,speed,minDmg,maxDmg,dps,qualityID,decay);
 }
-Game.getWeaponNameNew = function(type,quality,speedTier) {
+Game.getWeaponName = function(type,quality,speedTier) {
   var nameArray = [];
   switch(type) {
     case Game.WEAPON_MELEE:
@@ -968,58 +934,6 @@ Game.getWeaponNameNew = function(type,quality,speedTier) {
     var name = Game.qualityDescriptors[quality-Game.QUALITY_POOR];
     return (name[Game.RNG(0,name.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim();
   }
-}
-Game.makeWeapon = function(level) {
-	// Returns a weapon as an array in the format
-	// [level,type,speedBracket,speed,damage,decay]
-	var type = Game.RNG(1,3);
-	type += 200; // Brings it in line with weapon type constants
-	var sType = Game.RNG(1,3);
-	sType += 210; // Brings it in line with weapon speed constants
-	var speed = 0;
-	var damage = 0;
-	var decay = 50 + 5*(level-1);
-	switch(type) {
-		case Game.WEAPON_MAGIC:
-			switch(sType) {
-				case Game.WSPEED_FAST:
-					damage = Game.RNG(2*level,3*level);
-					break;
-				case Game.WSPEED_MID:
-					damage = Game.RNG(4*level,7*level);
-					break;
-				case Game.WSPEED_SLOW:
-					damage = Game.RNG(8*level,12*level);
-					break;
-			}
-			break;
-		default:
-			switch(sType) {
-				case Game.WSPEED_FAST:
-					damage = Game.RNG(3*level,4*level);
-					break;
-				case Game.WSPEED_MID:
-					damage = Game.RNG(6*level,9*level);
-					break;
-				case Game.WSPEED_SLOW:
-					damage = Game.RNG(10*level,15*level);
-					break;
-			}
-	}
-	switch(sType) {
-		case Game.WSPEED_FAST:
-			speed = Game.RNG(10,20);
-			break;
-		case Game.WSPEED_MID:
-			speed = Game.RNG(20,30);
-			break;
-		case Game.WSPEED_SLOW:
-			speed = Game.RNG(30,40);
-			break;
-	}
-	speed = speed/10;
-	if(type == Game.WEAPON_MAGIC) { decay = -1; }
-	return new Array(level,type,sType,speed,damage,decay);
 }
 
 Game.hasPower = function(power) {
