@@ -30,7 +30,7 @@ input {
 	position: relative;
 	z-index: 5;
 }
-#rightPanel table{ 
+#rightPanel table{
 	width:100%;
 }
 .tabBar {
