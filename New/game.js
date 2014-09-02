@@ -1059,9 +1059,9 @@ Game.fast_melee_special = ["Blinkstrike|They'll never know what hit 'em...",
 Game.mid_melee_special = ["Edge of Depravity|I think it's just misunderstood...",
                           "Storm's Herald|Whatever you do, don't hold it up in a storm.",
                           "Flametongue|Good for those long cold nights in camp."];
-Game.slow_melee_special = ["The Conqueror",
-                           "Death Sentence",
-                           "The Decommissioner"];
+Game.slow_melee_special = ["The Conqueror|Twice as large as it needs to be, for intimidation purposes.",
+                           "Death Sentence|Only tangentially related to Death's scythe.",
+                           "The Ambassador|Diplomacy? I do not think it means what you think it means."];
 Game.fast_range_special = ["Ace of Spades|Who throws a card? I mean, come on, really?",
                            "Tomahawk|Served native tribes for centuries, so it must be good!",
                            "Throat Piercers|Don't ask how you get them back."];
@@ -1075,12 +1075,13 @@ Game.fast_magic_special = ["Thundercaller|When used in battle, it chants the nam
                            "Cosmic Fury|What did you do to piss off THE UNIVERSE?!",
                            "Spark-Touched Fetish|Rubber gloves are strongly recommended."];
 Game.mid_magic_special = ["Flamecore Battlestaff|Still warm to the touch.",
-                          "Meteor Fragment|Contrary to popular belief, meteorite fragments are mostly made of fire.",
-                          "Emberleaf War Tome|Not actually made of embers. But it's red, does that count?"];
+                          "Gift of the Cosmos|Just keeps on giving.",
+                          "Emberleaf War Tome|Not actually made of embers, which are terrible for books."];
 Game.slow_magic_special = ["The Tetranomicon|Written and bound by Tetradigm. Mostly incomprehensible.",
                            "Comet Chaser|Note: Comets are dangerous, DO NOT TRY THIS AT HOME.",
                            "Absolute Zero|Not quite. But it's close!"];
 // Prefixes for non-great items
+// Yes there's a blank one, it's so the item has no prefix :)
 Game.qualityDescriptors = [["Worthless","Damaged","Inept","Decayed","Flawed"],
                            ["Standard-Issue","Unremarkable","","Passable","Blemish-Free"],
                            ["Pristine","Enhanced","Powerful","Well-Maintained","Powerful"]];
