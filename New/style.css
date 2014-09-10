@@ -146,6 +146,12 @@ input {
 	vertical-align:middle;
 	float:inherit;
 }
+.bigButton {
+  border: 3px solid #878787;
+  border-radius: 10px;
+  font-size: 28px;
+  padding: 3px;
+}
 
 .q221 {
   color:#808080;

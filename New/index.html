@@ -139,10 +139,9 @@
 											<td>
 												<div class="powerHeader">Available Actions:</div>
 												<div>
-													<input id="enterCombat" type="button" value="Look for Something to Kill">
-													<input id="repairGear" type="button" value="Repair your Equipment">
-													<input id="takeWeapon" type="button" value="Take the enemy's weapon">
-													<input id="takeArmour" type="button" value="Take the enemy's armour">
+                          <span class="bigButton" onClick="Game.startCombat();Game.showPanel('combatTable');">Go Hunting</span>
+                          <span class="bigButton" onClick="Game.startRepair()">Repair Weapon</span>
+                          <span class="bigButton" onClick="Game.takeWeapon()">Take Weapon</span>
 												</div>
 												<div id="levelUpPanel">
 													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
@@ -151,31 +150,40 @@
 													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
-												</div>
+												</div><!--
 												<div class="powerHeader">Autobattle Options:</div>
 												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
 												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
-												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>
+												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>-->
 											</td>
 										</tr>
 									</table>
 									<table id="combatTable" style="display:none;">
-										<tr>
-											<td>
+                    <tr>
+                      <td>
+													<span id="playerHPHeader" style="float:left;">Player Health</span>
+											</td>
+                      <td>
+													<span id="enemyHPHeader" style="float:right;">Enemy Health</span>
+											</td>
+                    </tr>
+                    <tr>
+											<td colspan="2">
 												<div class="playerHPBorder">
 													<img id="playerHPBar" class="playerHPBar" src="Clear.gif"></img>
-													<span id="playerHPBarText">Player: 100/100</span>
+													<span id="playerHPBarText">100/100</span>
 												</div>
 												<div class="enemyHPBorder">
 													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif"></img>
-													<span id="enemyHPBarText">Enemy: 100/100</span>
+													<span id="enemyHPBarText">100/100</span>
 												</div>
 											</td>
 										</tr>
 										<tr>
-											<td>
+											<td colspan="2">
 												<div><span id="enemyName" style="float:left;"></span><span id="enemyHealth" style="float:right;"></span></div>
 												<div><span id="enemyLevel" style="float:left;"></span><span id="enemyMainStat" style="float:right;"></span></div>
+                        <div><span id="enemyWeapon" style="float:left;"></span></div>
 												<!--
 												Enemy Information Panel
 												+--------------------------------------------------+
@@ -189,8 +197,10 @@
 											</td>
 										</tr>
 										<tr>
-											<td>
+											<td colspan="2">
 												<!-- Current Combat Log -->
+                        <div class="powerHeader">Combat Log</div>
+                        <div id="logBody"></div>
 											</td>
 										</tr>
 									</table>
@@ -331,6 +341,6 @@
 			</table>
 		</div>
 		<div id="saveToast" class="savePopup" style="display:none;"><span>Game saved.</span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
+		<div class="footer">Realm of Decay &copy; <a href="mailto:martin@realmofdecay.net">Martin Hayward</a> (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
 	</body>
 </html>
