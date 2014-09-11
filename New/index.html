@@ -13,13 +13,13 @@
 				</tr>
 			</table>
 				<span class="tabBar" style="padding-left:205px;">&nbsp;</span>
-				<span class="tabButton" onclick="Game.showPanel('coreTable')">Core</span>
-				<span class="tabButton" onclick="Game.showPanel('combatTable')">Combat</span>
-				<span class="tabButton" onclick="Game.showPanel('powersTable')">Powers</span>
-				<span class="tabButton" onclick="Game.showPanel('inventoryTable')">Inventory</span>
-				<span class="tabButton" onclick="Game.showPanel('storeTable')">Store</span>
-				<span class="tabButton" onclick="Game.showPanel('miscTable')">Misc</span>
-				<span class="tabButton" onclick="Game.showPanel('helpTable')">Help</span>
+				<span class="tabButton" onclick="Game.showPanel('coreTable');">Core</span>
+				<span class="tabButton" onclick="Game.showPanel('combatTable');">Combat</span>
+				<span class="tabButton" onclick="Game.showPanel('powersTable');">Powers</span>
+				<span class="tabButton" onclick="Game.showPanel('inventoryTable');">Inventory</span>
+				<span class="tabButton" onclick="Game.showPanel('storeTable');">Store</span>
+				<span class="tabButton" onclick="Game.showPanel('miscTable');">Misc</span>
+				<span class="tabButton" onclick="Game.showPanel('helpTable');">Help</span>
 			<table width="900px">
 				<tr>
 					<td id="leftPanel" width="200px" valign="top">
@@ -137,11 +137,10 @@
 									<table id="coreTable" style="display:none;">
 										<tr>
 											<td>
-												<div class="powerHeader">Available Actions:</div>
 												<div>
-                          <span class="bigButton" onClick="Game.startCombat();Game.showPanel('combatTable');">Go Hunting</span>
-                          <span class="bigButton" onClick="Game.startRepair()">Repair Weapon</span>
-                          <span class="bigButton" onClick="Game.takeWeapon()">Take Weapon</span>
+                          <span class="bigButton" onClick="Game.startCombat();">Go Hunting</span>
+                          <span class="bigButton" onClick="Game.startRepair();">Repair Weapon</span>
+                          <span class="bigButton" onClick="Game.takeWeapon();">Take Weapon</span>
 												</div>
 												<div id="levelUpPanel">
 													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
@@ -171,34 +170,42 @@
 											<td colspan="2">
 												<div class="playerHPBorder">
 													<img id="playerHPBar" class="playerHPBar" src="Clear.gif"></img>
-													<span id="playerHPBarText">100/100</span>
 												</div>
 												<div class="enemyHPBorder">
 													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif"></img>
-													<span id="enemyHPBarText">100/100</span>
 												</div>
 											</td>
 										</tr>
 										<tr>
-											<td colspan="2">
-												<div><span id="enemyName" style="float:left;"></span><span id="enemyHealth" style="float:right;"></span></div>
-												<div><span id="enemyLevel" style="float:left;"></span><span id="enemyMainStat" style="float:right;"></span></div>
-                        <div><span id="enemyWeapon" style="float:left;"></span></div>
-												<!--
-												Enemy Information Panel
-												+--------------------------------------------------+
-												| Enemy: <Enemy Name>       Health: <Enemy Health> |
-												| Level: <LVL>                  Main Stat: <Value> |
-												+--------------------------------------------------+
-												| Weapon: <Name>, <Type>, <Damage>, <Delay>, <DPS> |
-												| Armor: <Name>, <Type>, <Resistance>, <Weakness>  |
-												+--------------------------------------------------+
-												-->
+											<td id="enemyInfo" colspan="2">
+                        <table>
+                          <tr>
+                            <td align="left" width="50%">
+                              <span id="enemyName"></span>
+                            </td>
+                            <td align="left" width="10%">
+                              <span id="enemyLevel"></span>
+                            </td>
+                            <td align="left" width="10%">
+                              <span id="enemyMainStat"></span>
+                            </td>
+                            <td align="right" width="12%">
+                              <span id="enemyHealth"></span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td align="left" colspan="3">
+                              <span id="enemyWeapon"></span>
+                            </td>
+                            <td align="right">
+                              <span id="enemyDebuffOutput"></span>
+                            </td>
+                          </tr>
+                        </table>
 											</td>
 										</tr>
 										<tr>
 											<td colspan="2">
-												<!-- Current Combat Log -->
                         <div class="powerHeader">Combat Log</div>
                         <div id="logBody"></div>
 											</td>

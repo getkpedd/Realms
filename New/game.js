@@ -1,31 +1,19 @@
 Game = {};
-
 /* Comments
 Realm of Decay - An RPG Incremental
 Copyright Martin Hayward (Psychemaster) 2014
 Version 0.2 beta
 
 Changes in this version:
-	New Interface: Tabs
-		Player Info panel on left side
-		Core tab
-			Contains game actions (for now)
-			Contains auto-battle options (NYI)
-			Contains skill point allocation
-		Combat
-			HP bar frames
-		Powers
-			Lists selected powers
-			Lists all available powers
-	New weapon creation algorithm!!!
-  Combat algorithm changed to use new weapons
+  Combat is back, baby
 TODO:
 	A way to idle:
 		Initiate a battle at full health
 		After a battle, take enemy weapon if it has better DPS
 		Don't assign skill or power points
+  All those flashy interface tabs
+  Revamp powers
 */
-
 Game.init = function() {
 	//Define some constants we can use later
 	this.XP_MULT = 1.1;
@@ -97,28 +85,26 @@ Game.init = function() {
 	this.e_Weapon = []; // Enemy weapon
 	this.e_DebuffStacks = 0;
 	this.last_Weapon = []; // Weapon to take
+  this.activePanel = "";
 	this.showPanel("coreTable");
-// 	if(!this.load()) {
-// 		this.initPlayer(1);
-// 		this.save();
-// 	}
-  this.initPlayer(1);
+  if(!this.load()) {
+ 		this.initPlayer(1);
+ 		this.save();
+ 	}
 	if(Game.p_State != Game.STATE_COMBAT) { Game.idleHeal(); }
-	this.drawAllTheThings();
+	this.drawActivePanel();
 }
 Game.drawActivePanel = function() {
   //Nothing yet
+  Game.updateLeftPanel();
+  switch(Game.activePanel) {
+    case "combatTable":
+      Game.updateCombatPanel(); break;
+    case "powersTable":
+      Game.updatePowersPanel(); break;
+  }
 }
-Game.drawAllTheThings = function() {
-  // This function will be dropped in favour of drawActivePanel
-	Game.updatePlayerPanel();
-  Game.updatePowersPanel();
-  //Game.updateCombatPanel();
-	//Game.updateEnemyPanel();
-	//Game.updateCentrePanel();
-}
-
-Game.updatePlayerPanel = function() {
+Game.updateLeftPanel = function() {
 	var lv = document.getElementById("p_Level");
 	lv.innerHTML = Game.p_Level;
 	var exp = document.getElementById("p_EXP");
@@ -185,64 +171,51 @@ Game.updatePlayerPanel = function() {
 		lvPanel.style.display = "none";
 	}
 }
-
-Game.updateEnemyPanel = function() {
-  var r_Idle = document.getElementById("right_Idle");
-	var r_Combat = document.getElementById("right_Combat");
-	var r_Repair = document.getElementById("right_Repair");
+Game.updateCombatPanel = function() {
+  var e_panel = document.getElementById("enemyInfo");
 	switch(Game.p_State) {
 		case Game.STATE_IDLE:
-			// Vis
-			r_Idle.style.display = "";
-			r_Combat.style.display = "none";
-			r_Repair.style.display = "none";
-			break;
+      e_panel.style.display = "none";
+      break;
+      // Hide enemy panel
 		case Game.STATE_COMBAT:
-			// Vis
-			r_Idle.style.display = "none";
-			r_Combat.style.display = "";
-			r_Repair.style.display = "none";
 			// Enemy stat panel
-			var e_lv = document.getElementById("e_Level");
-			e_lv.innerHTML = Game.e_Level;
-			var e_hp = document.getElementById("e_HP");
-			e_hp.innerHTML = Game.e_HP;
-			var e_maxhp = document.getElementById("e_MaxHP");
-			e_maxhp.innerHTML = Game.e_MaxHP;
-			var e_str = document.getElementById("e_Str");
-			e_str.innerHTML = Game.e_Str;
-			var e_dex = document.getElementById("e_Dex");
-			e_dex.innerHTML = Game.e_Dex;
-			var e_intel = document.getElementById("e_Int");
-			e_intel.innerHTML = Game.e_Int;
-			var e_Debuff = document.getElementById("debuffStackOutput");
-			e_Debuff.innerHTML = Game.e_DebuffStacks;
+      e_panel.style.display = "";
+      var e_name = document.getElementById("enemyName");
+      e_name.innerHTML = "Generic Enemy Name";
+			var e_lv = document.getElementById("enemyLevel");
+      e_lv.innerHTML = "Level: " + Game.e_Level;
+			var e_hp = document.getElementById("enemyHealth");
+      e_hp.innerHTML = "Health: " + Game.e_HP + " / " + Game.e_MaxHP;
+      var e_mainStat = document.getElementById("enemyMainStat");
+      switch(Game.e_Weapon[2]) {
+        case Game.WEAPON_MELEE:
+          e_mainStat.innerHTML = "Main Stat: " + Game.e_Str;
+          break;
+        case Game.WEAPON_RANGE:
+          e_mainStat.innerHTML = "Main Stat: " + Game.e_Dex;
+          break;
+        case Game.WEAPON_MAGIC:
+          e_mainStat.innerHTML = "Main Stat: " + Game.e_Int;
+          break;
+      }
+			var e_Debuff = document.getElementById("enemyDebuffOutput");
+      e_Debuff.innerHTML = "Debuff Stacks: " + Game.e_DebuffStacks;
 			// Enemy weapon
-			var ew_name = document.getElementById("ew_Name");
-			ew_name.innerHTML = Game.e_Weapon[0];
-			var ew_type = document.getElementById("ew_Type");
+			var e_Weapon = document.getElementById("enemyWeapon");
+			var ew_type = ""
 			switch(Game.e_Weapon[2]) {
 				case Game.WEAPON_MELEE:
-					ew_type.innerHTML = "Melee"; break;
+					ew_type = "Melee"; break;
 				case Game.WEAPON_RANGE:
-					ew_type.innerHTML = "Ranged"; break;
+					ew_type = "Ranged"; break;
 				case Game.WEAPON_MAGIC:
-					ew_type.innerHTML = "Magic"; break;
+					ew_type = "Magic"; break;
 			}
-			var ew_speed = document.getElementById("ew_Speed");
-			ew_speed.innerHTML = Game.e_Weapon[3];
-			var ew_damage = document.getElementById("ew_Damage");
-			ew_damage.innerHTML = Game.e_Weapon[4] + "/" + Game.e_Weapon[5];
-			var ew_DPS = document.getElementById("ew_DPS");
-			ew_DPS.innerHTML = Math.floor(Game.e_Weapon[6]);
+      e_Weapon.innerHTML = "Weapon: <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> (" + ew_type + "), " + Game.e_Weapon[4] + " - " + Game.e_Weapon[5] + " Damage, " + Game.e_Weapon[3] + " speed, " + Game.e_Weapon[6] + " DPS";
 			break;
 		case Game.STATE_REPAIR:
-			// Vis
-			r_Idle.style.display = "none";
-			r_Combat.style.display = "none";
-			r_Repair.style.display = "";
-			var repTimer = document.getElementById("repairTime");
-			repTimer.innerHTML = Game.p_RepairValue;
+      e_panel.style.display = "none";
 			break;
 	}
 	if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
@@ -251,7 +224,7 @@ Game.updateEnemyPanel = function() {
 		var takeWep = document.getElementById("takeWeapon");
 		takeWep.style.display = "";
 		var ew_name = document.getElementById("lastw_Name");
-		ew_name.innerHTML = Game.last_Weapon[0];
+		ew_name.innerHTML = Game.last_Weapon[0].split("|")[0];
 		var ew_type = document.getElementById("lastw_Type");
 		switch(Game.last_Weapon[1]) {
 			case Game.WEAPON_MELEE:
@@ -275,7 +248,6 @@ Game.updateEnemyPanel = function() {
 		takeWep.style.display = "none";
 	}
 }
-
 Game.updatePowersPanel = function() {
 	//Available Powers Panel
 	var ppp = document.getElementById("availablePowers");
@@ -390,7 +362,6 @@ Game.updatePowersPanel = function() {
 		}
 	} else { spp.style.display = "none"; }
 }
-
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
@@ -400,7 +371,6 @@ Game.combatLog = function(combatant, message) {
 	var logBox = document.getElementById("logBody");
 	logBox.appendChild(d);
 }
-
 Game.startRepair = function() {
 	if(Game.p_Weapon[8] >= (50 + 5*(Game.p_Weapon[1]-1))) {
 		// Repair not required, do nothing
@@ -413,9 +383,8 @@ Game.startRepair = function() {
 		}
 		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
 	}
-	Game.drawAllTheThings();
+	Game.drawActivePanel();
 }
-
 Game.repairTick = function() {
 	if(Game.p_RepairValue === 0) {
 		Game.p_Weapon[8] = 50 + 5*(Game.p_Weapon[1]-1);
@@ -429,7 +398,6 @@ Game.repairTick = function() {
 	}
 	//Game.updateEnemyPanel();
 }
-
 Game.idleHeal = function() {
 	if(Game.p_State != Game.STATE_COMBAT) {
 		Game.p_HP = Math.min(Game.p_HP + Game.p_Con,Game.p_MaxHP);
@@ -442,9 +410,8 @@ Game.idleHeal = function() {
 		Game.p_IdleInterval = window.setTimeout(Game.idleHeal,800);
 	}
 	else { Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000); }
-	Game.updatePlayerPanel();
+	Game.updateLeftPanel();
 }
-
 Game.startCombat = function() {
 	if(Game.p_State == Game.STATE_IDLE) {
 		if(Game.p_Level >= 5 && Game.RNG(1,100) == 1) {
@@ -465,9 +432,9 @@ Game.startCombat = function() {
 	}
 	var log = document.getElementById("logBody");
 	log.innerHTML = "";
-	//Game.updateEnemyPanel();
+  Game.showPanel('combatTable');
+	Game.updateCombatPanel();
 }
-
 Game.playerCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
 		var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
@@ -496,8 +463,8 @@ Game.playerCombatTick = function() {
 				playerDMG = Math.floor(playerDMG/2);
 			}
 			Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
-		Game.updatePlayerPanel();
-		Game.combatLog("player","You hit the enemy with your <strong>" + Game.p_Weapon[0] + "</strong> for <strong>" + playerDMG + "</strong> damage.");
+		Game.updateLeftPanel();
+		Game.combatLog("player","You hit the enemy with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
 		// Debuff effect for melee
 		if(Game.p_Weapon[2] == Game.WEAPON_MELEE && Game.e_DebuffStacks > 0) {
 			var selfHeal = Game.e_DebuffStacks * Game.p_Weapon[1];
@@ -541,9 +508,8 @@ Game.playerCombatTick = function() {
 		else { Game.endCombat(); }
 	}
 	else { window.clearInterval(Game.combat_playerInterval); }
-	//Game.updateEnemyPanel();
+	Game.updateCombatPanel();
 }
-
 Game.enemyCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
 		var enemyDMG = Game.RNG(Game.e_Weapon[4],Game.e_Weapon[5]);
@@ -572,16 +538,15 @@ Game.enemyCombatTick = function() {
 				Game.combatLog("enemy","<strong>" + damageDown + "</strong> prevented by Infected Wound.");
 			}
 			Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
-			Game.combatLog("enemy","The enemy hits you with their <strong>" + Game.e_Weapon[0] + "</strong> for <strong>" + enemyDMG + "</strong> damage.");
+			Game.combatLog("enemy","The enemy hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
 		}
 
 		if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
 		else { Game.endCombat(); }
 	}
 	else { window.clearTimeout(Game.combat_enemyInterval); }
-	Game.updatePlayerPanel();
+	Game.updateLeftPanel();
 }
-
 Game.specialAttack = function() {
 	Game.p_specUsed = true;
 	switch(Game.p_Weapon[2]) {
@@ -614,9 +579,8 @@ Game.fleeCombat = function() {
 	window.clearTimeout(Game.combat_enemyInterval);
 	Game.p_State = Game.STATE_IDLE;
 	Game.combatLog("","You fled from the battle.");
-	Game.drawAllTheThings();
+	Game.drawActivePanel();
 }
-
 Game.endCombat = function() {
 	window.clearTimeout(Game.combat_playerInterval);
 	window.clearTimeout(Game.combat_enemyInterval);
@@ -643,9 +607,8 @@ Game.endCombat = function() {
 		Game.p_HP = Game.p_MaxHP;
 	}
 	Game.p_autoSaved = false;
-	Game.drawAllTheThings();
+	Game.drawActivePanel();
 }
-
 Game.levelUp = function() {
 	Game.combatLog("","Level up! You are now level <strong>" + (Game.p_Level+1) + "</strong>.");
 	var hpUp = Game.RNG(25,30);
@@ -690,10 +653,8 @@ Game.buyPower = function(power) {
 Game.takeWeapon = function() {
 	Game.p_Weapon = Game.last_Weapon.slice(0);
 	Game.last_Weapon = [];
-	Game.updatePlayerPanel();
-	Game.updateEnemyPanel();
+	Game.updateLeftPanel();
 }
-
 Game.addStat = function(stat) {
 	if(Game.p_SkillPoints > 0) {
 		switch(stat) {
@@ -708,9 +669,8 @@ Game.addStat = function(stat) {
 		}
 		Game.p_SkillPoints--;
 	}
-	Game.updatePlayerPanel();
+	Game.updateLeftPanel();
 }
-
 Game.initPlayer = function(level) {
 	Game.p_MaxHP = Game.RNG(100,120) + Game.RNG(25*(level-1),30*(level-1));
 	Game.p_HP = Game.p_MaxHP;
@@ -725,9 +685,8 @@ Game.initPlayer = function(level) {
 	Game.p_PP = 0;
 	Game.p_Weapon = Game.makeWeapon(level);
 }
-
 Game.makeEnemy = function(level) {
-	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
+	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
 	Game.e_Dex = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
@@ -737,9 +696,8 @@ Game.makeEnemy = function(level) {
 	Game.e_isBoss = false;
 	Game.e_Weapon = Game.makeWeapon(Game.RNG(1,5) == 1 ? level+1 : level);
 }
-
 Game.makeBoss = function(level) {
-	Game.e_MaxHP = Game.RNG(50,60) + Game.RNG(25*(level-1),30*(level-1));
+	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MaxHP *= 2;
 	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
@@ -750,14 +708,12 @@ Game.makeBoss = function(level) {
 	Game.e_isBoss = true;
 	Game.e_Weapon = Game.makeWeapon(level+3);
 }
-
 Game.reset = function() {
 	if(confirm("Are you sure you wish to erase your save? It will be lost permanently...")) {
 		window.localStorage.removeItem("gameSave");
 		window.location.reload();
 	}
 }
-
 Game.save = function() {
 	var g = JSON.stringify(Game);
 	window.localStorage.setItem("gameSave",g);
@@ -765,7 +721,6 @@ Game.save = function() {
 	saveToast.style.display = "";
 	window.setTimeout(function() { 	var saveToast = document.getElementById("saveToast"); saveToast.style.display = "none"; },3000);
 }
-
 Game.load = function() {
 	//localStorage yeeeeee
 	var g;
@@ -796,7 +751,6 @@ Game.load = function() {
 	}
 	else { return false; }
 }
-
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
 	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay]
@@ -857,8 +811,8 @@ Game.makeWeapon = function(level) {
 			break;
 	}
   var name = Game.getWeaponName(type,qualityID,sType);
-	minDmg = Math.floor((base + ((level-1)*perLv)*qualityMult)-(1+(variance*(level-1)/2)));
-	maxDmg = Math.ceil((base + ((level-1)*perLv)*qualityMult)+(1+(variance*(level-1)/2)));
+	minDmg = Math.floor((base + ((level-1)*perLv)-(1+(variance*(level-1)/2)))*qualityMult);
+	maxDmg = Math.ceil((base + ((level-1)*perLv)+(1+(variance*(level-1)/2)))*qualityMult);
 	dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
 	return new Array(name,level,type,speed,minDmg,maxDmg,dps,qualityID,decay);
 }
@@ -930,15 +884,12 @@ Game.getWeaponName = function(type,quality,speedTier) {
     return (qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim();
   }
 }
-
 Game.hasPower = function(power) {
 	return Game.p_Powers.indexOf(power) >= 0;
 }
-
 Game.RNG = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 Game.showPanel = function(panelID) {
 	var panelList = document.getElementsByTagName("table");
 	for(var x = 0; x < panelList.length; x++) {
@@ -949,6 +900,8 @@ Game.showPanel = function(panelID) {
 			panelList[x].style.display = "none";
 		}
 	}
+  Game.activePanel = panelID;
+  Game.drawActivePanel();
 }
 // Weapon name arrays
 Game.fast_melee_generic = ["Shortsword","Dagger","Quickblade","Knife"];
