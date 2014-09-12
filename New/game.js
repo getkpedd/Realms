@@ -220,7 +220,7 @@ Game.updateCombatPanel = function() {
       e_panel.style.display = "none";
 			break;
 	}
-	if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
+/*	if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
 		var lastWep = document.getElementById("lastEnemyWeapon");
 		lastWep.style.display = "";
 		var takeWep = document.getElementById("takeWeapon");
@@ -249,6 +249,7 @@ Game.updateCombatPanel = function() {
 		takeWep = document.getElementById("takeWeapon");
 		takeWep.style.display = "none";
 	}
+  */
 }
 Game.updatePowersPanel = function() {
 	//Available Powers Panel
@@ -693,10 +694,10 @@ Game.makeEnemy = function(level) {
 	Game.e_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
 	Game.e_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
   var scalingFactor = Math.max(1.8,0.8+((level-1)*0.04));
-  Game.e_MaxHP *= scalingFactor;
-  Game.e_Str *= scalingFactor;
-  Game.e_Dex *= scalingFactor;
-  Game.e_Int *= scalingFactor;
+  Game.e_MaxHP = Math.floor(Game.e_MaxHP*scalingFactor);
+  Game.e_Str = Math.floor(Game.e_Str*scalingFactor);
+  Game.e_Dex = Math.floor(Game.e_Dex*scalingFactor);
+  Game.e_Int = Math.floor(Game.e_Int*scalingFactor);
   Game.e_HP = Game.e_MaxHP;
 	Game.e_Level = level;
 	Game.e_DebuffStacks = 0;
@@ -709,10 +710,10 @@ Game.makeBoss = function(level) {
 	Game.e_Dex = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
 	Game.e_Int = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
   var scalingFactor = Math.max(3.0,1+((level-1)*0.05));
-  Game.e_MaxHP *= scalingFactor;
-  Game.e_Str *= scalingFactor;
-  Game.e_Dex *= scalingFactor;
-  Game.e_Int *= scalingFactor;
+  Game.e_MaxHP = Math.floor(Game.e_MaxHP*scalingFactor);
+  Game.e_Str = Math.floor(Game.e_Str*scalingFactor);
+  Game.e_Dex = Math.floor(Game.e_Dex*scalingFactor);
+  Game.e_Int = Math.floor(Game.e_Int*scalingFactor);
   Game.e_HP = Game.e_MaxHP;
 	Game.e_Level = level;
 	Game.e_DebuffStacks = 0;
