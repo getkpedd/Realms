@@ -5,8 +5,10 @@ Copyright Martin Hayward (Psychemaster) 2014
 Version 0.2 beta
 
 Changes in this version:
-  Combat is back, baby
+  Balance change in weapon quality
+  Increased enemy scaling with level
 TODO:
+  Combat buttons on combat tab
 	A way to idle:
 		Initiate a battle at full health
 		After a battle, take enemy weapon if it has better DPS
@@ -19,7 +21,7 @@ Game.init = function() {
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
-	this.XP_BASE = 40;
+	this.XP_BASE = 30;
 	this.XP_INIT = 100;
 	//Player states
 	this.STATE_IDLE = 0;
@@ -396,7 +398,7 @@ Game.repairTick = function() {
 		Game.p_RepairValue-=1;
 		Game.p_State = Game.STATE_REPAIR;
 	}
-	//Game.updateEnemyPanel();
+	Game.drawActivePanel();
 }
 Game.idleHeal = function() {
 	if(Game.p_State != Game.STATE_COMBAT) {
@@ -410,7 +412,7 @@ Game.idleHeal = function() {
 		Game.p_IdleInterval = window.setTimeout(Game.idleHeal,800);
 	}
 	else { Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000); }
-	Game.updateLeftPanel();
+	Game.drawActivePanel();
 }
 Game.startCombat = function() {
 	if(Game.p_State == Game.STATE_IDLE) {
@@ -433,7 +435,7 @@ Game.startCombat = function() {
 	var log = document.getElementById("logBody");
 	log.innerHTML = "";
   Game.showPanel('combatTable');
-	Game.updateCombatPanel();
+	Game.drawActivePanel();
 }
 Game.playerCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
@@ -463,7 +465,7 @@ Game.playerCombatTick = function() {
 				playerDMG = Math.floor(playerDMG/2);
 			}
 			Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
-		Game.updateLeftPanel();
+		Game.drawActivePanel();
 		Game.combatLog("player","You hit the enemy with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
 		// Debuff effect for melee
 		if(Game.p_Weapon[2] == Game.WEAPON_MELEE && Game.e_DebuffStacks > 0) {
@@ -508,7 +510,7 @@ Game.playerCombatTick = function() {
 		else { Game.endCombat(); }
 	}
 	else { window.clearInterval(Game.combat_playerInterval); }
-	Game.updateCombatPanel();
+	Game.drawActivePanel();
 }
 Game.enemyCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
@@ -545,7 +547,7 @@ Game.enemyCombatTick = function() {
 		else { Game.endCombat(); }
 	}
 	else { window.clearTimeout(Game.combat_enemyInterval); }
-	Game.updateLeftPanel();
+	Game.drawActivePanel();
 }
 Game.specialAttack = function() {
 	Game.p_specUsed = true;
@@ -648,12 +650,12 @@ Game.buyPower = function(power) {
 			Game.p_PP--;
 		}
 	}
-	Game.updateCentrePanel();
+	Game.drawActivePanel();
 }
 Game.takeWeapon = function() {
 	Game.p_Weapon = Game.last_Weapon.slice(0);
 	Game.last_Weapon = [];
-	Game.updateLeftPanel();
+	Game.drawActivePanel();
 }
 Game.addStat = function(stat) {
 	if(Game.p_SkillPoints > 0) {
@@ -669,7 +671,7 @@ Game.addStat = function(stat) {
 		}
 		Game.p_SkillPoints--;
 	}
-	Game.updateLeftPanel();
+	Game.drawActivePanel();
 }
 Game.initPlayer = function(level) {
 	Game.p_MaxHP = Game.RNG(100,120) + Game.RNG(25*(level-1),30*(level-1));
@@ -687,10 +689,15 @@ Game.initPlayer = function(level) {
 }
 Game.makeEnemy = function(level) {
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
-	Game.e_HP = Game.e_MaxHP;
-	Game.e_Str = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
-	Game.e_Dex = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
-	Game.e_Int = Game.RNG(4,6) + Game.RNG(Math.floor((level-1)*0.5),level-1);
+	Game.e_Str = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Dex = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+	Game.e_Int = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
+  var scalingFactor = Math.max(1.8,0.8+((level-1)*0.04));
+  Game.e_MaxHP *= scalingFactor;
+  Game.e_Str *= scalingFactor;
+  Game.e_Dex *= scalingFactor;
+  Game.e_Int *= scalingFactor;
+  Game.e_HP = Game.e_MaxHP;
 	Game.e_Level = level;
 	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = false;
@@ -698,11 +705,15 @@ Game.makeEnemy = function(level) {
 }
 Game.makeBoss = function(level) {
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
-	Game.e_MaxHP *= 2;
-	Game.e_HP = Game.e_MaxHP;
 	Game.e_Str = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
 	Game.e_Dex = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
 	Game.e_Int = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
+  var scalingFactor = Math.max(3.0,1+((level-1)*0.05));
+  Game.e_MaxHP *= scalingFactor;
+  Game.e_Str *= scalingFactor;
+  Game.e_Dex *= scalingFactor;
+  Game.e_Int *= scalingFactor;
+  Game.e_HP = Game.e_MaxHP;
 	Game.e_Level = level;
 	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = true;
@@ -764,13 +775,13 @@ Game.makeWeapon = function(level) {
 	// Quality generator
 	var qT = Game.RNG(1,100);
 	if(qT == 1) {
-		qualityMult = 1.6;
+		qualityMult = 1.4;
 		qualityID = Game.QUALITY_AMAZING;
 	} else if(qT < 6) {
-		qualityMult = 1.4;
+		qualityMult = 1.2;
 		qualityID = Game.QUALITY_GREAT;
 	} else if(qT < 16) {
-		qualityMult = 1.2;
+		qualityMult = 1.1;
 		qualityID = Game.QUALITY_GOOD;
 	} else if(qT < 26) {
 		qualityMult = 0.8;

@@ -138,9 +138,9 @@
 										<tr>
 											<td>
 												<div>
-                          <span class="bigButton" onClick="Game.startCombat();">Go Hunting</span>
-                          <span class="bigButton" onClick="Game.startRepair();">Repair Weapon</span>
-                          <span class="bigButton" onClick="Game.takeWeapon();">Take Weapon</span>
+                          <span class="bigButton" id="combatButton" onClick="Game.startCombat();">Go Hunting</span>
+                          <span class="bigButton" id="repairButton" onClick="Game.startRepair();">Repair Weapon</span>
+                          <span class="bigButton" id="takeButton" onClick="Game.takeWeapon();">Take Weapon</span>
 												</div>
 												<div id="levelUpPanel">
 													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
@@ -149,11 +149,7 @@
 													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
-												</div><!--
-												<div class="powerHeader">Autobattle Options:</div>
-												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
-												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
-												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>-->
+												</div>
 											</td>
 										</tr>
 									</table>
@@ -338,7 +334,16 @@
 									</table>
 									<table id="inventoryTable"></table>
 									<table id="storeTable"></table>
-									<table id="miscTable"></table>
+									<table id="miscTable" style="display:none;">
+                    <tr>
+                      <td>
+                        <div class="powerHeader">Autobattle Options:</div>
+												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
+												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
+												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>
+                      </td>
+                    </tr>
+                  </table>
 									<table id="helpTable"></table>
 								</td>
 							</tr>
