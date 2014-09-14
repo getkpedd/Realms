@@ -1,9 +1,5 @@
 Game = {};
-/* Comments
-Realm of Decay - An RPG Incremental
-Copyright Martin Hayward (Psychemaster) 2014
-Version 0.2 beta
-
+/*
 Changes in this version:
   Balance change in weapon quality
   Increased enemy scaling with level
@@ -18,6 +14,7 @@ TODO:
 */
 Game.init = function() {
 	//Define some constants we can use later
+  this.GAME_VERSION = 0.21; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -88,7 +85,7 @@ Game.init = function() {
 	this.e_DebuffStacks = 0;
 	this.last_Weapon = []; // Weapon to take
   this.activePanel = "";
-	this.showPanel("coreTable");
+	this.showPanel("helpTable");
   if(!this.load()) {
  		this.initPlayer(1);
  		this.save();
@@ -162,15 +159,47 @@ Game.updateLeftPanel = function() {
 	var pp = document.getElementById("p_PP");
 	pp.innerHTML = Game.p_PP;
 	w_decay.innerHTML = Game.p_Weapon[8];
-  var lvPanel = document.getElementById("levelUpPanel");
-	if(Game.p_SkillPoints > 0 && Game.p_State != Game.STATE_COMBAT) {
-		lvPanel.style.display = "";
-		var spDisp = document.getElementById("skillPoints");
-		spDisp.innerHTML = Game.p_SkillPoints;
+  // Last enemy weapon
+  var lastWep = document.getElementById("lastWep");
+  if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
+		lastWep.style.display = "";
+    var e_name = document.getElementById("l_Name");
+    e_name.className = "q" + Game.last_Weapon[7];
+    var e_flavourHandle = document.getElementById("l_flavourTextHandle");
+    if(Game.last_Weapon[7] >= Game.QUALITY_GREAT) {
+      var e_wepText = Game.last_Weapon[0].split("|");
+      e_name.innerHTML = e_wepText[0];
+      var ew_flavour = document.getElementById("l_flavourText");
+      ew_flavour.innerHTML = e_wepText[1];
+      e_flavourHandle.style.display = "";
+    } else {
+      e_name.innerHTML = Game.last_Weapon[0];
+      e_flavourHandle.style.display = "none";
+    }
+    var ew_level = document.getElementById("l_Level");
+    ew_level.innerHTML = Game.last_Weapon[1];
+		var ew_type = document.getElementById("l_Type");
+		switch(Game.last_Weapon[2]) {
+			case Game.WEAPON_MELEE:
+				ew_type.innerHTML = "Melee"; break;
+			case Game.WEAPON_RANGE:
+				ew_type.innerHTML = "Ranged"; break;
+			case Game.WEAPON_MAGIC:
+				ew_type.innerHTML = "Magic"; break;
+		}
+		var ew_speed = document.getElementById("l_Speed");
+		ew_speed.innerHTML = Game.last_Weapon[3];
+		var ew_minDamage = document.getElementById("l_minDamage");
+		ew_minDamage.innerHTML = Game.last_Weapon[4];
+    var ew_maxDamage = document.getElementById("l_maxDamage");
+		ew_maxDamage.innerHTML = Game.last_Weapon[5];
+		var ew_DPS = document.getElementById("l_DPS");
+		ew_DPS.innerHTML = Math.floor(Game.last_Weapon[6]);
+    var ew_dura = document.getElementById("l_Decay");
+    ew_dura.innerHTML = Game.last_Weapon[8];
 	}
 	else {
-		lvPanel = document.getElementById("levelUpPanel");
-		lvPanel.style.display = "none";
+		lastWep.style.display = "none";
 	}
 }
 Game.updateCombatPanel = function() {
@@ -220,36 +249,6 @@ Game.updateCombatPanel = function() {
       e_panel.style.display = "none";
 			break;
 	}
-/*	if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
-		var lastWep = document.getElementById("lastEnemyWeapon");
-		lastWep.style.display = "";
-		var takeWep = document.getElementById("takeWeapon");
-		takeWep.style.display = "";
-		var ew_name = document.getElementById("lastw_Name");
-		ew_name.innerHTML = Game.last_Weapon[0].split("|")[0];
-		var ew_type = document.getElementById("lastw_Type");
-		switch(Game.last_Weapon[1]) {
-			case Game.WEAPON_MELEE:
-				ew_type.innerHTML = "Melee"; break;
-			case Game.WEAPON_RANGE:
-				ew_type.innerHTML = "Ranged"; break;
-			case Game.WEAPON_MAGIC:
-				ew_type.innerHTML = "Magic"; break;
-		}
-		var ew_speed = document.getElementById("lastw_Speed");
-		ew_speed.innerHTML = Game.last_Weapon[3];
-		var ew_damage = document.getElementById("lastw_Damage");
-		ew_damage.innerHTML = Game.last_Weapon[4] + "/" + Game.last_Weapon[5];
-		var ew_DPS = document.getElementById("lastw_DPS");
-		ew_DPS.innerHTML = Math.floor(Game.last_Weapon[6]);
-	}
-	else {
-		lastWep = document.getElementById("lastEnemyWeapon");
-		lastWep.style.display = "none";
-		takeWep = document.getElementById("takeWeapon");
-		takeWep.style.display = "none";
-	}
-  */
 }
 Game.updatePowersPanel = function() {
 	//Available Powers Panel
@@ -364,6 +363,17 @@ Game.updatePowersPanel = function() {
 			targetControl.style.display = "";
 		}
 	} else { spp.style.display = "none"; }
+  // Level up panel
+  var lvPanel = document.getElementById("levelUpPanel");
+	if(Game.p_SkillPoints > 0 && Game.p_State != Game.STATE_COMBAT) {
+		lvPanel.style.display = "";
+		var spDisp = document.getElementById("skillPoints");
+		spDisp.innerHTML = Game.p_SkillPoints;
+	}
+	else {
+		lvPanel = document.getElementById("levelUpPanel");
+		lvPanel.style.display = "none";
+	}
 }
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");

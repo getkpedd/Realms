@@ -9,11 +9,10 @@
 		<div id="main">
 			<table class="titleBar">
 				<tr>
-					<td class="powerHeader">Realm of Decay v0.2a</td>
+					<td class="powerHeader">Realm of Decay</td>
 				</tr>
 			</table>
 				<span class="tabBar" style="padding-left:205px;">&nbsp;</span>
-				<span class="tabButton" onclick="Game.showPanel('coreTable');">Core</span>
 				<span class="tabButton" onclick="Game.showPanel('combatTable');">Combat</span>
 				<span class="tabButton" onclick="Game.showPanel('powersTable');">Powers</span>
 				<span class="tabButton" onclick="Game.showPanel('inventoryTable');">Inventory</span>
@@ -94,65 +93,57 @@
 								<td>Durability: </td>
 								<td><div id="w_Decay"></div></td>
 							</tr>
-							<tr>
-								<td colspan="2">Weapon Bonuses
-									<div id="w_Bonuses"></div>
-								</td>
-							</tr>
+              <tr>
+                <td colspan="2">
+                  <span class="bigButton" id="repairButton" onClick="Game.startRepair();">Repair</span>
+                </td>
+              </tr>
 						</table>
-						<table class="armourInfo">
+						<table id="lastWep" class="lastWepInfo">
 							<tr align="center">
-								<td class="blockHeader" colspan="2">Armour Statistics</td>
+								<td class="blockHeader" colspan="2">Available Weapon</td>
 							</tr>
 							<tr align="center">
-								<td colspan="2"><div id="a_Name"></div></td>
+								<td colspan="2"><div id="l_Name"></div></td>
+							</tr>
+              <tr id="l_flavourTextHandle">
+                <td colspan="2"><div id="l_flavourText"></div></td>
+              </tr>
+              <tr>
+								<td>Level: </td>
+								<td><div id="l_Level"></div></td>
 							</tr>
 							<tr>
 								<td>Type: </td>
-								<td><div id="a_Type"></div></td>
+								<td><div id="l_Type"></div></td>
 							</tr>
 							<tr>
-								<td>Reduction: </td>
-								<td><div id="a_Str"></div></td>
+								<td>Speed: </td>
+								<td><div id="l_Speed"></div></td>
 							</tr>
 							<tr>
-								<td>Amplification: </td>
-								<td><div id="a_Weak"></div></td>
+								<td>Damage: </td>
+                <td><span id="l_minDamage"></span> - <span id="l_maxDamage"></span></td>
+							</tr>
+							<tr>
+								<td>DPS: </td>
+								<td><div id="l_DPS"></div></td>
 							</tr>
 							<tr>
 								<td>Durability: </td>
-								<td><div id="a_Decay"></div></td>
+								<td><div id="l_Decay"></div></td>
 							</tr>
-							<tr>
-								<td colspan="2">Armour Bonuses
-									<div id="w_Bonuses"></div>
-								</td>
-							</tr>
+              <tr>
+                <td colspan="2">
+                  <span class="bigButton" id="takeButton" onClick="Game.takeWeapon();">Claim</span>
+                </td>
+              </tr>
 						</table>
 					</td>
 					<td id="rightPanel" valign="top">
 						<table>
 							<tr>
 								<td>
-									<table id="coreTable" style="display:none;">
-										<tr>
-											<td>
-												<div>
-                          <span class="bigButton" id="combatButton" onClick="Game.startCombat();">Go Hunting</span>
-                          <span class="bigButton" id="repairButton" onClick="Game.startRepair();">Repair Weapon</span>
-                          <span class="bigButton" id="takeButton" onClick="Game.takeWeapon();">Take Weapon</span>
-												</div>
-												<div id="levelUpPanel">
-													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
-													<br />
-													<span><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
-												</div>
-											</td>
-										</tr>
-									</table>
 									<table id="combatTable" style="display:none;">
                     <tr>
                       <td>
@@ -200,6 +191,11 @@
                         </table>
 											</td>
 										</tr>
+                    <tr>
+                      <td id="oocActionBar" colspan="2">
+                        <span class="bigButton" id="combatButton" onClick="Game.startCombat();">Look for something to kill</span>
+                      </td>
+                    </tr>
 										<tr>
 											<td colspan="2">
                         <div class="powerHeader">Combat Log</div>
@@ -210,6 +206,14 @@
 									<table id="powersTable" style="display:none;">
 										<tr>
 											<td>
+                        <div id="levelUpPanel">
+													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
+													<br />
+													<span><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
+													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
+												</div>
 												<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
 													<tr id="selected_header">
 														<td colspan="2" class="powerHeader">
@@ -353,6 +357,6 @@
 			</table>
 		</div>
 		<div id="saveToast" class="savePopup" style="display:none;"><span>Game saved.</span></div>
-		<div class="footer">Realm of Decay &copy; <a href="mailto:martin@realmofdecay.net">Martin Hayward</a> (Psychemaster) 2014 - Version 0.1 beta UI Change</div>
+		<div class="footer">Realm of Decay &copy; <a href="mailto:martin@realmofdecay.net">Martin Hayward</a> (Psychemaster) 2014 - Version 0.21 alpha</div>
 	</body>
 </html>

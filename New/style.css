@@ -66,14 +66,14 @@ input {
 	font-size:28px;
 	font-weight:bold;
 }
-.playerInfo td, .weaponInfo td, .armourInfo td{
+.playerInfo td, .weaponInfo td, .lastWepInfo td{
 	width:50%;
 	text-align:center;
 }
-.playerInfo td:first-child, .weaponInfo td:first-child, .armourInfo td:first-child{
+.playerInfo td:first-child, .weaponInfo td:first-child, .lastWepInfo td:first-child{
 	text-align:right;
 }
-.playerInfo td:only-child, .weaponInfo td:only-child, .armourInfo td:only-child{
+.playerInfo td:only-child, .weaponInfo td:only-child, .lastWepInfo td:only-child{
 	text-align:center;
 }
 .titleBar {
@@ -147,10 +147,10 @@ input {
 	float:inherit;
 }
 .bigButton {
-  border: 3px solid #878787;
+  border: 2px outset #878787;
   border-radius: 10px;
-  font-size: 28px;
-  padding: 3px;
+  font-size: 24px;
+  padding: 0px 3px;
 }
 
 .q221 {
