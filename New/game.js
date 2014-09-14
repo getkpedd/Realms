@@ -194,7 +194,7 @@ Game.updateLeftPanel = function() {
     var ew_maxDamage = document.getElementById("l_maxDamage");
 		ew_maxDamage.innerHTML = Game.last_Weapon[5];
 		var ew_DPS = document.getElementById("l_DPS");
-		ew_DPS.innerHTML = Math.floor(Game.last_Weapon[6]);
+		ew_DPS.innerHTML = Game.last_Weapon[6];
     var ew_dura = document.getElementById("l_Decay");
     ew_dura.innerHTML = Game.last_Weapon[8];
 	}
