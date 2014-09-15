@@ -93,7 +93,7 @@
 								<td>Durability: </td>
 								<td><div id="w_Decay"></div></td>
 							</tr>
-              <tr>
+              <tr id="repairPanel">
                 <td colspan="2">
                   <span class="bigButton" id="repairButton" onClick="Game.startRepair();">Repair</span>
                 </td>
@@ -336,15 +336,19 @@
 											</td>
 										</tr>
 									</table>
-									<table id="inventoryTable"></table>
-									<table id="storeTable"></table>
+									<table id="inventoryTable" style="display:none;"></table>
+									<table id="storeTable"style="display:none;"></table>
 									<table id="miscTable" style="display:none;">
                     <tr>
                       <td>
+                        <span class="bigButton" onClick="Game.save();">Save Game</span>
+                        <span class="bigButton" onClick="Game.reset();">Reset Game</span>
+                        <!--
                         <div class="powerHeader">Autobattle Options:</div>
 												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
 												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
 												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>
+                        -->
                       </td>
                     </tr>
                   </table>

@@ -157,6 +157,9 @@ Game.updateLeftPanel = function() {
 	w_DPS.innerHTML = Game.p_Weapon[6];
 	var w_decay = document.getElementById("w_Decay");
 	var pp = document.getElementById("p_PP");
+  var rPanel = document.getElementById("repairPanel");
+  if(Game.p_State == Game.STATE_IDLE) { rPanel.style.display = ""; }
+  else { rPanel.style.display = "none"; }
 	pp.innerHTML = Game.p_PP;
 	w_decay.innerHTML = Game.p_Weapon[8];
   // Last enemy weapon
@@ -204,14 +207,17 @@ Game.updateLeftPanel = function() {
 }
 Game.updateCombatPanel = function() {
   var e_panel = document.getElementById("enemyInfo");
+  var ooc_panel = document.getElementById("oocActionBar");
 	switch(Game.p_State) {
 		case Game.STATE_IDLE:
       e_panel.style.display = "none";
+      ooc_panel.style.display = "";
       break;
       // Hide enemy panel
 		case Game.STATE_COMBAT:
 			// Enemy stat panel
       e_panel.style.display = "";
+      ooc_panel.style.display = "none";
       var e_name = document.getElementById("enemyName");
       e_name.innerHTML = "Generic Enemy Name";
 			var e_lv = document.getElementById("enemyLevel");
@@ -247,6 +253,7 @@ Game.updateCombatPanel = function() {
 			break;
 		case Game.STATE_REPAIR:
       e_panel.style.display = "none";
+      ooc_panel.style.display = "none";
 			break;
 	}
 }
@@ -414,7 +421,7 @@ Game.repairTick = function() {
 Game.idleHeal = function() {
 	if(Game.p_State != Game.STATE_COMBAT) {
 		Game.p_HP = Math.min(Game.p_HP + Game.p_Con,Game.p_MaxHP);
-		if(!Game.p_autoSaved && Game.p_HP == Game.p_MaxHP) {
+		if(!Game.p_autoSaved && Game.p_HP == Game.p_MaxHP && Game.p_State == Game.STATE_IDLE) {
 			Game.p_autoSaved = true;
 			Game.save();
 		}
