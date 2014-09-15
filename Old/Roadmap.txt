@@ -1,3 +1,26 @@
+Slated for Version 0.25 alpha
+-----------------------------
+
+Inventory and Upgrades
+----------------------
+
+ - An inventory tab containing an arbitrary number of weapons (20 as a first guess), which can be equipped, sold or scrapped as required.
+ - Selling a weapon generates an amount of currency based on the weapon's level and quality.
+ - Scrapping a weapon generates a number of 'Decay Spheres' - the amount based on weapon quality ONLY
+   - 0 spheres for POOR weapons
+   - 1-2 spheres for NORMAL weapons
+   - 2-3 spheres for GOOD weapons
+   - 3-5 spheres for GREAT weapons
+   - 7-10 spheres for AWESOME weapons
+
+The Store
+---------
+
+ - Enemies will drop currency based on their level and the level of their weapons. Bosses will drop twice as much as a normal enemy of the same level and weapon level.
+ - This currency can be spent to increase the level of a carried weapon, up to a cap dictated by the player's level and weapon quality. This will make weapons easier to keep for long periods.
+ - A combination of currency and 'Decay Spheres' can be used to increase a weapon's quality tier. This should be very costly on the sphere front.
+ - A small number of weapons will be available in the store for purchase with currency.
+
 Future Updates
 --------------
 
@@ -9,10 +32,6 @@ Armour System
  - Damage absorption will be capped at a percentage of damage taken.
  - Armour can decay like weapons do.
 
-Currency
- - Could be coins or something more post-apocalyptic (think bottle caps in Fallout).
- - Prices should be such that each level you gain enough currency to upgrade either your weapon or armour.
- - Gold gained from combat, and also from selling dropped enemy weapons and armour.
 
 Naming
  - The following things should be named:
@@ -23,13 +42,6 @@ Naming
    - Weapons
      - Depending on level, speed tier and weapon type
      - Named weapons are rare (and as such should command higher stats)
-
-Layout
- - A single column layout which contains a number of tabs:
-   - Main tab, which contains the actions a player can take
-   - Store tab, which allows the player to upgrade their items
-   - Combat tab, which contains the player/enemy stat outputs and combat log
- - Consider bootstrap (thanks /u/seiyria)
 
 Story (low priority)
  - Some way of motivating the player to actually play the game.

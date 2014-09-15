@@ -1,9 +1,9 @@
 Game = {};
 /*
 Changes in this version:
-  Balance change in weapon quality
-  Increased enemy scaling with level
+  Inventory!
 TODO:
+  inventory buttons
   Combat buttons on combat tab
 	A way to idle:
 		Initiate a battle at full health
@@ -14,7 +14,7 @@ TODO:
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.211; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.212; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -85,6 +85,8 @@ Game.init = function() {
 	this.e_DebuffStacks = 0;
 	this.last_Weapon = []; // Weapon to take
   this.activePanel = "";
+  this.p_Inventory = [];
+  this.updateInv = true;
 	this.showPanel("helpTable");
   if(!this.load()) {
  		this.initPlayer(1);
@@ -101,6 +103,8 @@ Game.drawActivePanel = function() {
       Game.updateCombatPanel(); break;
     case "powersTable":
       Game.updatePowersPanel(); break;
+    case "inventoryTable":
+      Game.updateInventoryPanel(); break;
   }
 }
 Game.updateLeftPanel = function() {
@@ -382,6 +386,67 @@ Game.updatePowersPanel = function() {
 		lvPanel.style.display = "none";
 	}
 }
+Game.updateInventoryPanel = function() {
+  if(Game.updateInv === true) {
+    var invPanel = document.getElementById("inventoryOut");
+    invPanel.innerHTML = "";
+    for(var x = 0; x < Game.p_Inventory.length; x++) {
+      // Table row
+      var inventoryObject = document.createElement("tr");
+      var leftAlign = document.createAttribute("style");
+      leftAlign.value = "text-align:left;";
+      inventoryObject.setAttributeNode(leftAlign);
+      var infopane = document.createElement("td");
+      var nameColor = document.createElement("span");
+      nameColor.className = "q" + Game.p_Inventory[x][7];
+      var flavourText = document.createElement("span");
+      if(Game.p_Inventory[x][7] >= Game.QUALITY_GREAT) {
+        var wepText = Game.p_Inventory[x][0].split("|");
+        nameColor.innerHTML = wepText[0];
+        flavourText.innerHTML = "<span style='font-style:italic;'> " + wepText[1] + "</span>";
+        flavourText.style.display = "";
+      } else {
+        nameColor.innerHTML = Game.p_Inventory[x][0];
+        flavourText.style.display = "none";
+      }
+      infopane.appendChild(nameColor);
+      infopane.appendChild(flavourText);
+      var weaponType = "";
+      switch(Game.p_Inventory[x][2]) {
+        case Game.WEAPON_MELEE:
+          weaponType = "Melee"; break;
+        case Game.WEAPON_RANGE:
+          weaponType = "Ranged"; break;
+        case Game.WEAPON_MAGIC:
+          weaponType = "Magic"; break;
+      }
+      var textContent = document.createTextNode(" (" + weaponType + ") - Level " + Game.p_Inventory[x][1] + " - " + Game.p_Inventory[x][4] + "-" + Game.p_Inventory[x][5] + " damage (" + Game.p_Inventory[x][6] + " DPS) - " + Game.p_Inventory[x][8] + " durability");
+      infopane.appendChild(document.createElement("br"));
+      infopane.appendChild(textContent);
+      inventoryObject.appendChild(infopane);
+      // Column for buttons
+      if(Game.p_State !== Game.STATE_REPAIR) {
+        var buttons = document.createElement("td");
+        var rightAlign = document.createAttribute("style");
+        rightAlign.value = "text-align:right;";
+        buttons.setAttributeNode(rightAlign);
+        var equipButton = document.createElement("span");
+        equipButton.className = "bigButton";
+        equipButton.onclick = function(a){ return function() { Game.equipWeapon(a); }; }(x);
+        equipButton.innerHTML = "Equip";
+        buttons.appendChild(equipButton);
+        var discardButton = document.createElement("span");
+        discardButton.className = "bigButton";
+        discardButton.onclick = function(a){ return function() { Game.discardWeapon(a); }; }(x);
+        discardButton.innerHTML = "Discard";
+        buttons.appendChild(discardButton);
+        inventoryObject.appendChild(buttons);
+      }
+      invPanel.appendChild(inventoryObject);
+    }
+    Game.updateInv = false;
+  }
+}
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
@@ -403,6 +468,7 @@ Game.startRepair = function() {
 		}
 		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
 	}
+  Game.updateInv = true;
 	Game.drawActivePanel();
 }
 Game.repairTick = function() {
@@ -410,6 +476,7 @@ Game.repairTick = function() {
 		Game.p_Weapon[8] = 50 + 5*(Game.p_Weapon[1]-1);
 		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Weapon[8]*=2; }
 		Game.p_State = Game.STATE_IDLE;
+    Game.updateInv = true;
 		window.clearInterval(Game.p_RepairInterval);
 	}
 	else {
@@ -671,8 +738,11 @@ Game.buyPower = function(power) {
 	Game.drawActivePanel();
 }
 Game.takeWeapon = function() {
-	Game.p_Weapon = Game.last_Weapon.slice(0);
-	Game.last_Weapon = [];
+  if(Game.p_Inventory.length < 20) {
+    Game.p_Inventory.push(Game.last_Weapon.slice(0));
+    Game.last_Weapon = [];
+  }
+  Game.updateInv = true;
 	Game.drawActivePanel();
 }
 Game.addStat = function(stat) {
@@ -760,7 +830,7 @@ Game.load = function() {
 		g = null;
 		console.log("Failed to load save. Is localStorage a thing on this browser?");
 	}
-	if(g !== null && g.GAME_VERSION == 0.211) {
+	if(g !== null && g.GAME_VERSION == 0.212) {
 		Game.p_HP = g.p_HP;
 		Game.p_MaxHP = g.p_MaxHP;
 		Game.p_Str = g.p_Str;
@@ -774,11 +844,25 @@ Game.load = function() {
 		Game.p_State = g.p_State;
 		Game.p_PP = g.p_PP;
 		Game.p_SkillPoints = g.p_SkillPoints;
+    Game.p_Inventory = g.p_Inventory
 		Game.p_Weapon = g.p_Weapon;
 		Game.last_Weapon = g.last_Weapon;
 		return true;
 	}
 	else { return false; }
+}
+Game.equipWeapon = function(index) {
+  var currentWep = Game.p_Weapon.slice(0);
+  var newWep = Game.p_Inventory[index].slice(0);
+  Game.p_Weapon = newWep.slice(0);
+  Game.p_Inventory[index] = currentWep.slice(0);
+  Game.updateInv = true;
+  Game.drawActivePanel();
+}
+Game.discardWeapon = function(index) {
+  Game.p_Inventory.splice(index,1);
+  Game.updateInv = true;
+  Game.drawActivePanel();
 }
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
