@@ -4,24 +4,47 @@ body {
 body * {
 	font-family:sans-serif;
 	font-size:12px;
+	color:#b0b0b0;
+}
+input {
+	color:#000000;
 }
 #main {
 	width:900px;
 	margin-left:auto;
 	margin-right:auto;
 	padding-bottom:20px;
+	z-index:5;
 }
-.playerPanel table, .enemyPanel table, .centerPanel table {
+#leftPanel > table, #rightPanel > table, .titleBar{
 	background: #660000;
-	border-radius: 10px 10px 10px 10px;
-	-moz-border-radius: 10px 10px 10px 10px;
-	-webkit-border-radius: 10px 10px 10px 10px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	border: 5px outset #666666;
 	min-width:200px;
 	width:100%;
 	text-align:center;
 	color:#b0b0b0;
-	margin-bottom:10px;
+	margin-bottom:15px;
+	position: relative;
+	z-index: 5;
+}
+#rightPanel table{
+	width:100%;
+}
+.tabBar {
+	z-index:3;
+}
+.tabButton {
+	background: #660000;
+	border-radius: 15px 15px 0px 0px;
+	-moz-border-radius: 15px 15px 0px 0px;
+	-webkit-border-radius: 15px 15px 0px 0px;
+	border: 4px outset #666666;
+	padding: 6px;
+	position: relative;
+	z-index:4;
 }
 .centerPanel td {
 	padding-bottom:3px;
@@ -43,14 +66,18 @@ body * {
 	font-size:28px;
 	font-weight:bold;
 }
-.playerPanel {
-	width:200px;
-}
-.playerPanel td, .enemyPanel td, .lastEnemyWeapon td {
+.playerInfo td, .weaponInfo td, .lastWepInfo td{
 	width:50%;
+	text-align:center;
 }
-.topPanel td{
-	font-size:40px;
+.playerInfo td:first-child, .weaponInfo td:first-child, .lastWepInfo td:first-child{
+	text-align:right;
+}
+.playerInfo td:only-child, .weaponInfo td:only-child, .lastWepInfo td:only-child{
+	text-align:center;
+}
+.titleBar {
+	width:100%;
 }
 .blockHeader {
 	font-size:16px;
@@ -61,6 +88,88 @@ body * {
 	bottom:0;
 	text-align:center;
 	width:100%;
+	margin-left:auto;
+	margin-right:auto;
 	background:#000000;
 	color:#b0b0b0;
+}
+.savePopup {
+	position:fixed;
+	bottom:35px;
+	text-align:center;
+	width:100%;
+	margin-left:auto;
+	margin-right:auto;
+	color:#b0b0b0;
+	z-index:10;
+}
+.savePopup > span {
+	padding:5px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border: 5px outset #666666;
+	background: #660000;
+}
+.playerHPBorder {
+	border: 2px outset #666666;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	z-index:9;
+	width:300px;
+	height:15px;
+	float:left;
+	text-align:left;
+	position:relative;
+}
+.enemyHPBorder {
+	border: 2px outset #666666;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	z-index:9;
+	width:300px;
+	height:15px;
+	float:right;
+	text-align:right;
+	position:relative;
+}
+.playerHPBar, .enemyHPBar {
+	position:relative;
+	z-index:8;
+	height:15px;
+}
+#playerHPBarText, #enemyHPBarText {
+	font-size:10px;
+	padding: 1px 3px;
+	vertical-align:middle;
+	float:inherit;
+}
+.bigButton {
+  border: 2px outset #878787;
+  border-radius: 10px;
+  font-size: 24px;
+  padding: 0px 3px;
+}
+
+.q221 {
+  color:#808080;
+  font-weight:bold;
+}
+.q222 {
+  color:#ffffff;
+  font-weight:bold;
+}
+.q223 {
+  color:#33cc33;
+  font-weight:bold;
+}
+.q224 {
+  color:#4d94ff;
+  font-weight:bold;
+}
+.q225 {
+  color:#e600e6;
+  font-weight:bold;
 }
