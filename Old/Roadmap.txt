@@ -6,19 +6,19 @@ Inventory and Upgrades
 
  - An inventory tab containing an arbitrary number of weapons (20 as a first guess), which can be equipped, sold or scrapped as required.
  - Selling a weapon generates an amount of currency based on the weapon's level and quality.
- - Scrapping a weapon generates a number of 'Decay Spheres' - the amount based on weapon quality ONLY
-   - 0 spheres for POOR weapons
-   - 1-2 spheres for NORMAL weapons
-   - 2-3 spheres for GOOD weapons
-   - 3-5 spheres for GREAT weapons
-   - 7-10 spheres for AWESOME weapons
+ - Scrapping a weapon generates an amount of scrap - the amount based on weapon quality ONLY
+   - 0 scrap for POOR weapons
+   - 1-2 scrap for NORMAL weapons
+   - 2-3 scrap for GOOD weapons
+   - 3-5 scrap for GREAT weapons
+   - 7-10 scrap for AWESOME weapons
 
 The Store
 ---------
 
  - Enemies will drop currency based on their level and the level of their weapons. Bosses will drop twice as much as a normal enemy of the same level and weapon level.
  - This currency can be spent to increase the level of a carried weapon, up to a cap dictated by the player's level and weapon quality. This will make weapons easier to keep for long periods.
- - A combination of currency and 'Decay Spheres' can be used to increase a weapon's quality tier. This should be very costly on the sphere front.
+ - A combination of currency and scrap can be used to increase a weapon's quality tier. This should be very costly on the scrap front.
  - A small number of weapons will be available in the store for purchase with currency.
 
 Future Updates

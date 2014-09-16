@@ -2,19 +2,21 @@ Game = {};
 /*
 Changes in this version:
   Inventory!
+  Currency and Scrap resource output
 TODO:
-  inventory buttons
+  Inventory buttons
+  Store tab
+  Help tab
   Combat buttons on combat tab
 	A way to idle:
 		Initiate a battle at full health
 		After a battle, take enemy weapon if it has better DPS
 		Don't assign skill or power points
-  All those flashy interface tabs
   Revamp powers
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.212; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.214; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -73,6 +75,8 @@ Game.init = function() {
 	this.p_autoSaved = false;
 	this.p_RepairInterval = null;
   this.p_RepairValue = 0;
+  this.p_Currency = 0;
+  this.p_Scrap = 0;
 	this.p_IdleInterval = null;
 	this.combat_enemyInterval = null;
   this.combat_playerInterval = null;
@@ -126,6 +130,10 @@ Game.updateLeftPanel = function() {
 	intel.innerHTML = Game.p_Int;
 	var con = document.getElementById("p_Con");
 	con.innerHTML = Game.p_Con;
+  var currency = document.getElementById("CurrencyOut");
+  currency.innerHTML = Game.p_Currency;
+  var scrap = document.getElementById("ScrapOut");
+  scrap.innerHTML = Game.p_Scrap;
 	// Player weapon
 	var w_name = document.getElementById("w_Name");
   w_name.className = "q" + Game.p_Weapon[7];
@@ -830,7 +838,7 @@ Game.load = function() {
 		g = null;
 		console.log("Failed to load save. Is localStorage a thing on this browser?");
 	}
-	if(g !== null && g.GAME_VERSION == 0.212) {
+	if(g !== null && g.GAME_VERSION == 0.214) {
 		Game.p_HP = g.p_HP;
 		Game.p_MaxHP = g.p_MaxHP;
 		Game.p_Str = g.p_Str;
@@ -843,6 +851,8 @@ Game.load = function() {
 		Game.p_Level = g.p_Level;
 		Game.p_State = g.p_State;
 		Game.p_PP = g.p_PP;
+    Game.p_Currency = g.p_Currency;
+    Game.p_Scrap = g.p_Scrap;
 		Game.p_SkillPoints = g.p_SkillPoints;
     Game.p_Inventory = g.p_Inventory
 		Game.p_Weapon = g.p_Weapon;
@@ -856,6 +866,10 @@ Game.equipWeapon = function(index) {
   var newWep = Game.p_Inventory[index].slice(0);
   Game.p_Weapon = newWep.slice(0);
   Game.p_Inventory[index] = currentWep.slice(0);
+  if(Game.p_State == Game.STATE_COMBAT && Game.e_DebuffStacks > 0) {
+    Game.e_DebuffStacks = 0;
+    Game.combatLog("player","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
+  }
   Game.updateInv = true;
   Game.drawActivePanel();
 }
