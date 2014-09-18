@@ -205,8 +205,14 @@
                         </table>
 											</td>
 										</tr>
-                    <tr>
-                      <td id="oocActionBar" colspan="2">
+                    <tr id="combatActionBar">
+                      <td colspan="2">
+                        <span class="bigButton" id="specialButton" onClick="Game.specialAttack();">Use special attack</span>
+                        <span class="bigButton" id="fleeButton" onClick="Game.fleeCombat();">Flee from battle</span>
+                      </td>
+                    </tr>
+                    <tr id="oocActionBar">
+                      <td colspan="2">
                         <span class="bigButton" id="combatButton" onClick="Game.startCombat();">Look for something to kill</span>
                       </td>
                     </tr>

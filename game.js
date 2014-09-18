@@ -3,11 +3,11 @@ Game = {};
 Changes in this version:
   Inventory!
   Currency and Scrap resource output
+  Combat buttons on combat tab
 TODO:
   Inventory buttons
   Store tab
   Help tab
-  Combat buttons on combat tab
 	A way to idle:
 		Initiate a battle at full health
 		After a battle, take enemy weapon if it has better DPS
@@ -220,16 +220,19 @@ Game.updateLeftPanel = function() {
 Game.updateCombatPanel = function() {
   var e_panel = document.getElementById("enemyInfo");
   var ooc_panel = document.getElementById("oocActionBar");
+  var ic_panel = document.getElementById("combatActionBar");
 	switch(Game.p_State) {
 		case Game.STATE_IDLE:
       e_panel.style.display = "none";
       ooc_panel.style.display = "";
+      ic_panel.style.display = "none";
       break;
       // Hide enemy panel
 		case Game.STATE_COMBAT:
 			// Enemy stat panel
       e_panel.style.display = "";
       ooc_panel.style.display = "none";
+      ic_panel.style.display = "";
       var e_name = document.getElementById("enemyName");
       e_name.innerHTML = "Generic Enemy Name";
 			var e_lv = document.getElementById("enemyLevel");
@@ -266,6 +269,7 @@ Game.updateCombatPanel = function() {
 		case Game.STATE_REPAIR:
       e_panel.style.display = "none";
       ooc_panel.style.display = "none";
+      ic_panel.style.display = "none";
 			break;
 	}
 }
@@ -455,6 +459,7 @@ Game.updateInventoryPanel = function() {
     Game.updateInv = false;
   }
 }
+Game.updateStorePanel = function() {}
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
@@ -643,31 +648,32 @@ Game.enemyCombatTick = function() {
 	Game.drawActivePanel();
 }
 Game.specialAttack = function() {
-	Game.p_specUsed = true;
-	switch(Game.p_Weapon[2]) {
-		case Game.WEAPON_MELEE:
-			// Bloodthirst: Heal 10% per stack
-			var healAmount = Math.floor(Game.p_MaxHP/10)*Game.e_DebuffStacks;
-			Game.p_HP = Math.min(Game.p_MaxHP, Game.p_HP + healAmount);
-			Game.combatLog("player","<strong>Bloodthirst</strong> healed for <strong>" + healAmount + "</strong>.");
-			break;
-		case Game.WEAPON_RANGE:
-			// Power Shot: Deal 10% per stack
-			var dmgAmount = Math.floor(Game.e_MaxHP/10)*Game.e_DebuffStacks;
-			Game.e_HP = Math.max(0, Game.e_HP - dmgAmount);
-			Game.combatLog("player","<strong>Power Shot</strong> hit for <strong>" + dmgAmount + "</strong>.");
-			if(Game.e_HP <= 0) { Game.endCombat(); }
-			break;
-		case Game.WEAPON_MAGIC:
-			// Wild Magic: Fire one attack per stack
-			Game.combatLog("player","<strong>Wild Magic</strong> activated!");
-			for(var x = Game.e_DebuffStacks; x > 0; x--) { Game.playerCombatTick(); }
-			if(Game.e_HP > 0) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); }
-			break;
-	}
-	Game.e_DebuffStacks = 0;
-	Game.p_specUsed = false;
-	// Perform a special function based on weapon type and debuff stacks.
+  if(Game.e_DebuffStacks > 0) {
+	  Game.p_specUsed = true;
+    switch(Game.p_Weapon[2]) {
+      case Game.WEAPON_MELEE:
+        // Bloodthirst: Heal 10% per stack
+        var healAmount = Math.floor(Game.p_MaxHP/10)*Game.e_DebuffStacks;
+        Game.p_HP = Math.min(Game.p_MaxHP, Game.p_HP + healAmount);
+        Game.combatLog("player","<strong>Bloodthirst</strong> healed for <strong>" + healAmount + "</strong>.");
+        break;
+      case Game.WEAPON_RANGE:
+        // Power Shot: Deal 10% per stack
+        var dmgAmount = Math.floor(Game.e_MaxHP/10)*Game.e_DebuffStacks;
+        Game.e_HP = Math.max(0, Game.e_HP - dmgAmount);
+        Game.combatLog("player","<strong>Power Shot</strong> hit for <strong>" + dmgAmount + "</strong>.");
+        if(Game.e_HP <= 0) { Game.endCombat(); }
+        break;
+      case Game.WEAPON_MAGIC:
+        // Wild Magic: Fire one attack per stack
+        Game.combatLog("player","<strong>Wild Magic</strong> activated!");
+        for(var x = Game.e_DebuffStacks; x > 0; x--) { Game.playerCombatTick(); }
+        if(Game.e_HP > 0) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); }
+        break;
+    }
+    Game.e_DebuffStacks = 0;
+    Game.p_specUsed = false;
+  }
 }
 Game.fleeCombat = function() {
 	window.clearTimeout(Game.combat_playerInterval);
