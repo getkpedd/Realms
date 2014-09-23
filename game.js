@@ -42,6 +42,7 @@ Game.init = function() {
 	this.BOOST_DOUBLE = 113; // Flurry
 	this.BOOST_SHIELD = 114; // Divine Shield
 	this.BOOST_CONSERVE = 115; // Proper Care
+  this.BOOST_CURRENCY = 116; // Pickpocket
 	//Weapon Types
 	this.WEAPON_MELEE = 201;
 	this.WEAPON_RANGE = 202;
@@ -109,6 +110,8 @@ Game.drawActivePanel = function() {
       Game.updatePowersPanel(); break;
     case "inventoryTable":
       Game.updateInventoryPanel(); break;
+    case "storeTable":
+      Game.updateStorePanel(); break;
   }
 }
 Game.updateLeftPanel = function() {
@@ -326,6 +329,9 @@ Game.updatePowersPanel = function() {
 				case Game.BOOST_CONSERVE: // Proper Care
 					targetControl = document.getElementById("conserve");
 					break;
+        case Game.BOOST_CURRENCY: // Pickpocket
+					targetControl = document.getElementById("currency");
+					break;
 			}
 			targetControl.style.display = "none";
 		}
@@ -381,6 +387,9 @@ Game.updatePowersPanel = function() {
 					break;
 				case Game.BOOST_CONSERVE: // Proper Care
 					targetControl = document.getElementById("selected_conserve");
+					break;
+        case Game.BOOST_CURRENCY: // Proper Care
+					targetControl = document.getElementById("selected_currency");
 					break;
 			}
 			targetControl.style.display = "";
@@ -459,7 +468,10 @@ Game.updateInventoryPanel = function() {
     Game.updateInv = false;
   }
 }
-Game.updateStorePanel = function() {}
+Game.updateStorePanel = function() {
+  var lUPCost = document.getElementById("levelUpgradeCost");
+  lUPCost.innerHTML = Math.floor(100 + Math.pow(1.08,Game.p_Weapon[1]));
+}
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
@@ -692,9 +704,13 @@ Game.endCombat = function() {
 		Game.combatLog("","You won!");
 		Game.last_Weapon = Game.e_Weapon.slice();
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
+    var currencyToAdd = xpToAdd;
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
 		Game.combatLog("","You gained <strong>" + xpToAdd + "</strong> experience.");
+		if(Game.hasPower(Game.BOOST_CURRENCY)) { currencyToAdd = Math.floor(currencyToAdd*1.2); }
+		Game.combatLog("","You gained <strong>" + currencyToAdd + "</strong> seeds.");
 		Game.p_EXP += xpToAdd;
+    Game.p_Currency += currencyToAdd;
 		if(Game.p_EXP >= Game.p_NextEXP) {
 			Game.levelUp();
 		}
@@ -1015,6 +1031,56 @@ Game.getWeaponName = function(type,quality,speedTier) {
   } else {
     var qualityState = Game.qualityDescriptors[quality-Game.QUALITY_POOR];
     return (qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim();
+  }
+}
+Game.upgradeWeaponLevel = function(weapon) {
+  weapon[1]++;
+  var qualityMult = 1.0;
+  switch(weapon[7]) {
+    case Game.QUALITY_POOR:
+      qualityMult = 0.8; break;
+    case Game.QUALITY_GOOD:
+      qualityMult = 1.1; break;
+    case Game.QUALITY_GREAT:
+      qualityMult = 1.2; break;
+    case Game.QUALITY_AMAZING:
+      qualityMult = 1.4; break;
+  }
+  switch(weapon[3]) {
+    case 1.6:
+    case 1.7:
+    case 1.8:
+    case 1.9:
+    case 2.0:
+      weapon[4] = Math.floor(weapon[4]+1.7*qualityMult);
+      weapon[5] = Math.floor(weapon[5]+2.3*qualityMult);
+      break;
+    case 2.1:
+    case 2.2:
+    case 2.3:
+    case 2.4:
+    case 2.5:
+      weapon[4] = Math.floor(weapon[4]+2.1*qualityMult);
+      weapon[5] = Math.floor(weapon[5]+2.9*qualityMult);
+      break;
+    case 2.6:
+    case 2.7:
+    case 2.8:
+    case 2.9:
+    case 3.0:
+      weapon[4] = Math.floor(weapon[4]+2.5*qualityMult);
+      weapon[5] = Math.floor(weapon[5]+3.5*qualityMult);
+      break;
+  }
+  weapon[6] = Math.floor((weapon[4] + weapon[5])/2/weapon[3]*100)/100;
+  return weapon;
+}
+Game.buyWeaponLevelUpgrade = function() {
+  var upgradeCost = Math.floor(100 + Math.pow(1.08,Game.p_Weapon[1]));
+  if(Game.p_Currency >= upgradeCost) {
+    Game.p_Currency -= upgradeCost;
+    Game.upgradeWeaponLevel(Game.p_Weapon);
+    Game.drawActivePanel();
   }
 }
 Game.hasPower = function(power) {

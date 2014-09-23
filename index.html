@@ -65,7 +65,7 @@
                 <td>&nbsp;</td>
               </tr>
               <tr>
-                <td>Currency: </td>
+                <td>Seeds: </td>
                 <td><div id="CurrencyOut"></div></td>
               </tr>
               <tr>
@@ -286,6 +286,9 @@
 													<tr id="selected_shield" style="display:none">
 														<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
 													</tr>
+                          <tr id="selected_currency" style="display:none">
+														<td width="80%"><div class="powerName">Pickpocket</div>Grants 20% more seeds from defeated enemies.</td>
+													</tr>
 												</table>
 												<table id="availablePowers" class="availablePowersPanel">
 													<tr>
@@ -353,6 +356,10 @@
 														<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
 														<td width="20%"><input type="button" id="buy_Shield" onClick="Game.buyPower(Game.BOOST_SHIELD);" value="Activate"></td>
 													</tr>
+                          <tr id="currency">
+														<td width="80%"><div class="powerName">Pickpocket</div>Grants 20% more seeds from defeated enemies.</td>
+														<td width="20%"><input type="button" id="buy_Currency" onClick="Game.buyPower(Game.BOOST_CURRENCY);" value="Activate"></td>
+													</tr>
 												</table>
 											</td>
 										</tr>
@@ -369,7 +376,14 @@
                       </td>
                     </tr>
                   </table>
-									<table id="storeTable"style="display:none;"></table>
+									<table id="storeTable"style="display:none;">
+                    <tr>
+                      <td>
+                        Increase Weapon Level for <span id="levelUpgradeCost"></span> seeds
+                      </td>
+                      <td><span class="bigButton" onClick="Game.buyWeaponLevelUpgrade();">Upgrade</span></td>
+                    </tr>
+                  </table>
 									<table id="miscTable" style="display:none;">
                     <tr>
                       <td>
