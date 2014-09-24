@@ -456,6 +456,11 @@ Game.updateInventoryPanel = function() {
         equipButton.onclick = function(a){ return function() { Game.equipWeapon(a); }; }(x);
         equipButton.innerHTML = "Equip";
         buttons.appendChild(equipButton);
+        var sellButton = document.createElement("span");
+        sellButton.className = "bigButton";
+        sellButton.onclick = function(a){ return function() { Game.sellWeapon(a); }; }(x);
+        sellButton.innerHTML = "Sell";
+        buttons.appendChild(sellButton);
         var discardButton = document.createElement("span");
         discardButton.className = "bigButton";
         discardButton.onclick = function(a){ return function() { Game.discardWeapon(a); }; }(x);
@@ -470,7 +475,7 @@ Game.updateInventoryPanel = function() {
 }
 Game.updateStorePanel = function() {
   var lUPCost = document.getElementById("levelUpgradeCost");
-  lUPCost.innerHTML = Math.floor(100 + Math.pow(1.08,Game.p_Weapon[1]));
+  lUPCost.innerHTML = Math.floor(100 * Math.pow(1.12,Game.p_Weapon[1]));
 }
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
@@ -900,6 +905,13 @@ Game.discardWeapon = function(index) {
   Game.updateInv = true;
   Game.drawActivePanel();
 }
+Game.sellWeapon = function(index) {
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_Inventory[index][1]));
+  Game.p_Inventory.splice(index,1);
+  Game.updateInv = true;
+  Game.p_Currency += salePrice;
+  Game.drawActivePanel();
+}
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
 	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay]
@@ -1076,7 +1088,7 @@ Game.upgradeWeaponLevel = function(weapon) {
   return weapon;
 }
 Game.buyWeaponLevelUpgrade = function() {
-  var upgradeCost = Math.floor(100 + Math.pow(1.08,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(100 * Math.pow(1.12,Game.p_Weapon[1]));
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
     Game.upgradeWeaponLevel(Game.p_Weapon);
