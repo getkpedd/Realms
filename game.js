@@ -527,8 +527,8 @@ Game.repairTick = function() {
 		window.clearInterval(Game.p_RepairInterval);
 	}
 	else {
-		Game.p_RepairValue-=1;
     Game.toastNotification("Ticks to repair: " + Game.p_RepairValue);
+		Game.p_RepairValue-=1;
 		Game.p_State = Game.STATE_REPAIR;
 	}
 	Game.drawActivePanel();
