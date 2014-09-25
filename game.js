@@ -1,12 +1,16 @@
 Game = {};
 /*
 Changes in this version:
-  Inventory!
-  Currency and Scrap resource output
-  Combat buttons on combat tab
+  Selling and scrapping weapons.
+  Upgrade weapon level.
+  Toast notifications for some events.
+  Flurry infinite chain prevention
+  Double XP/seeds for boss kills
+  Active tab preserved on save
 TODO:
-  Inventory buttons
-  Store tab
+  Enemy names
+  Upgrade weapon quality
+  Add additional buffs to weapons
   Help tab
 	A way to idle:
 		Initiate a battle at full health
@@ -73,7 +77,7 @@ Game.init = function() {
 	this.p_Weapon = []; // Player weapon.
 	this.p_State = Game.STATE_IDLE; // Player states
 	this.p_specUsed = false;
-	this.p_autoSaved = false;
+	this.p_autoSaved = true;
 	this.p_RepairInterval = null;
   this.p_RepairValue = 0;
   this.p_Currency = 0;
@@ -81,6 +85,7 @@ Game.init = function() {
 	this.p_IdleInterval = null;
 	this.combat_enemyInterval = null;
   this.combat_playerInterval = null;
+  this.toastTimer = null;
 	// Enemy variables
 	this.e_HP = 0; this.e_MaxHP = 0;
 	this.e_Str = 0; this.e_Dex = 0;
@@ -92,11 +97,16 @@ Game.init = function() {
   this.activePanel = "";
   this.p_Inventory = [];
   this.updateInv = true;
-	this.showPanel("helpTable");
+  this.flurryActive = false;
   if(!this.load()) {
  		this.initPlayer(1);
+    this.showPanel("helpTable");
  		this.save();
  	}
+  else {
+    this.showPanel(this.activePanel);
+    this.toastNotification("Game loaded.");
+  }
 	if(Game.p_State != Game.STATE_COMBAT) { Game.idleHeal(); }
 	this.drawActivePanel();
 }
@@ -461,6 +471,11 @@ Game.updateInventoryPanel = function() {
         sellButton.onclick = function(a){ return function() { Game.sellWeapon(a); }; }(x);
         sellButton.innerHTML = "Sell";
         buttons.appendChild(sellButton);
+        var scrapButton = document.createElement("span");
+        scrapButton.className = "bigButton";
+        scrapButton.onclick = function(a){ return function() { Game.scrapWeapon(a); }; }(x);
+        scrapButton.innerHTML = "Scrap";
+        buttons.appendChild(scrapButton);
         var discardButton = document.createElement("span");
         discardButton.className = "bigButton";
         discardButton.onclick = function(a){ return function() { Game.discardWeapon(a); }; }(x);
@@ -475,7 +490,7 @@ Game.updateInventoryPanel = function() {
 }
 Game.updateStorePanel = function() {
   var lUPCost = document.getElementById("levelUpgradeCost");
-  lUPCost.innerHTML = Math.floor(100 * Math.pow(1.12,Game.p_Weapon[1]));
+  lUPCost.innerHTML = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
 }
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
@@ -613,11 +628,13 @@ Game.playerCombatTick = function() {
 		if(Game.e_HP > 0) {
 			var timerLength = 1000*Game.p_Weapon[3];
 			if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
-			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1) {
+			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1 && !Game.flurryActive) {
+        Game.flurryActive = true;
 				Game.combatLog("player","<strong>Flurry</strong> activated for an additional strike!");
 				Game.playerCombatTick();
 			}
 			else {
+        Game.flurryActive = false;
 				window.clearTimeout(Game.combat_playerInterval);
 				Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength);
 			}
@@ -711,8 +728,10 @@ Game.endCombat = function() {
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
     var currencyToAdd = xpToAdd;
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
+    if(Game.e_isBoss) { xpToAdd *= 2; }
 		Game.combatLog("","You gained <strong>" + xpToAdd + "</strong> experience.");
 		if(Game.hasPower(Game.BOOST_CURRENCY)) { currencyToAdd = Math.floor(currencyToAdd*1.2); }
+    if(Game.e_isBoss) { currencyToAdd *= 2; }
 		Game.combatLog("","You gained <strong>" + currencyToAdd + "</strong> seeds.");
 		Game.p_EXP += xpToAdd;
     Game.p_Currency += currencyToAdd;
@@ -851,9 +870,15 @@ Game.reset = function() {
 Game.save = function() {
 	var g = JSON.stringify(Game);
 	window.localStorage.setItem("gameSave",g);
-	var saveToast = document.getElementById("saveToast");
-	saveToast.style.display = "";
-	window.setTimeout(function() { 	var saveToast = document.getElementById("saveToast"); saveToast.style.display = "none"; },3000);
+  Game.toastNotification("Game saved.");
+}
+Game.toastNotification = function(message) {
+  if(Game.toastTimer !== null) { window.clearTimeout(Game.toastTimer); }
+  var toastFrame = document.getElementById("saveToast");
+  var toast = document.getElementById("toastContent");
+  toast.innerHTML = message;
+  toastFrame.style.display = "";
+  Game.toastTimer = window.setTimeout(function() { 	var saveToast = document.getElementById("saveToast"); saveToast.style.display = "none"; },3000);
 }
 Game.load = function() {
 	//localStorage yeeeeee
@@ -884,6 +909,7 @@ Game.load = function() {
     Game.p_Inventory = g.p_Inventory
 		Game.p_Weapon = g.p_Weapon;
 		Game.last_Weapon = g.last_Weapon;
+    Game.activePanel = g.activePanel;
 		return true;
 	}
 	else { return false; }
@@ -898,18 +924,49 @@ Game.equipWeapon = function(index) {
     Game.combatLog("player","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
   }
   Game.updateInv = true;
+  Game.toastNotification("Equipped " + Game.p_Weapon[0] + ".");
   Game.drawActivePanel();
 }
 Game.discardWeapon = function(index) {
+  var thrownWepName = Game.p_Inventory[index][0];
   Game.p_Inventory.splice(index,1);
   Game.updateInv = true;
+  Game.toastNotification(thrownWepName + " tossed away.");
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index) {
   var salePrice = Math.floor(25*Math.pow(1.1,Game.p_Inventory[index][1]));
+  var soldWepName = Game.p_Inventory[index][0];
   Game.p_Inventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Currency += salePrice;
+  Game.toastNotification(soldWepName + " sold for " + salePrice + " seeds.");
+  Game.drawActivePanel();
+}
+Game.scrapWeapon = function(index) {
+  var salePrice = 0;
+  var scrappedWepName = Game.p_Inventory[index][0];
+  switch(Game.p_Inventory[index][7]) {
+    case Game.QUALITY_AMAZING:
+      salePrice = Game.RNG(7,10);
+      break;
+    case Game.QUALITY_GREAT:
+      salePrice = Game.RNG(4,6);
+      break;
+    case Game.QUALITY_GOOD:
+      salePrice = Game.RNG(2,3);
+      break;
+    case Game.QUALITY_NORMAL:
+      salePrice = Game.RNG(1,2);
+      break;
+    case Game.QUALITY_POOR:
+      salePrice = Game.RNG(0,1);
+      break;
+  }
+  Game.p_Inventory.splice(index,1);
+  Game.updateInv = true;
+  Game.p_Scrap += salePrice;
+  Game.toastNotification(scrappedWepName + " converted into " + salePrice + " scrap.");
   Game.drawActivePanel();
 }
 Game.makeWeapon = function(level) {
@@ -1088,10 +1145,11 @@ Game.upgradeWeaponLevel = function(weapon) {
   return weapon;
 }
 Game.buyWeaponLevelUpgrade = function() {
-  var upgradeCost = Math.floor(100 * Math.pow(1.12,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
     Game.upgradeWeaponLevel(Game.p_Weapon);
+    Game.toastNotification("Weapon level upgraded.");
     Game.drawActivePanel();
   }
 }
