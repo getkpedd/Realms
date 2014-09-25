@@ -514,6 +514,7 @@ Game.startRepair = function() {
 		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
 	}
   Game.updateInv = true;
+  Game.toastNotification("Repairing weapon...");
 	Game.drawActivePanel();
 }
 Game.repairTick = function() {
@@ -521,11 +522,13 @@ Game.repairTick = function() {
 		Game.p_Weapon[8] = 50 + 5*(Game.p_Weapon[1]-1);
 		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Weapon[8]*=2; }
 		Game.p_State = Game.STATE_IDLE;
+    Game.toastNotification("Weapon repaired.");
     Game.updateInv = true;
 		window.clearInterval(Game.p_RepairInterval);
 	}
 	else {
 		Game.p_RepairValue-=1;
+    Game.toastNotification("Ticks to repair: " + Game.p_RepairValue);
 		Game.p_State = Game.STATE_REPAIR;
 	}
 	Game.drawActivePanel();
