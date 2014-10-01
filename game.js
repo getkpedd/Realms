@@ -1,16 +1,27 @@
 Game = {};
 /*
 Changes in this version:
-  Selling and scrapping weapons.
-  Upgrade weapon level.
-  Toast notifications for some events.
-  Flurry infinite chain prevention
-  Double XP/seeds for boss kills
-  Active tab preserved on save
+  Amazing weapons now have 130% of normal stats (down from 140%)
+  Poor weapons now have 90% of normal stats (up from 80%)
+  Weapon upgrade cost now scales with weapon quality
+  Weapon sale price now scales with weapon quality
+  Weapons now guarantee an extra relevant stat point on level up
+  Items dropped by enemies are now shown in the inventory window.
+  Fix: Weapon speeds now show in inventory
+  Fix: Great/Amazing weapon names display properly when selling/scrapping
+  Fix: Repair not required messages show properly
+  Players and enemies now come with armour:
+    Armour provides a flat damage reduction against some combat styles.
+    Armour also carries weaknesses to some combat styles.
+    Strengths and weaknesses are flat increases and reductions.
+    Quality increases the amount and power of strengths, and removes vulnerabilities.
 TODO:
+  IMPORTANT: Range debuff is now OP as hell, nerf!!!!
+  Armour names + prefixes
+  Rewrite save function
+  Debuff + special revamp
   Enemy names
   Upgrade weapon quality
-  Add additional buffs to weapons
   Help tab
 	A way to idle:
 		Initiate a battle at full health
@@ -20,7 +31,7 @@ TODO:
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.214; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.216; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -55,6 +66,23 @@ Game.init = function() {
 	this.WSPEED_SLOW = 211;
 	this.WSPEED_MID = 212;
 	this.WSPEED_FAST = 213;
+  // Armour strengths
+  this.ARMOUR_STR_MELEE = 231;
+  this.ARMOUR_STR_RANGE = 232;
+  this.ARMOUR_STR_MAGIC = 233;
+  // Armour vulnerabilities
+  this.ARMOUR_VULN_MELEE = 234;
+  this.ARMOUR_VULN_RANGE = 235;
+  this.ARMOUR_VULN_MAGIC = 236;
+  // Debuff types
+  this.DEBUFF_SHRED = 241;
+  this.DEBUFF_MULTI = 242;
+  this.DEBUFF_DRAIN = 243;
+  this.DEBUFF_SLOW = 244;
+  this.DEBUFF_MC = 245;
+  this.DEBUFF_DOT = 246;
+  this.DEBUFF_PARAHAX = 247;
+  this.DEBUFF_DOOM = 248;
 	// Item Quality
 	this.QUALITY_POOR = 221;
 	this.QUALITY_NORMAL = 222;
@@ -75,6 +103,7 @@ Game.init = function() {
 	this.p_Level = 0; this.p_PP = 0; // Power points.
 	this.p_Powers = []; // Selected powers.
 	this.p_Weapon = []; // Player weapon.
+  this.p_Armour = []; // Player armour
 	this.p_State = Game.STATE_IDLE; // Player states
 	this.p_specUsed = false;
 	this.p_autoSaved = true;
@@ -92,10 +121,13 @@ Game.init = function() {
 	this.e_Int = 0; this.e_Level = 0;
 	this.e_isBoss = false;
 	this.e_Weapon = []; // Enemy weapon
+  this.e_Armour = []; // Enemy armour
 	this.e_DebuffStacks = 0;
 	this.last_Weapon = []; // Weapon to take
+  this.last_Armour = [];
   this.activePanel = "";
-  this.p_Inventory = [];
+  this.p_WeaponInventory = [];
+  this.p_ArmourInventory = [];
   this.updateInv = true;
   this.flurryActive = false;
   if(!this.load()) {
@@ -182,53 +214,73 @@ Game.updateLeftPanel = function() {
 	w_DPS.innerHTML = Game.p_Weapon[6];
 	var w_decay = document.getElementById("w_Decay");
 	var pp = document.getElementById("p_PP");
-  var rPanel = document.getElementById("repairPanel");
-  if(Game.p_State == Game.STATE_IDLE) { rPanel.style.display = ""; }
-  else { rPanel.style.display = "none"; }
+  var wrPanel = document.getElementById("weaponRepairPanel");
+  if(Game.p_State == Game.STATE_IDLE) { wrPanel.style.display = ""; }
+  else { wrPanel.style.display = "none"; }
 	pp.innerHTML = Game.p_PP;
 	w_decay.innerHTML = Game.p_Weapon[8];
-  // Last enemy weapon
-  var lastWep = document.getElementById("lastWep");
-  if(Game.last_Weapon.length > 0 && Game.p_State != Game.STATE_COMBAT) {
-		lastWep.style.display = "";
-    var e_name = document.getElementById("l_Name");
-    e_name.className = "q" + Game.last_Weapon[7];
-    var e_flavourHandle = document.getElementById("l_flavourTextHandle");
-    if(Game.last_Weapon[7] >= Game.QUALITY_GREAT) {
-      var e_wepText = Game.last_Weapon[0].split("|");
-      e_name.innerHTML = e_wepText[0];
-      var ew_flavour = document.getElementById("l_flavourText");
-      ew_flavour.innerHTML = e_wepText[1];
-      e_flavourHandle.style.display = "";
-    } else {
-      e_name.innerHTML = Game.last_Weapon[0];
-      e_flavourHandle.style.display = "none";
+  // Armour display
+  var a_name = document.getElementById("a_Name");
+  a_name.className = "q" + Game.p_Armour[2];
+  var a_flavourHandle = document.getElementById("a_flavourTextHandle");
+  if(Game.p_Armour[2] >= Game.QUALITY_GREAT) {
+    var armText = Game.p_Armour[0].split("|");
+    a_name.innerHTML = armText[0];
+    var a_flavour = document.getElementById("a_flavourText");
+    a_flavour.innerHTML = armText[1];
+    a_flavourHandle.style.display = "";
+  } else {
+    a_name.innerHTML = Game.p_Armour[0];
+    a_flavourHandle.style.display = "none";
+  }
+  var a_level = document.getElementById("a_Level");
+  a_level.innerHTML = Game.p_Armour[1];
+  var a_decay = document.getElementById("a_Decay");
+  a_decay.innerHTML = Game.p_Armour[3];
+  var a_statOut = document.getElementById("armourStats");
+  a_statOut.innerHTML = "";
+  var a_strengths = document.createElement("div");
+  for(var a = 0; a < Game.p_Armour[4].length; a++) {
+    var strData = Game.p_Armour[4][a];
+    var strType = "";
+    switch(strData[0]) {
+      case Game.ARMOUR_STR_MELEE:
+        strType = "Melee Resist"; break;
+      case Game.ARMOUR_STR_RANGE:
+        strType = "Range Resist"; break;
+      case Game.ARMOUR_STR_MAGIC:
+        strType = "Magic Resist"; break;
     }
-    var ew_level = document.getElementById("l_Level");
-    ew_level.innerHTML = Game.last_Weapon[1];
-		var ew_type = document.getElementById("l_Type");
-		switch(Game.last_Weapon[2]) {
-			case Game.WEAPON_MELEE:
-				ew_type.innerHTML = "Melee"; break;
-			case Game.WEAPON_RANGE:
-				ew_type.innerHTML = "Ranged"; break;
-			case Game.WEAPON_MAGIC:
-				ew_type.innerHTML = "Magic"; break;
-		}
-		var ew_speed = document.getElementById("l_Speed");
-		ew_speed.innerHTML = Game.last_Weapon[3];
-		var ew_minDamage = document.getElementById("l_minDamage");
-		ew_minDamage.innerHTML = Game.last_Weapon[4];
-    var ew_maxDamage = document.getElementById("l_maxDamage");
-		ew_maxDamage.innerHTML = Game.last_Weapon[5];
-		var ew_DPS = document.getElementById("l_DPS");
-		ew_DPS.innerHTML = Game.last_Weapon[6];
-    var ew_dura = document.getElementById("l_Decay");
-    ew_dura.innerHTML = Game.last_Weapon[8];
-	}
-	else {
-		lastWep.style.display = "none";
-	}
+    var strOut = document.createElement("span");
+    strOut.style.color = "#33cc33";
+    strOut.innerHTML = "+" + strData[1] + " " + strType;
+    a_strengths.appendChild(strOut);
+    if(a != Game.p_Armour[4].length) { a_strengths.appendChild(document.createElement("br")); }
+  }
+  a_statOut.appendChild(a_strengths);
+    var a_vulns = document.createElement("div");
+  for(var b = 0; b < Game.p_Armour[5].length; b++) {
+    var vulnData = Game.p_Armour[5][b];
+    var vulnType = "";
+    switch(vulnData[0]) {
+      case Game.ARMOUR_VULN_MELEE:
+        vulnType = "Melee Resist"; break;
+      case Game.ARMOUR_VULN_RANGE:
+        vulnType = "Range Resist"; break;
+      case Game.ARMOUR_VULN_MAGIC:
+        vulnType = "Magic Resist"; break;
+    }
+    var vulnOut = document.createElement("span");
+    vulnOut.style.color = "red";
+    vulnOut.innerHTML = "-" + vulnData[1] + " " + vulnType;
+    a_vulns.appendChild(vulnOut);
+    if(b != Game.p_Armour[5].length) { a_vulns.appendChild(document.createElement("br")); }
+  }
+  a_statOut.appendChild(a_vulns);
+  var arPanel = document.getElementById("armourRepairPanel");
+  if(Game.p_State == Game.STATE_IDLE) { arPanel.style.display = ""; }
+  else { arPanel.style.display = "none"; }
+  // Need a button here to go to inventory if enemy drops available
 }
 Game.updateCombatPanel = function() {
   var e_panel = document.getElementById("enemyInfo");
@@ -278,6 +330,35 @@ Game.updateCombatPanel = function() {
 					ew_type = "Magic"; break;
 			}
       e_Weapon.innerHTML = "Weapon: <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> (" + ew_type + "), " + Game.e_Weapon[4] + " - " + Game.e_Weapon[5] + " Damage, " + Game.e_Weapon[3] + " speed, " + Game.e_Weapon[6] + " DPS";
+      // Enemy armour
+      var e_Armour = document.getElementById("enemyArmour");
+      e_Armour.innerHTML = "Armour: <span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span><br />"
+      for(var st = 0; st < Game.e_Armour[4].length; st++) {
+        var thisStr = Game.e_Armour[4][st];
+        var strType = "";
+        switch(thisStr[0]) {
+          case Game.ARMOUR_STR_MELEE:
+            strType = "Melee Resist"; break;
+          case Game.ARMOUR_STR_RANGE:
+            strType = "Range Resist"; break;
+          case Game.ARMOUR_STR_MAGIC:
+            strType = "Magic Resist"; break;
+        }
+        e_Armour.innerHTML += "<span style='color:#33cc33;'>+" + thisStr[1] + " " + strType + "</span> ";
+      }
+      for(var vu = 0; vu < Game.e_Armour[5].length; vu++) {
+        var thisVul = Game.e_Armour[5][vu];
+        var vulType = "";
+        switch(thisVul[0]) {
+          case Game.ARMOUR_VULN_MELEE:
+            vulType = "Melee Resist"; break;
+          case Game.ARMOUR_VULN_RANGE:
+            vulType = "Range Resist"; break;
+          case Game.ARMOUR_VULN_MAGIC:
+            vulType = "Magic Resist"; break;
+        }
+        e_Armour.innerHTML += "<span style='color:red;'>-" + thisVul[1] + " " + vulType + "</span> ";
+      }
 			break;
 		case Game.STATE_REPAIR:
       e_panel.style.display = "none";
@@ -398,7 +479,7 @@ Game.updatePowersPanel = function() {
 				case Game.BOOST_CONSERVE: // Proper Care
 					targetControl = document.getElementById("selected_conserve");
 					break;
-        case Game.BOOST_CURRENCY: // Proper Care
+        case Game.BOOST_CURRENCY: // Pickpocket
 					targetControl = document.getElementById("selected_currency");
 					break;
 			}
@@ -419,9 +500,11 @@ Game.updatePowersPanel = function() {
 }
 Game.updateInventoryPanel = function() {
   if(Game.updateInv === true) {
-    var invPanel = document.getElementById("inventoryOut");
+    var invPanel = document.getElementById("weaponOut");
     invPanel.innerHTML = "";
-    for(var x = 0; x < Game.p_Inventory.length; x++) {
+    if(Game.p_WeaponInventory.length > 0) { document.getElementById("weaponCache").style.display = ""; }
+    else { document.getElementById("weaponCache").style.display = "none"; }
+    for(var x = 0; x < Game.p_WeaponInventory.length; x++) {
       // Table row
       var inventoryObject = document.createElement("tr");
       var leftAlign = document.createAttribute("style");
@@ -429,21 +512,21 @@ Game.updateInventoryPanel = function() {
       inventoryObject.setAttributeNode(leftAlign);
       var infopane = document.createElement("td");
       var nameColor = document.createElement("span");
-      nameColor.className = "q" + Game.p_Inventory[x][7];
+      nameColor.className = "q" + Game.p_WeaponInventory[x][7];
       var flavourText = document.createElement("span");
-      if(Game.p_Inventory[x][7] >= Game.QUALITY_GREAT) {
-        var wepText = Game.p_Inventory[x][0].split("|");
+      if(Game.p_WeaponInventory[x][7] >= Game.QUALITY_GREAT) {
+        var wepText = Game.p_WeaponInventory[x][0].split("|");
         nameColor.innerHTML = wepText[0];
         flavourText.innerHTML = "<span style='font-style:italic;'> " + wepText[1] + "</span>";
         flavourText.style.display = "";
       } else {
-        nameColor.innerHTML = Game.p_Inventory[x][0];
+        nameColor.innerHTML = Game.p_WeaponInventory[x][0];
         flavourText.style.display = "none";
       }
       infopane.appendChild(nameColor);
       infopane.appendChild(flavourText);
       var weaponType = "";
-      switch(Game.p_Inventory[x][2]) {
+      switch(Game.p_WeaponInventory[x][2]) {
         case Game.WEAPON_MELEE:
           weaponType = "Melee"; break;
         case Game.WEAPON_RANGE:
@@ -451,7 +534,7 @@ Game.updateInventoryPanel = function() {
         case Game.WEAPON_MAGIC:
           weaponType = "Magic"; break;
       }
-      var textContent = document.createTextNode(" (" + weaponType + ") - Level " + Game.p_Inventory[x][1] + " - " + Game.p_Inventory[x][4] + "-" + Game.p_Inventory[x][5] + " damage (" + Game.p_Inventory[x][6] + " DPS) - " + Game.p_Inventory[x][8] + " durability");
+      var textContent = document.createTextNode(" (" + weaponType + ") - Level " + Game.p_WeaponInventory[x][1] + " - " + Game.p_WeaponInventory[x][3] + " speed - " + Game.p_WeaponInventory[x][4] + "-" + Game.p_WeaponInventory[x][5] + " damage (" + Game.p_WeaponInventory[x][6] + " DPS) - " + Game.p_WeaponInventory[x][8] + " durability");
       infopane.appendChild(document.createElement("br"));
       infopane.appendChild(textContent);
       inventoryObject.appendChild(infopane);
@@ -485,12 +568,255 @@ Game.updateInventoryPanel = function() {
       }
       invPanel.appendChild(inventoryObject);
     }
+    // Armour panel
+    invPanel = document.getElementById("armourOut");
+    invPanel.innerHTML = "";
+    if(Game.p_ArmourInventory.length > 0) { document.getElementById("armourCache").style.display = ""; }
+    else { document.getElementById("armourCache").style.display = "none"; }
+    for(var y = 0; y < Game.p_ArmourInventory.length; y++) {
+      // Table row
+      var inventoryObject = document.createElement("tr");
+      var leftAlign = document.createAttribute("style");
+      leftAlign.value = "text-align:left;";
+      inventoryObject.setAttributeNode(leftAlign);
+      var infopane = document.createElement("td");
+      var nameColor = document.createElement("span");
+      nameColor.className = "q" + Game.p_ArmourInventory[y][2];
+      var flavourText = document.createElement("span");
+      if(Game.p_ArmourInventory[y][2] >= Game.QUALITY_GREAT) {
+        var wepText = Game.p_ArmourInventory[y][0].split("|");
+        nameColor.innerHTML = wepText[0];
+        flavourText.innerHTML = "<span style='font-style:italic;'> " + wepText[1] + "</span>";
+        flavourText.style.display = "";
+      } else {
+        nameColor.innerHTML = Game.p_ArmourInventory[y][0];
+        flavourText.style.display = "none";
+      }
+      infopane.appendChild(nameColor);
+      infopane.appendChild(flavourText);
+      var armText = "Level " + Game.p_ArmourInventory[y][1] + " - " + Game.p_ArmourInventory[y][3] + " durability";
+      infopane.appendChild(document.createElement("br"));
+      infopane.appendChild(document.createTextNode(armText));
+      infopane.appendChild(document.createElement("br"));
+      var armStrs = "";
+      for(var st = 0; st < Game.p_ArmourInventory[y][4].length; st++) {
+        var thisStr = Game.p_ArmourInventory[y][4][st];
+        var strType = "";
+        switch(thisStr[0]) {
+          case Game.ARMOUR_STR_MELEE:
+            strType = "Melee Resist"; break;
+          case Game.ARMOUR_STR_RANGE:
+            strType = "Range Resist"; break;
+          case Game.ARMOUR_STR_MAGIC:
+            strType = "Magic Resist"; break;
+        }
+        armStrs = armStrs + "+" + thisStr[1] + " " + strType + ", ";
+      }
+      armStrs = armStrs.slice(0,-2);
+      var armStrSpan = document.createElement("span");
+      armStrSpan.style.color = "#33cc33";
+      armStrSpan.innerHTML = armStrs;
+      infopane.appendChild(armStrSpan);
+      infopane.appendChild(document.createElement("br"));
+      // Vulnerabilities
+      var armVulns = "";
+      for(var vu = 0; vu < Game.p_ArmourInventory[y][5].length; vu++) {
+        var thisVul = Game.p_ArmourInventory[y][5][vu];
+        var vulType = "";
+        switch(thisVul[0]) {
+          case Game.ARMOUR_VULN_MELEE:
+            vulType = "Melee Resist"; break;
+          case Game.ARMOUR_VULN_RANGE:
+            vulType = "Range Resist"; break;
+          case Game.ARMOUR_VULN_MAGIC:
+            vulType = "Magic Resist"; break;
+        }
+        armVulns = armVulns + "-" + thisVul[1] + " " + vulType + ", ";
+      }
+      armVulns = armVulns.slice(0,-2);
+      var armVulnsSpan = document.createElement("span");
+      armVulnsSpan.style.color = "red";
+      armVulnsSpan.innerHTML = armVulns;
+      infopane.appendChild(armVulnsSpan);
+      inventoryObject.appendChild(infopane);
+      // Column for buttons
+      if(Game.p_State !== Game.STATE_REPAIR) {
+        var buttons = document.createElement("td");
+        var rightAlign = document.createAttribute("style");
+        rightAlign.value = "text-align:right;";
+        buttons.setAttributeNode(rightAlign);
+        var equipButton = document.createElement("span");
+        equipButton.className = "bigButton";
+        equipButton.onclick = function(a){ return function() { Game.equipArmour(a); }; }(y);
+        equipButton.innerHTML = "Equip";
+        buttons.appendChild(equipButton);
+        var sellButton = document.createElement("span");
+        sellButton.className = "bigButton";
+        sellButton.onclick = function(a){ return function() { Game.sellArmour(a); }; }(y);
+        sellButton.innerHTML = "Sell";
+        buttons.appendChild(sellButton);
+        var scrapButton = document.createElement("span");
+        scrapButton.className = "bigButton";
+        scrapButton.onclick = function(a){ return function() { Game.scrapArmour(a); }; }(y);
+        scrapButton.innerHTML = "Scrap";
+        buttons.appendChild(scrapButton);
+        var discardButton = document.createElement("span");
+        discardButton.className = "bigButton";
+        discardButton.onclick = function(a){ return function() { Game.discardArmour(a); }; }(y);
+        discardButton.innerHTML = "Discard";
+        buttons.appendChild(discardButton);
+        inventoryObject.appendChild(buttons);
+      }
+      invPanel.appendChild(inventoryObject);
+    }
+    // Enemy loot panel
+    invPanel = document.getElementById("enemyInvOut");
+    invPanel.innerHTML = "";
+    if(Game.last_Weapon.length > 0 || Game.last_Armour.length > 0) {
+      document.getElementById("enemyItems").style.display = "";
+    }
+    else { document.getElementById("enemyItems").style.display = "none";
+    }
+    if(Game.last_Weapon.length > 0) {
+      var inventoryObject = document.createElement("tr");
+      var leftAlign = document.createAttribute("style");
+      leftAlign.value = "text-align:left;";
+      inventoryObject.setAttributeNode(leftAlign);
+      var infopane = document.createElement("td");
+      var nameColor = document.createElement("span");
+      nameColor.className = "q" + Game.last_Weapon[7];
+      var flavourText = document.createElement("span");
+      if(Game.last_Weapon[7] >= Game.QUALITY_GREAT) {
+        var wepText = Game.last_Weapon[0].split("|");
+        nameColor.innerHTML = wepText[0];
+        flavourText.innerHTML = "<span style='font-style:italic;'> " + wepText[1] + "</span>";
+        flavourText.style.display = "";
+      } else {
+        nameColor.innerHTML = Game.last_Weapon[0];
+        flavourText.style.display = "none";
+      }
+      infopane.appendChild(nameColor);
+      infopane.appendChild(flavourText);
+      var weaponType = "";
+      switch(Game.last_Weapon[2]) {
+        case Game.WEAPON_MELEE:
+          weaponType = "Melee"; break;
+        case Game.WEAPON_RANGE:
+          weaponType = "Ranged"; break;
+        case Game.WEAPON_MAGIC:
+          weaponType = "Magic"; break;
+      }
+      var textContent = document.createTextNode(" (" + weaponType + ") - Level " + Game.last_Weapon[1] + " - " + Game.last_Weapon[3] + " speed - " + Game.last_Weapon[4] + "-" + Game.last_Weapon[5] + " damage (" + Game.last_Weapon[6] + " DPS) - " + Game.last_Weapon[8] + " durability");
+      infopane.appendChild(document.createElement("br"));
+      infopane.appendChild(textContent);
+      inventoryObject.appendChild(infopane);
+      // Column for buttons
+      if(Game.p_State !== Game.STATE_REPAIR) {
+        var buttons = document.createElement("td");
+        var rightAlign = document.createAttribute("style");
+        rightAlign.value = "text-align:right;";
+        buttons.setAttributeNode(rightAlign);
+        var equipButton = document.createElement("span");
+        equipButton.className = "bigButton";
+        equipButton.onclick = function() { Game.takeWeapon(); }
+        equipButton.innerHTML = "Take Weapon";
+        buttons.appendChild(equipButton);
+        inventoryObject.appendChild(buttons);
+      }
+      invPanel.appendChild(inventoryObject);
+    }
+    if(Game.last_Armour.length > 0) {
+      var inventoryObject = document.createElement("tr");
+      var leftAlign = document.createAttribute("style");
+      leftAlign.value = "text-align:left;";
+      inventoryObject.setAttributeNode(leftAlign);
+      var infopane = document.createElement("td");
+      var nameColor = document.createElement("span");
+      nameColor.className = "q" + Game.last_Armour[2];
+      var flavourText = document.createElement("span");
+      if(Game.last_Armour[2] >= Game.QUALITY_GREAT) {
+        var wepText = Game.last_Armour[0].split("|");
+        nameColor.innerHTML = wepText[0];
+        flavourText.innerHTML = "<span style='font-style:italic;'> " + wepText[1] + "</span>";
+        flavourText.style.display = "";
+      } else {
+        nameColor.innerHTML = Game.last_Armour[0];
+        flavourText.style.display = "none";
+      }
+      infopane.appendChild(nameColor);
+      infopane.appendChild(flavourText);
+      var lastArmText = "Level " + Game.last_Armour[1] + " - " + Game.last_Armour[3] + " durability";
+      infopane.appendChild(document.createElement("br"));
+      infopane.appendChild(document.createTextNode(lastArmText));
+      infopane.appendChild(document.createElement("br"));
+      var lastArmStrs = "";
+      for(var st = 0; st < Game.last_Armour[4].length; st++) {
+        var thisStr = Game.last_Armour[4][st];
+        var strType = "";
+        switch(thisStr[0]) {
+          case Game.ARMOUR_STR_MELEE:
+            strType = "Melee Resist"; break;
+          case Game.ARMOUR_STR_RANGE:
+            strType = "Range Resist"; break;
+          case Game.ARMOUR_STR_MAGIC:
+            strType = "Magic Resist"; break;
+        }
+        lastArmStrs = lastArmStrs + "+" + thisStr[1] + " " + strType + ", ";
+      }
+      lastArmStrs = lastArmStrs.slice(0,-2);
+      var lastArmStrSpan = document.createElement("span");
+      lastArmStrSpan.style.color = "#33cc33";
+      lastArmStrSpan.innerHTML = lastArmStrs;
+      infopane.appendChild(lastArmStrSpan);
+      infopane.appendChild(document.createElement("br"));
+      // Vulnerabilities
+      var lastArmVulns = "";
+      for(var vu = 0; vu < Game.last_Armour[5].length; vu++) {
+        var thisVul = Game.last_Armour[5][vu];
+        var vulType = "";
+        switch(thisVul[0]) {
+          case Game.ARMOUR_VULN_MELEE:
+            vulType = "Melee Resist"; break;
+          case Game.ARMOUR_VULN_RANGE:
+            vulType = "Range Resist"; break;
+          case Game.ARMOUR_VULN_MAGIC:
+            vulType = "Magic Resist"; break;
+        }
+        lastArmVulns = lastArmVulns + "-" + thisVul[1] + " " + vulType + ", ";
+      }
+      lastArmVulns = lastArmVulns.slice(0,-2);
+      var lastArmVulnsSpan = document.createElement("span");
+      lastArmVulnsSpan.style.color = "red";
+      lastArmVulnsSpan.innerHTML = lastArmVulns;
+      infopane.appendChild(lastArmVulnsSpan);
+      inventoryObject.appendChild(infopane);
+      // Column for buttons
+      if(Game.p_State !== Game.STATE_REPAIR) {
+        var buttons = document.createElement("td");
+        var rightAlign = document.createAttribute("style");
+        rightAlign.value = "text-align:right;";
+        buttons.setAttributeNode(rightAlign);
+        var takeButton = document.createElement("span");
+        takeButton.className = "bigButton";
+        takeButton.onclick = function() { Game.takeArmour(); };
+        takeButton.innerHTML = "Take Armour";
+        buttons.appendChild(takeButton);
+        inventoryObject.appendChild(buttons);
+      }
+      invPanel.appendChild(inventoryObject);
+    }
     Game.updateInv = false;
   }
 }
 Game.updateStorePanel = function() {
-  var lUPCost = document.getElementById("levelUpgradeCost");
-  lUPCost.innerHTML = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
+  var wlUPCost = document.getElementById("weaponLevelUpgradeCost");
+  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
+  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
+  wlUPCost.innerHTML = upgradeCost;
+  var alUPCost = document.getElementById("armourLevelUpgradeCost");
+  upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Armour[1]));
+  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
+  alUPCost.innerHTML = upgradeCost;
 }
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
@@ -501,28 +827,64 @@ Game.combatLog = function(combatant, message) {
 	var logBox = document.getElementById("logBody");
 	logBox.appendChild(d);
 }
-Game.startRepair = function() {
-	if(Game.p_Weapon[8] >= (50 + 5*(Game.p_Weapon[1]-1))) {
-		// Repair not required, do nothing
+Game.startWeaponRepair = function() {
+  var maxRepair = 50 + (5*(Game.p_Weapon[1]-1));
+  if(Game.hasPower(Game.BOOST_REPAIR)) { maxRepair*=2; }
+	if(Game.p_Weapon[8] >= maxRepair) {
+		Game.toastNotification("Repair not required.")
 	}
 	else {
 		Game.p_State = Game.STATE_REPAIR;
 		Game.p_RepairValue = Game.p_Weapon[1];
+    Game.toastNotification("Repairing weapon...");
 		if(Game.hasPower(Game.BOOST_HEAL)) {
-			Game.p_RepairInterval = window.setInterval(Game.repairTick,800);
+			Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,800);
 		}
-		else { Game.p_RepairInterval = window.setInterval(Game.repairTick,1000); }
+		else { Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,1000); }
 	}
   Game.updateInv = true;
-  Game.toastNotification("Repairing weapon...");
 	Game.drawActivePanel();
 }
-Game.repairTick = function() {
+Game.startArmourRepair = function() {
+  var maxRepair = 50 + (5*(Game.p_Armour[1]-1));
+  if(Game.hasPower(Game.BOOST_REPAIR)) { maxRepair*=2; }
+	if(Game.p_Armour[3] >= maxRepair) {
+		Game.toastNotification("Repair not required.")
+	}
+	else {
+		Game.p_State = Game.STATE_REPAIR;
+		Game.p_RepairValue = Game.p_Armour[1];
+    Game.toastNotification("Repairing armour...");
+		if(Game.hasPower(Game.BOOST_HEAL)) {
+			Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,800);
+		}
+		else { Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,1000); }
+	}
+  Game.updateInv = true;
+	Game.drawActivePanel();
+}
+Game.repairWeaponTick = function() {
 	if(Game.p_RepairValue === 0) {
 		Game.p_Weapon[8] = 50 + 5*(Game.p_Weapon[1]-1);
 		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Weapon[8]*=2; }
 		Game.p_State = Game.STATE_IDLE;
     Game.toastNotification("Weapon repaired.");
+    Game.updateInv = true;
+		window.clearInterval(Game.p_RepairInterval);
+	}
+	else {
+    Game.toastNotification("Ticks to repair: " + Game.p_RepairValue);
+		Game.p_RepairValue-=1;
+		Game.p_State = Game.STATE_REPAIR;
+	}
+	Game.drawActivePanel();
+}
+Game.repairArmourTick = function() {
+	if(Game.p_RepairValue === 0) {
+		Game.p_Armour[3] = 50 + 5*(Game.p_Armour[1]-1);
+		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Armour[3]*=2; }
+		Game.p_State = Game.STATE_IDLE;
+    Game.toastNotification("Armour repaired.");
     Game.updateInv = true;
 		window.clearInterval(Game.p_RepairInterval);
 	}
@@ -576,15 +938,33 @@ Game.playerCombatTick = function() {
 		switch(Game.p_Weapon[2]) {
 			case Game.WEAPON_MAGIC:
 				playerDMG += Math.floor(Game.p_Int/2);
-				if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*0.8); }
+        for(var a = 0; a < Game.e_Armour[4].length; a++) {
+          if(Game.e_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][a][1],0); }
+        }
+        for(var b = 0; b < Game.e_Armour[5].length; b++) {
+          if(Game.e_Armour[5][b][0] == Game.ARMOUR_VULN_MAGIC) { playerDMG += Game.e_Armour[5][b][1]; }
+        }
 				break;
 			case Game.WEAPON_RANGE:
 				playerDMG += Math.floor(Game.p_Dex/2);
-				if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*0.8); }
+        for(var c = 0; c < Game.e_Armour[4].length; c++) {
+          if(Game.e_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][c][1],0); }
+        }
+        for(var d = 0; d < Game.e_Armour[5].length; d++) {
+          if(Game.e_Armour[5][d][0] == Game.ARMOUR_VULN_RANGE) { playerDMG += Game.e_Armour[5][d][1]; }
+        }
 				break;
 			case Game.WEAPON_MELEE:
 				playerDMG += Math.floor(Game.p_Str/2);
-				if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
+				if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*0.8); }
+        for(var e = 0; e < Game.e_Armour[4].length; e++) {
+          if(Game.e_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][e][1],0); }
+        }
+        for(var f = 0; f < Game.e_Armour[5].length; f++) {
+          if(Game.e_Armour[5][f][0] == Game.ARMOUR_VULN_MELEE) { playerDMG += Game.e_Armour[5][f][1]; }
+        }
 				break;
 		}
 		// Decay handling
@@ -654,14 +1034,38 @@ Game.enemyCombatTick = function() {
 			case Game.WEAPON_MAGIC:
 				enemyDMG += Math.floor(Game.e_Int/2);
 				if(Game.hasPower(Game.BOOST_MAGICDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+        if(Game.p_Armour[3] > 0) {
+          for(var a = 0; a < Game.p_Armour[4].length; a++) {
+            if(Game.p_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][a][1],0); }
+          }
+          for(var b = 0; b < Game.p_Armour[5].length; b++) {
+            if(Game.p_Armour[5][b][0] == Game.ARMOUR_VULN_MAGIC) { enemyDMG += Game.p_Armour[5][b][1]; }
+          }
+        }
 				break;
 			case Game.WEAPON_RANGE:
 				enemyDMG += Math.floor(Game.e_Dex/2);
 				if(Game.hasPower(Game.BOOST_RANGEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+        if(Game.p_Armour[3] > 0) {
+          for(var c = 0; c < Game.p_Armour[4].length; c++) {
+            if(Game.p_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][c][1],0); }
+          }
+          for(var d = 0; d < Game.p_Armour[5].length; d++) {
+            if(Game.p_Armour[5][d][0] == Game.ARMOUR_VULN_RANGE) { enemyDMG += Game.p_Armour[5][d][1]; }
+          }
+        }
 				break;
 			case Game.WEAPON_MELEE:
 				enemyDMG += Math.floor(Game.e_Str/2);
 				if(Game.hasPower(Game.BOOST_MELEEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
+        if(Game.p_Armour[3] > 0) {
+          for(var e = 0; e < Game.p_Armour[4].length; e++) {
+            if(Game.p_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][e][1],0); }
+          }
+          for(var f = 0; f < Game.p_Armour[5].length; f++) {
+            if(Game.p_Armour[5][f][0] == Game.ARMOUR_VULN_MELEE) { enemyDMG += Game.p_Armour[5][f][1]; }
+          }
+        }
 				break;
 		}
 		if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
@@ -674,6 +1078,10 @@ Game.enemyCombatTick = function() {
 				enemyDMG = Math.max(enemyDMG - damageDown,0);
 				Game.combatLog("enemy","<strong>" + damageDown + "</strong> prevented by Infected Wound.");
 			}
+      if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
+        Game.combatLog("player","<strong>Proper Care</strong> prevented armour decay.");
+      }
+      else { Game.p_Armour[3]--; }
 			Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
 			Game.combatLog("enemy","The enemy hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
 		}
@@ -685,7 +1093,7 @@ Game.enemyCombatTick = function() {
 	Game.drawActivePanel();
 }
 Game.specialAttack = function() {
-  if(Game.e_DebuffStacks > 0) {
+  if(Game.e_DebuffStacks > 0 && Game.e_HP > 0 && !Game.p_specUsed) {
 	  Game.p_specUsed = true;
     switch(Game.p_Weapon[2]) {
       case Game.WEAPON_MELEE:
@@ -728,6 +1136,8 @@ Game.endCombat = function() {
 		// Player won, give xp and maybe, just maybe, a level.
 		Game.combatLog("","You won!");
 		Game.last_Weapon = Game.e_Weapon.slice();
+    Game.last_Armour = Game.e_Armour.slice();
+    Game.updateInv = true;
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
     var currencyToAdd = xpToAdd;
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
@@ -759,22 +1169,22 @@ Game.levelUp = function() {
 	Game.p_MaxHP += hpUp
 	Game.p_HP = Game.p_MaxHP;
 	Game.combatLog("","You gained <strong>" + hpUp + "</strong> HP.")
-	var strUp = Game.RNG(1,5) == 1 ? 2 : 1;
+  var strUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_MELEE ? 1 : 0);
 	Game.p_Str += strUp;
 	Game.combatLog("","You gained <strong>" + strUp + "</strong> Strength.")
-	var dexUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	var dexUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_RANGE ? 1 : 0);
 	Game.p_Dex += dexUp;
 	Game.combatLog("","You gained <strong>" + dexUp + "</strong> Dexterity.")
-	var intUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	var intUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_MAGIC ? 1 : 0);
 	Game.p_Int += intUp;
 	Game.combatLog("","You gained <strong>" + intUp + "</strong> Intelligence.")
-	var conUp = Game.RNG(1,5) == 1 ? 2 : 1;
+	var conUp = Game.RNG(1,4) == 1 ? 2 : 1;
 	Game.p_Con += conUp;
 	Game.combatLog("","You gained <strong>" + conUp + "</strong> Constitution.")
-	Game.p_Level += 1;
+	Game.p_Level++;
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
-	Game.p_SkillPoints += 1;
+	Game.p_SkillPoints++;
 	Game.combatLog("","You gained a skill point.");
 	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) {
 		Game.p_SkillPoints++;
@@ -795,10 +1205,20 @@ Game.buyPower = function(power) {
 	Game.drawActivePanel();
 }
 Game.takeWeapon = function() {
-  if(Game.p_Inventory.length < 20) {
-    Game.p_Inventory.push(Game.last_Weapon.slice(0));
+  if(Game.p_WeaponInventory.length < 20) {
+    Game.p_WeaponInventory.push(Game.last_Weapon.slice(0));
     Game.last_Weapon = [];
   }
+  else { Game.toastNotification("Weapon inventory is full."); }
+  Game.updateInv = true;
+	Game.drawActivePanel();
+}
+Game.takeArmour = function() {
+  if(Game.p_ArmourInventory.length < 20) {
+    Game.p_ArmourInventory.push(Game.last_Armour.slice(0));
+    Game.last_Armour = [];
+  }
+  else { Game.toastNotification("Armour inventory is full."); }
   Game.updateInv = true;
 	Game.drawActivePanel();
 }
@@ -831,6 +1251,7 @@ Game.initPlayer = function(level) {
 	Game.p_Level = level;
 	Game.p_PP = 0;
 	Game.p_Weapon = Game.makeWeapon(level);
+  Game.p_Armour = Game.makeArmour(level);
 }
 Game.makeEnemy = function(level) {
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
@@ -847,6 +1268,7 @@ Game.makeEnemy = function(level) {
 	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = false;
 	Game.e_Weapon = Game.makeWeapon(Game.RNG(1,5) == 1 ? level+1 : level);
+  Game.e_Armour = Game.makeArmour(Game.RNG(1,5) == 1 ? level+1 : level);
 }
 Game.makeBoss = function(level) {
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
@@ -863,6 +1285,7 @@ Game.makeBoss = function(level) {
 	Game.e_DebuffStacks = 0;
 	Game.e_isBoss = true;
 	Game.e_Weapon = Game.makeWeapon(level+3);
+  Game.e_Armour = Game.makeArmour(level+3);
 }
 Game.reset = function() {
 	if(confirm("Are you sure you wish to erase your save? It will be lost permanently...")) {
@@ -893,7 +1316,7 @@ Game.load = function() {
 		g = null;
 		console.log("Failed to load save. Is localStorage a thing on this browser?");
 	}
-	if(g !== null && g.GAME_VERSION == 0.214) {
+	if(g !== null && g.GAME_VERSION == Game.GAME_VERSION) {
 		Game.p_HP = g.p_HP;
 		Game.p_MaxHP = g.p_MaxHP;
 		Game.p_Str = g.p_Str;
@@ -909,9 +1332,12 @@ Game.load = function() {
     Game.p_Currency = g.p_Currency;
     Game.p_Scrap = g.p_Scrap;
 		Game.p_SkillPoints = g.p_SkillPoints;
-    Game.p_Inventory = g.p_Inventory
+    Game.p_WeaponInventory = g.p_WeaponInventory
 		Game.p_Weapon = g.p_Weapon;
+    Game.p_ArmourInventory = g.p_ArmourInventory;
+    Game.p_Armour = g.p_Armour;
 		Game.last_Weapon = g.last_Weapon;
+    Game.last_Armour = g.last_Armour;
     Game.activePanel = g.activePanel;
 		return true;
 	}
@@ -919,28 +1345,29 @@ Game.load = function() {
 }
 Game.equipWeapon = function(index) {
   var currentWep = Game.p_Weapon.slice(0);
-  var newWep = Game.p_Inventory[index].slice(0);
+  var newWep = Game.p_WeaponInventory[index].slice(0);
   Game.p_Weapon = newWep.slice(0);
-  Game.p_Inventory[index] = currentWep.slice(0);
+  Game.p_WeaponInventory[index] = currentWep.slice(0);
   if(Game.p_State == Game.STATE_COMBAT && Game.e_DebuffStacks > 0) {
     Game.e_DebuffStacks = 0;
     Game.combatLog("player","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
   }
   Game.updateInv = true;
-  Game.toastNotification("Equipped " + Game.p_Weapon[0] + ".");
+  Game.toastNotification("Equipped " + Game.p_Weapon[0].split("|")[0] + ".");
   Game.drawActivePanel();
 }
 Game.discardWeapon = function(index) {
-  var thrownWepName = Game.p_Inventory[index][0];
-  Game.p_Inventory.splice(index,1);
+  var thrownWepName = Game.p_WeaponInventory[index][0].split("|")[0];
+  Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.toastNotification(thrownWepName + " tossed away.");
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index) {
-  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_Inventory[index][1]));
-  var soldWepName = Game.p_Inventory[index][0];
-  Game.p_Inventory.splice(index,1);
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1]));
+  salePrice = Math.floor(salePrice*(10+(Game.p_WeaponInventory[index][7]-Game.QUALITY_NORMAL))/10);
+  var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
+  Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Currency += salePrice;
   Game.toastNotification(soldWepName + " sold for " + salePrice + " seeds.");
@@ -948,8 +1375,8 @@ Game.sellWeapon = function(index) {
 }
 Game.scrapWeapon = function(index) {
   var salePrice = 0;
-  var scrappedWepName = Game.p_Inventory[index][0];
-  switch(Game.p_Inventory[index][7]) {
+  var scrappedWepName = Game.p_WeaponInventory[index][0].split("|")[0];
+  switch(Game.p_WeaponInventory[index][7]) {
     case Game.QUALITY_AMAZING:
       salePrice = Game.RNG(7,10);
       break;
@@ -966,10 +1393,62 @@ Game.scrapWeapon = function(index) {
       salePrice = Game.RNG(0,1);
       break;
   }
-  Game.p_Inventory.splice(index,1);
+  Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Scrap += salePrice;
   Game.toastNotification(scrappedWepName + " converted into " + salePrice + " scrap.");
+  Game.drawActivePanel();
+}
+Game.equipArmour = function(index) {
+  var currentArm = Game.p_Armour.slice(0);
+  var newArm = Game.p_ArmourInventory[index].slice(0);
+  Game.p_Armour = newArm.slice(0);
+  Game.p_ArmourInventory[index] = currentArm.slice(0);
+  Game.updateInv = true;
+  Game.toastNotification("Equipped " + Game.p_Armour[0].split("|")[0] + ".");
+  Game.drawActivePanel();
+}
+Game.discardArmour = function(index) {
+  var thrownArmName = Game.p_ArmourInventory[index][0].split("|")[0];
+  Game.p_ArmourInventory.splice(index,1);
+  Game.updateInv = true;
+  Game.toastNotification(thrownArmName + " tossed away.");
+  Game.drawActivePanel();
+}
+Game.sellArmour = function(index) {
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_ArmourInventory[index][1]));
+  salePrice = Math.floor(salePrice*(10+(Game.p_ArmourInventory[index][2]-Game.QUALITY_NORMAL))/10);
+  var soldArmName = Game.p_ArmourInventory[index][0].split("|")[0];
+  Game.p_ArmourInventory.splice(index,1);
+  Game.updateInv = true;
+  Game.p_Currency += salePrice;
+  Game.toastNotification(soldArmName + " sold for " + salePrice + " seeds.");
+  Game.drawActivePanel();
+}
+Game.scrapArmour = function(index) {
+  var salePrice = 0;
+  var scrappedArmName = Game.p_ArmourInventory[index][0].split("|")[0];
+  switch(Game.p_ArmourInventory[index][2]) {
+    case Game.QUALITY_AMAZING:
+      salePrice = Game.RNG(7,10);
+      break;
+    case Game.QUALITY_GREAT:
+      salePrice = Game.RNG(4,6);
+      break;
+    case Game.QUALITY_GOOD:
+      salePrice = Game.RNG(2,3);
+      break;
+    case Game.QUALITY_NORMAL:
+      salePrice = Game.RNG(1,2);
+      break;
+    case Game.QUALITY_POOR:
+      salePrice = Game.RNG(0,1);
+      break;
+  }
+  Game.p_ArmourInventory.splice(index,1);
+  Game.updateInv = true;
+  Game.p_Scrap += salePrice;
+  Game.toastNotification(scrappedArmName + " converted into " + salePrice + " scrap.");
   Game.drawActivePanel();
 }
 Game.makeWeapon = function(level) {
@@ -985,7 +1464,7 @@ Game.makeWeapon = function(level) {
 	// Quality generator
 	var qT = Game.RNG(1,100);
 	if(qT == 1) {
-		qualityMult = 1.4;
+		qualityMult = 1.3;
 		qualityID = Game.QUALITY_AMAZING;
 	} else if(qT < 6) {
 		qualityMult = 1.2;
@@ -994,7 +1473,7 @@ Game.makeWeapon = function(level) {
 		qualityMult = 1.1;
 		qualityID = Game.QUALITY_GOOD;
 	} else if(qT < 26) {
-		qualityMult = 0.8;
+		qualityMult = 0.9;
 		qualityID = Game.QUALITY_POOR;
 	} else {
 		qualityMult = 1;
@@ -1036,6 +1515,64 @@ Game.makeWeapon = function(level) {
 	maxDmg = Math.ceil((base + ((level-1)*perLv)+(1+(variance*(level-1)/2)))*qualityMult);
 	dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
 	return new Array(name,level,type,speed,minDmg,maxDmg,dps,qualityID,decay);
+}
+Game.makeArmour = function(level) {
+  // Returns a piece of armour in the following form:
+  // [name,level,quality,durability,[[str1,value],[str2,value],[str3,value]],[[vuln1,value],[vuln2,value]]]
+  var armName = "Generic Armour Name";
+  var armLevel = level;
+  var armDura = 50+(5*(level-1));
+  if(Game.hasPower(Game.BOOST_REPAIR)) { armDura *= 2; }
+  var armQuality = 0;
+  var qualityPlus = 1;
+  var armStrengths = 0; var armVulns = 0;
+  var qT = Game.RNG(1,100);
+	if(qT == 1) {
+		qualityPlus = 4;	armQuality = Game.QUALITY_AMAZING;
+    armStrengths = 3; armVulns = 0;
+	} else if(qT < 6) {
+		qualityPlus = 3; armQuality = Game.QUALITY_GREAT;
+    armStrengths = 2; armVulns = 0;
+	} else if(qT < 16) {
+		qualityPlus = 2;armQuality = Game.QUALITY_GOOD;
+    armStrengths = 2; armVulns = 1;
+	} else if(qT < 26) {
+		qualityPlus = 0; armQuality = Game.QUALITY_POOR;
+    armStrengths = 1; armVulns = 2;
+	} else {
+		qualityPlus = 1; armQuality = Game.QUALITY_NORMAL;
+    armStrengths = 1; armVulns = 1;
+	}
+  var availableTypes = [0,1,2];
+  var armStrList = [];
+  var armVulnList = [];
+  for(var x = 0; x < armStrengths; x++) {
+    var added = false;
+    while(!added) {
+      var strType = Game.RNG(Game.ARMOUR_STR_MELEE, Game.ARMOUR_STR_MAGIC);
+      if(availableTypes.indexOf(strType - Game.ARMOUR_STR_MELEE) != -1) {
+        var strPower = 1 + Math.floor(qualityPlus + Game.RNG(Math.floor(level/2),level));
+        var str = [strType, strPower];
+        armStrList.push(str.slice(0));
+        availableTypes.splice(availableTypes.indexOf(strType - Game.ARMOUR_STR_MELEE),1);
+        added = true;
+      }
+    }
+  }
+  for(var y = 0; y < armVulns; y++) {
+    var added = false;
+    while(!added) {
+      var vulnType = Game.RNG(Game.ARMOUR_VULN_MELEE, Game.ARMOUR_VULN_MAGIC);
+      if(availableTypes.indexOf(vulnType - Game.ARMOUR_VULN_MELEE) != -1) {
+        var vulnPower = 1 + Math.floor(qualityPlus + Game.RNG(Math.floor(level/2),level));
+        var vuln = [vulnType, vulnPower];
+        armVulnList.push(vuln.slice(0));
+        availableTypes.splice(availableTypes.indexOf(vulnType - Game.ARMOUR_VULN_MELEE),1);
+        added = true;
+      }
+    }
+  }
+  return [armName, armLevel, armQuality, armDura, armStrList.slice(0), armVulnList.slice(0)];
 }
 Game.getWeaponName = function(type,quality,speedTier) {
   var nameArray = [];
@@ -1147,14 +1684,43 @@ Game.upgradeWeaponLevel = function(weapon) {
   weapon[6] = Math.floor((weapon[4] + weapon[5])/2/weapon[3]*100)/100;
   return weapon;
 }
+Game.upgradeArmourLevel = function(armour) {
+  armour[1]++;
+  for(var x = 0; x < armour[4].length; x++) {
+    armour[4][x][1]++;
+  }
+  for(var y = 0; y < armour[5].length; y++) {
+    armour[5][y][1]++;
+  }
+  return armour;
+}
 Game.buyWeaponLevelUpgrade = function() {
   var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
+  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
     Game.upgradeWeaponLevel(Game.p_Weapon);
     Game.toastNotification("Weapon level upgraded.");
     Game.drawActivePanel();
   }
+  else { Game.toastNotification("Not enough seeds..."); }
+}
+Game.buyArmourLevelUpgrade = function() {
+  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Armour[1]));
+  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
+  if(Game.p_Currency >= upgradeCost) {
+    Game.p_Currency -= upgradeCost;
+    Game.upgradeArmourLevel(Game.p_Armour);
+    Game.toastNotification("Armour level upgraded.");
+    Game.drawActivePanel();
+  }
+  else { Game.toastNotification("Not enough seeds..."); }
+}
+Game.upgradeWeaponQuality = function(weapon) {
+  
+}
+Game.buyWeaponQualityUpgrade = function() {
+  
 }
 Game.hasPower = function(power) {
 	return Game.p_Powers.indexOf(power) >= 0;
@@ -1189,33 +1755,63 @@ Game.slow_magic_generic = ["War Staff","Tome of Frost","Grimoire"];
 Game.fast_melee_special = ["Blinkstrike|They'll never know what hit 'em...",
                            "Adder's Fang|Not to scale.",
                            "Torturer's Poker|Tell me all your dirty little secrets..."];
+Game.fast_melee_debuffs = [[Game.DEBUFF_MULTI, "Frenzy", 3, 70],
+                           [Game.DEBUFF_DOT, "Wound Poison", 5, 0],
+                           [Game.DEBUFF_MC, "Domination", 1, 0]];
 Game.mid_melee_special = ["Edge of Depravity|I think it's just misunderstood...",
                           "Storm's Herald|Whatever you do, don't hold it above your head.",
                           "Flametongue|Good for those long cold nights in camp."];
+Game.mid_melee_debuffs = [[Game.DEBUFF_SHRED, "Ruthlessness", 5, 0],
+                          [Game.DEBUFF_PARAHAX, "Static Shock", 5, 25],
+                          [Game.DEBUFF_DRAIN, "Cauterize", 5, 0]];
 Game.slow_melee_special = ["Planetary Edge|Rare, if only because planets are usually spherical.",
                            "Death Sentence|Bears a passing resemblance to Death's own scythe.",
                            "The Ambassador|Diplomacy? I do not think it means what you think it means."];
+Game.slow_melee_debuffs = [[Game.DEBUFF_SLOW, "Hamstring", 5, 20],
+                           [Game.DEBUFF_DOOM, "Impending Doom", 3, 5],
+                           [Game.DEBUFF_SHRED, "Ruthlessness", 5, 0]];
 Game.fast_range_special = ["Ace of Spades|Who throws a card? I mean, come on, really?",
                            "Tomahawk|Serving native tribes for centuries.",
                            "Throat Piercers|Also perfect for piercing other parts."];
+Game.fast_range_debuffs = [[Game.DEBUFF_DOT, "Paper Cut", 5, 0],
+                           [Game.DEBUFF_SLOW, "Cripple", 5, 25],
+                           [Game.DEBUFF_SHRED, "Piercing Throw", 5, 0]];
 Game.mid_range_special = ["Death From Above|Or below, or far away, depending on where you stand.",
                           "Tidebreaker's Harpoon|They might want it back at some point.",
                           "Starshatter Recurve|Has been known to shoot rainbows on occasion."];
+Game.mid_range_debuffs = [[Game.DEBUFF_DOOM, "Impending Doom", 3, 5],
+                          [Game.DEBUFF_DRAIN, "Bloodthirst", 5, 0],
+                          [Game.DEBUFF_MULTI, "Multishot", 3, 70]];
 Game.slow_range_special = ["The Stakeholder|Raising the stakes, one corpse at a time.",
                            "Artemis Bow|Comes with a free built in harp, no strings attached.",
                            "Parting Shot|This isn't going to end well for at least one of us..."];
+Game.slow_range_debuffs = [[Game.DEBUFF_PARAHAX, "Unbalanced", 5, 20],
+                           [Game.DEBUFF_MC, "Charm", 1, 0],
+                           [Game.DEBUFF_SHRED, "Ruthlessness", 5, 0]];
 Game.fast_magic_special = ["Thundercaller|When used in battle, it chants the name 'Thor' repeatedly.",
                            "Cosmic Fury|Dr. Tyson would like a word with you...",
                            "Spark-Touched Fetish|Rubber gloves are strongly recommended."];
+Game.fast_magic_debuffs = [[Game.DEBUFF_PARAHAX, "Static Shock", 5, 20],
+                           [Game.DEBUFF_MULTI, "Frenzy", 3, 65],
+                           [Game.DEBUFF_MC, "Confuse", 1, 0]];
 Game.mid_magic_special = ["Flamecore Battlestaff|Still warm to the touch.",
                           "Gift of the Cosmos|Just keeps on giving.",
                           "Emberleaf War Tome|Not actually made of embers, which are terrible for books.",
                           "Encyclopedia of the Realm|Knowledge is power."];
+Game.mid_magic_debuffs = [[Game.DEBUFF_DOT, "Slow Burn", 5, 0],
+                          [Game.DEBUFF_SLOW, "Cripple", 5, 25],
+                          [Game.DEBUFF_DRAIN, "Drain Life", 5, 0],
+                          [Game.DEBUFF_SHRED, "Find Weakness", 5, 0]];
 Game.slow_magic_special = ["The Tetranomicon|Written and bound by Tetradigm. Mostly incomprehensible.",
                            "Comet Chaser|Note: Comets are dangerous, DO NOT TRY THIS AT HOME.",
                            "Absolute Zero|Not quite. But it's close!"];
+Game.slow_magic_debuffs = [[Game.DEBUFF_DOOM, "Flames of Tetradigm", 3, 5],
+                           [Game.DEBUFF_DOT, "Slow Burn", 3, 65],
+                           [Game.DEBUFF_PARAHAX, "Frozen", 5, 25]];
 // Prefixes for non-great items
 // Yes there's a blank one, it's so the item has no prefix :)
 Game.qualityDescriptors = [["Worthless","Damaged","Inept","Decayed","Flawed","Decrepit"],
                            ["Average","Unremarkable","","Passable","Basic","Simple"],
                            ["Pristine","Enhanced","Powerful","Well-Maintained","Powerful","Superior"]];
+Game.armour_generic = [];
+Game.armour_special = [];

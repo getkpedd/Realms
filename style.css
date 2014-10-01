@@ -67,14 +67,14 @@ input {
 	font-size:28px;
 	font-weight:bold;
 }
-.playerInfo td, .weaponInfo td, .lastWepInfo td{
+.playerInfo td, .weaponInfo td, .armourInfo td, .lastWepInfo td{
 	width:50%;
 	text-align:center;
 }
-.playerInfo td:first-child, .weaponInfo td:first-child, .lastWepInfo td:first-child{
+.playerInfo td:first-child, .weaponInfo td:first-child, .armourInfo td:first-child, .lastWepInfo td:first-child{
 	text-align:right;
 }
-.playerInfo td:only-child, .weaponInfo td:only-child, .lastWepInfo td:only-child{
+.playerInfo td:only-child, .weaponInfo td:only-child, .armourInfo td:only-child, .lastWepInfo td:only-child{
 	text-align:center;
 }
 .titleBar {

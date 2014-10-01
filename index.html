@@ -19,6 +19,7 @@
 				<span class="tabButton" onclick="Game.showPanel('storeTable');">Store</span>
 				<span class="tabButton" onclick="Game.showPanel('miscTable');">Misc</span>
 				<span class="tabButton" onclick="Game.showPanel('helpTable');">Help</span>
+      <!-- Autobattle status output here maybe -->
 			<table width="900px">
 				<tr>
 					<td id="leftPanel" width="200px" valign="top">
@@ -107,52 +108,39 @@
 								<td>Durability: </td>
 								<td><div id="w_Decay"></div></td>
 							</tr>
-              <tr id="repairPanel">
+              <tr id="weaponRepairPanel">
                 <td colspan="2">
-                  <span class="bigButton" id="repairButton" onClick="Game.startRepair();">Repair</span>
+                  <span class="bigButton" id="repairButton" onClick="Game.startWeaponRepair();">Repair Weapon</span>
                 </td>
               </tr>
 						</table>
-						<table id="lastWep" class="lastWepInfo">
-							<tr align="center">
-								<td class="blockHeader" colspan="2">Available Weapon</td>
+            <table class="armourInfo">
+              <tr align="center">
+								<td class="blockHeader" colspan="2">Armour Statistics</td>
 							</tr>
 							<tr align="center">
-								<td colspan="2"><div id="l_Name"></div></td>
+								<td colspan="2"><div id="a_Name"></div></td>
 							</tr>
-              <tr id="l_flavourTextHandle">
-                <td colspan="2"><div id="l_flavourText"></div></td>
+              <tr id="a_flavourTextHandle">
+                <td colspan="2"><div id="a_flavourText"></div></td>
               </tr>
               <tr>
 								<td>Level: </td>
-								<td><div id="l_Level"></div></td>
-							</tr>
-							<tr>
-								<td>Type: </td>
-								<td><div id="l_Type"></div></td>
-							</tr>
-							<tr>
-								<td>Speed: </td>
-								<td><div id="l_Speed"></div></td>
-							</tr>
-							<tr>
-								<td>Damage: </td>
-                <td><span id="l_minDamage"></span> - <span id="l_maxDamage"></span></td>
-							</tr>
-							<tr>
-								<td>DPS: </td>
-								<td><div id="l_DPS"></div></td>
+								<td><div id="a_Level"></div></td>
 							</tr>
 							<tr>
 								<td>Durability: </td>
-								<td><div id="l_Decay"></div></td>
+								<td><div id="a_Decay"></div></td>
 							</tr>
               <tr>
+                <td colspan="2" id="armourStats"></td>
+              </tr>
+              <tr id="armourRepairPanel">
                 <td colspan="2">
-                  <span class="bigButton" id="takeButton" onClick="Game.takeWeapon();">Claim</span>
+                  <span class="bigButton" id="repairButton" onClick="Game.startArmourRepair();">Repair Armour</span>
                 </td>
               </tr>
-						</table>
+            </table>
 					</td>
 					<td id="rightPanel" valign="top">
 						<table>
@@ -201,6 +189,11 @@
                             </td>
                             <td align="right">
                               <span id="enemyDebuffOutput"></span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td align="left" colspan="4">
+                              <span id="enemyArmour"></span>
                             </td>
                           </tr>
                         </table>
@@ -365,23 +358,49 @@
 										</tr>
 									</table>
 									<table id="inventoryTable" style="display:none;">
-                    <tr>
+                    <tr id="enemyItems" style="display:none;">
                       <td>
-                        <div class="powerHeader">Inventory</div>
+                        <div class="powerHeader">Enemy Inventory</div>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <table id="inventoryOut"></table>
+                        <table id="enemyInvOut"></table>
+                      </td>
+                    </tr>
+                    <tr id="weaponCache" style="display:none;">
+                      <td>
+                        <div class="powerHeader">Weapon Cache</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <table id="weaponOut"></table>
+                      </td>
+                    </tr>
+                    <tr id="armourCache" style="display:none;">
+                      <td>
+                        <div class="powerHeader">Armour Cache</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <table id="armourOut"></table>
                       </td>
                     </tr>
                   </table>
 									<table id="storeTable"style="display:none;">
                     <tr>
                       <td>
-                        Increase Weapon Level for <span id="levelUpgradeCost"></span> seeds
+                        Increase Weapon Level for <span id="weaponLevelUpgradeCost"></span> seeds
                       </td>
                       <td><span class="bigButton" onClick="Game.buyWeaponLevelUpgrade();">Upgrade</span></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        Increase Armour Level for <span id="armourLevelUpgradeCost"></span> seeds
+                      </td>
+                      <td><span class="bigButton" onClick="Game.buyArmourLevelUpgrade();">Upgrade</span></td>
                     </tr>
                   </table>
 									<table id="miscTable" style="display:none;">
@@ -407,6 +426,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.215 alpha</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.216 alpha</div>
 	</body>
 </html>
