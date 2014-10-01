@@ -31,7 +31,7 @@ TODO:
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.216; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.22; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
