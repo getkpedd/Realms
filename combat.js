@@ -214,6 +214,7 @@ Game.specialAttack = function() {
     }
     Game.e_DebuffStacks = 0;
     Game.p_specUsed = false;
+    Game.updateActivePanel();
   }
 }
 Game.fleeCombat = function() {

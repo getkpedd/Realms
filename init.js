@@ -3,13 +3,13 @@ Game = {};
 Changes in this version:
   Update: Drops now land directly in the player's inventory if it is not full.
   Update: The value of Str/Dex/Int varies based on weapon speed (slower weapons do more)
+  Update: Visual output for health bars in combat.
   Fix: Inventories cap at 10 slots (down from 20)
   Fix: Powers that boost a weapon type's damage now work as intended.
   Backend: Reorganisation of functions into multiple files.
 TODO:
   Help Tab
   Appearance change for combat log
-   - Including health bar visual outputs
   Revisions to the following mechanics:
    - Player powers
    - Debuffs

@@ -154,7 +154,6 @@ Game.updateCombatPanel = function() {
       ooc_panel.style.display = "";
       ic_panel.style.display = "none";
       break;
-      // Hide enemy panel
 		case Game.STATE_COMBAT:
 			// Enemy stat panel
       e_panel.style.display = "";
@@ -228,6 +227,29 @@ Game.updateCombatPanel = function() {
       ic_panel.style.display = "none";
 			break;
 	}
+  // Some logic
+  // 100 to 75%: Green
+  // 75 to 50%: Yellow
+  // 50 to 25%: Orange
+  // 25 to 0%: Red
+  var PHB = document.getElementById("playerHPBar");
+  var PH_Percent = Game.p_HP/Game.p_MaxHP;
+  if(PH_Percent < 0.25) { PHB.style.background = "#dd0000"; }
+  else if(PH_Percent < 0.5) { PHB.style.background = "#dd7700"; }
+  else if(PH_Percent < 0.75) { PHB.style.background = "#dddd00"; }
+  else { PHB.style.background = "#33cc33"; }
+  PHB.style.width = Math.floor(300*PH_Percent) + "px";
+  var EHB = document.getElementById("enemyHPBar");
+  if(Game.p_State !== Game.STATE_COMBAT) { EHB.style.display = "none"; }
+  else {
+    EHB.style.display = "";
+    var EH_Percent = Game.e_HP/Game.e_MaxHP;
+    if(EH_Percent < 0.25) { EHB.style.background = "#dd0000"; }
+    else if(EH_Percent < 0.5) { EHB.style.background = "#dd7700"; }
+    else if(EH_Percent < 0.75) { EHB.style.background = "#dddd00"; }
+    else { EHB.style.background = "#33cc33"; }
+    EHB.style.width = Math.floor(300*EH_Percent) + "px";
+  }
 }
 Game.updatePowersPanel = function() {
 	//Available Powers Panel
