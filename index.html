@@ -9,6 +9,43 @@
     <script type="text/javascript" src="player.js"></script>
     <script type="text/javascript" src="tickers.js"></script>
     <script type="text/javascript" src="ui.js"></script>
+    <script type="text/javascript">
+      function keyBindings(key) {
+        var eventObj = window.event ? event : key;
+        var pkCode = eventObj.charCode ? eventObj.charCode : eventObj.keyCode;
+        var pressedKey = String.fromCharCode(pkCode);
+        switch(pressedKey) {
+          case "1":
+            Game.showPanel('combatTable');
+            break;
+          case "2":
+            Game.showPanel('powersTable');
+            break;
+          case "3":
+            Game.showPanel('inventoryTable');
+            break;
+          case "4":
+            Game.showPanel('storeTable');
+            break;
+          case "5":
+            Game.showPanel('miscTable');
+            break;
+          case "6":
+            Game.showPanel('helpTable');
+            break;
+          case " ":
+            Game.startCombat();
+            Game.showPanel('combatTable');
+          case "s":
+            if(Game.p_State == Game.STATE_COMBAT) { Game.specialAttack(); }
+            break;
+          case "f":
+            if(Game.p_State == Game.STATE_COMBAT) { Game.fleeCombat(); }
+            break;
+        }
+      }
+      document.onkeypress = keyBindings;
+    </script>
 		<link rel="stylesheet" type="text/css" href="style.css"></link>
 	</head>
 	<body onload="Game.init()">
