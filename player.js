@@ -6,35 +6,35 @@ actions and advancement.
 --------------------------*/
 
 Game.levelUp = function() {
-	Game.combatLog("","Level up! You are now level <strong>" + (Game.p_Level+1) + "</strong>.");
-	var hpUp = Game.RNG(25,30);
+	Game.combatLog("info","Level up! You are now level <strong>" + (Game.p_Level+1) + "</strong>.");
+	var hpUp = Game.p_Con + Game.p_Con + Game.RNG(0,Game.p_Level);
 	Game.p_MaxHP += hpUp
 	Game.p_HP = Game.p_MaxHP;
-	Game.combatLog("","You gained <strong>" + hpUp + "</strong> HP.")
+	Game.combatLog("info","You gained <strong>" + hpUp + "</strong> HP.")
   var strUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_MELEE ? 1 : 0);
 	Game.p_Str += strUp;
-	Game.combatLog("","You gained <strong>" + strUp + "</strong> Strength.")
+	Game.combatLog("info","You gained <strong>" + strUp + "</strong> Strength.")
 	var dexUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_RANGE ? 1 : 0);
 	Game.p_Dex += dexUp;
-	Game.combatLog("","You gained <strong>" + dexUp + "</strong> Dexterity.")
+	Game.combatLog("info","You gained <strong>" + dexUp + "</strong> Dexterity.")
 	var intUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_MAGIC ? 1 : 0);
 	Game.p_Int += intUp;
-	Game.combatLog("","You gained <strong>" + intUp + "</strong> Intelligence.")
+	Game.combatLog("info","You gained <strong>" + intUp + "</strong> Intelligence.")
 	var conUp = Game.RNG(1,4) == 1 ? 2 : 1;
 	Game.p_Con += conUp;
-	Game.combatLog("","You gained <strong>" + conUp + "</strong> Constitution.")
+	Game.combatLog("info","You gained <strong>" + conUp + "</strong> Constitution.")
 	Game.p_Level++;
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
 	Game.p_SkillPoints++;
-	Game.combatLog("","You gained a skill point.");
+	Game.combatLog("info","You gained a skill point.");
 	if(Game.hasPower(Game.BOOST_SKILLPT) && Game.RNG(1,5) == 1) {
 		Game.p_SkillPoints++;
-		Game.combatLog("","Your <strong>Fortuitous Growth</strong> granted another skill point!");
+		Game.combatLog("info","Your <strong>Fortuitous Growth</strong> granted another skill point!");
 	}
 	if(Game.p_Level % 5 === 0) {
 		Game.p_PP += 1;
-		Game.combatLog("","You gained a Power point.");
+		Game.combatLog("info","You gained a Power point.");
 	}
 }
 Game.buyPower = function(power) {

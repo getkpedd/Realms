@@ -1,19 +1,23 @@
 Game = {};
 /*
 Changes in this version:
-  Update: Drops now land directly in the player's inventory if it is not full.
-  Update: The value of Str/Dex/Int varies based on weapon speed (slower weapons do more)
-  Update: Visual output for health bars in combat.
-  Fix: Inventories cap at 10 slots (down from 20)
-  Fix: Powers that boost a weapon type's damage now work as intended.
-  Backend: Reorganisation of functions into multiple files.
+  Armour pieces now have generated names.
+  Visual updates to the combat log.
+  Health gained on level up is now equal to twice your Constitution (plus a small random component)
+  Debuff effects have been changed slightly:
+   - Blood Siphon now heals 10% of damage dealt per stack
+   - Residual Burn now deals 10% additional weapon damage per stack.
+   - Infected Wound now reduces enemy damage dealt by 10% per stack.
+  Fix: Special attacks now update the display properly.
+  Fix: Text can no longer be selected.
 TODO:
   Help Tab
-  Appearance change for combat log
   Revisions to the following mechanics:
    - Player powers
    - Debuffs
   Idle system
+  Names
+   - Enemies
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -62,14 +66,15 @@ Game.init = function() {
   this.ARMOUR_VULN_RANGE = 235;
   this.ARMOUR_VULN_MAGIC = 236;
   // Debuff types
-  this.DEBUFF_SHRED = 241;
-  this.DEBUFF_MULTI = 242;
-  this.DEBUFF_DRAIN = 243;
-  this.DEBUFF_SLOW = 244;
-  this.DEBUFF_MC = 245;
-  this.DEBUFF_DOT = 246;
-  this.DEBUFF_PARAHAX = 247;
-  this.DEBUFF_DOOM = 248;
+  this.DEBUFF_SHRED = 241; // Negates opponent's armour
+  this.DEBUFF_MULTI = 242; // Delivers a second attack with each hit
+  this.DEBUFF_DRAIN = 243; // Restores a percentage of damage dealt as health
+  this.DEBUFF_SLOW = 244; // Lowers the enemy's attack speed
+  this.DEBUFF_MC = 245; // Causes the enemy's next attack to hit themselves
+  this.DEBUFF_DOT = 246; // Deals an arbitrary amount of extra damage
+  this.DEBUFF_PARAHAX = 247; // May cause the enemy to be unable to attack
+  this.DEBUFF_DOOM = 248; // Kills the enemy instantly
+  this.DEBUFF_DISARM = 249; // Negates opponent's weapon
 	// Item Quality
 	this.QUALITY_POOR = 221;
 	this.QUALITY_NORMAL = 222;
@@ -180,4 +185,7 @@ Game.load = function() {
 }
 Game.RNG = function(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+Game.padLeft = function(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
 }

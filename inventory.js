@@ -11,7 +11,7 @@ Game.equipWeapon = function(index) {
   Game.p_WeaponInventory[index] = currentWep.slice(0);
   if(Game.p_State == Game.STATE_COMBAT && Game.e_DebuffStacks > 0) {
     Game.e_DebuffStacks = 0;
-    Game.combatLog("player","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
+    Game.combatLog("info","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
   }
   Game.updateInv = true;
   Game.toastNotification("Equipped " + Game.p_Weapon[0].split("|")[0] + ".");
@@ -180,7 +180,6 @@ Game.makeWeapon = function(level) {
 Game.makeArmour = function(level) {
   // Returns a piece of armour in the following form:
   // [name,level,quality,durability,[[str1,value],[str2,value],[str3,value]],[[vuln1,value],[vuln2,value]]]
-  var armName = "Generic Armour Name";
   var armLevel = level;
   var armDura = 50+(5*(level-1));
   if(Game.hasPower(Game.BOOST_REPAIR)) { armDura *= 2; }
@@ -233,6 +232,7 @@ Game.makeArmour = function(level) {
       }
     }
   }
+  var armName = Game.getArmourName(armQuality);
   return [armName, armLevel, armQuality, armDura, armStrList.slice(0), armVulnList.slice(0)];
 }
 Game.getWeaponName = function(type,quality,speedTier) {
@@ -299,8 +299,18 @@ Game.getWeaponName = function(type,quality,speedTier) {
   if(quality >= Game.QUALITY_GREAT) {
     return nameArray[Game.RNG(0,nameArray.length-1)];
   } else {
-    var qualityState = Game.qualityDescriptors[quality-Game.QUALITY_POOR];
+    var qualityState = Game.weaponQualityDescriptors[quality-Game.QUALITY_POOR];
     return (qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim();
+  }
+}
+Game.getArmourName = function(quality) {
+  if(quality >= Game.QUALITY_GREAT) {
+    return Game.armour_special[Game.RNG(0,Game.armour_special.length-1)];
+  }
+  else {
+    var qualitySet = Game.armourQualityDescriptors[quality-Game.QUALITY_POOR];
+    var aName = qualitySet[Game.RNG(0,qualitySet.length-1)] + " " + Game.armour_generic[Game.RNG(0,Game.armour_generic.length-1)];
+    return aName.trim();
   }
 }
 Game.upgradeWeaponLevel = function(weapon) {

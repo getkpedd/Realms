@@ -2,6 +2,10 @@ body {
 	background:#000000;
 }
 body * {
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
 	font-family:sans-serif;
 	font-size:12px;
 	color:#b0b0b0;
@@ -53,11 +57,26 @@ input {
 .combatLog {
 	padding:0px 10px;
 }
-.combatLog div.player {
+#logBody div.player {
 	text-align:left;
+   padding-left:30px;
 }
-.combatLog div.enemy {
-	text-align:right;
+#logBody div.player > * {
+  color: #33ff33;
+}
+#logBody div.enemy {
+	text-align:left;
+  padding-left:30px;
+}
+#logBody div.enemy > * {
+  color: #ff3333;
+}
+#logBody div.info {
+  text-align:left;
+  padding-left:30px;
+}
+#logBody div.info > * {
+  color: #dddddd;
 }
 .powerName {
 	font-size:14px;
@@ -86,6 +105,7 @@ input {
 }
 .footer {
 	position:fixed;
+  z-index:15;
 	bottom:0;
 	text-align:center;
 	width:100%;

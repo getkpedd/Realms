@@ -66,7 +66,7 @@ Game.playerCombatTick = function() {
 		// Decay handling
     if(Game.p_Weapon[8]>0) {
       if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
-        Game.combatLog("player","<strong>Proper Care</strong> prevented weapon decay.");
+        Game.combatLog("player"," - <strong>Proper Care</strong> prevented weapon decay.");
       }
       else { Game.p_Weapon[8]--; }
     }
@@ -78,15 +78,15 @@ Game.playerCombatTick = function() {
 		Game.combatLog("player","You hit the enemy with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
 		// Debuff effect for melee
 		if(Game.p_Weapon[2] == Game.WEAPON_MELEE && Game.e_DebuffStacks > 0) {
-			var selfHeal = Game.e_DebuffStacks * Game.p_Weapon[1];
+			var selfHeal = Math.floor(playerDMG * (Game.e_DebuffStacks / 10));
 			Game.p_HP = Math.min(Game.p_HP + selfHeal, Game.p_MaxHP);
-			Game.combatLog("player","Healed <strong>" + selfHeal + "</strong> from Blood Siphon.");
+			Game.combatLog("player"," - Healed <strong>" + selfHeal + "</strong> from Blood Siphon.");
 		}
 		// Debuff effect for magic
 		if(Game.p_Weapon[2] == Game.WEAPON_MAGIC && Game.e_DebuffStacks > 0) {
-			var bonusDMG = Game.e_DebuffStacks * Game.p_Weapon[1];
+      var bonusDMG = Math.floor(playerDMG * (Game.e_DebuffStacks / 10));
 			Game.e_HP = Math.max(Game.e_HP - bonusDMG, 0);
-			Game.combatLog("player","&nbsp;Dealt <strong>" + bonusDMG + "</strong> damage from Residual Burn.");
+			Game.combatLog("player"," - Dealt <strong>" + bonusDMG + "</strong> damage from Residual Burn.");
 		}
 		var debuffApplyChance = 2;
 		if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
@@ -94,13 +94,13 @@ Game.playerCombatTick = function() {
 			Game.e_DebuffStacks++;
 			switch(Game.p_Weapon[2]) {
 				case Game.WEAPON_MAGIC:
-					Game.combatLog("player","The enemy suffers from <strong>Residual Burn.</strong>");
+					Game.combatLog("player","   - The enemy suffers from <strong>Residual Burn.</strong>");
 					break;
 				case Game.WEAPON_RANGE:
-					Game.combatLog("player","The enemy suffers from <strong>Infected Wound.</strong>");
+					Game.combatLog("player","   - The enemy suffers from <strong>Infected Wound.</strong>");
 					break;
 				case Game.WEAPON_MELEE:
-					Game.combatLog("player","The enemy suffers from <strong>Blood Siphon.</strong>");
+					Game.combatLog("player","   - The enemy suffers from <strong>Blood Siphon.</strong>");
 					break;
 			}
 		}
@@ -109,7 +109,7 @@ Game.playerCombatTick = function() {
 			if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
 			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1 && !Game.flurryActive) {
         Game.flurryActive = true;
-				Game.combatLog("player","<strong>Flurry</strong> activated for an additional strike!");
+				Game.combatLog("player"," - <strong>Flurry</strong> activated for an additional strike!");
 				Game.playerCombatTick();
 			}
 			else {
@@ -169,17 +169,18 @@ Game.enemyCombatTick = function() {
 		}
 		else {
 			// Debuff effect for range
+      var damageDown = 0;
 			if(Game.p_Weapon[2] == Game.WEAPON_RANGE && Game.e_DebuffStacks > 0) {
-				var damageDown = Game.e_DebuffStacks * Game.p_Weapon[1];
+				damageDown = Math.floor(enemyDMG * (Game.e_DebuffStacks/10));
 				enemyDMG = Math.max(enemyDMG - damageDown,0);
-				Game.combatLog("enemy","<strong>" + damageDown + "</strong> prevented by Infected Wound.");
 			}
       if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
-        Game.combatLog("player","<strong>Proper Care</strong> prevented armour decay.");
+        Game.combatLog("player"," - <strong>Proper Care</strong> prevented armour decay.");
       }
       else { Game.p_Armour[3]--; }
 			Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
 			Game.combatLog("enemy","The enemy hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
+      if(damageDown > 0) { Game.combatLog("enemy"," - Infected Wound prevented <strong>" + damageDown + "</strong> damage."); }
 		}
 
 		if(Game.p_HP > 0) { Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]); }
@@ -214,47 +215,47 @@ Game.specialAttack = function() {
     }
     Game.e_DebuffStacks = 0;
     Game.p_specUsed = false;
-    Game.updateActivePanel();
+    Game.drawActivePanel();
   }
 }
 Game.fleeCombat = function() {
 	window.clearTimeout(Game.combat_playerInterval);
 	window.clearTimeout(Game.combat_enemyInterval);
 	Game.p_State = Game.STATE_IDLE;
-	Game.combatLog("","You fled from the battle.");
+	Game.combatLog("info","You fled from the battle.");
 	Game.drawActivePanel();
 }
 Game.endCombat = function() {
 	window.clearTimeout(Game.combat_playerInterval);
 	window.clearTimeout(Game.combat_enemyInterval);
 	Game.p_State = Game.STATE_IDLE;
-	if(Game.p_specUsed && Game.p_Weapon[1] == Game.WEAPON_MAGIC) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); }
+	if(Game.p_specUsed && Game.p_Weapon[2] == Game.WEAPON_MAGIC) { Game.combatLog("player","<strong>Wild Magic</strong> ended."); }
 	if(Game.p_HP > 0) {
 		// Player won, give xp and maybe, just maybe, a level.
-		Game.combatLog("","You won!");
+		Game.combatLog("info","You won!");
     if(Game.p_WeaponInventory.length < Game.MAX_INVENTORY) {
       Game.p_WeaponInventory.push(Game.e_Weapon.slice());
-      Game.combatLog("player","<span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> added to your inventory.")
+      Game.combatLog("info","<span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> added to your inventory.")
     } else {
       Game.last_Weapon = Game.e_Weapon.slice();
-      Game.combatLog("player","<span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> could not be taken due to full inventory.")
+      Game.combatLog("info","<span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> could not be taken due to full inventory.")
     }
     if(Game.p_ArmourInventory.length < Game.MAX_INVENTORY) {
       Game.p_ArmourInventory.push(Game.e_Armour.slice());
-      Game.combatLog("player","<span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span> added to your inventory.");
+      Game.combatLog("info","<span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span> added to your inventory.");
     } else {
       Game.last_Armour = Game.e_Armour.slice();
-      Game.combatLog("player","<span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span> could not be taken due to full inventory.");
+      Game.combatLog("info","<span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span> could not be taken due to full inventory.");
     }
     Game.updateInv = true;
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
     var currencyToAdd = xpToAdd;
 		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
     if(Game.e_isBoss) { xpToAdd *= 2; }
-		Game.combatLog("","You gained <strong>" + xpToAdd + "</strong> experience.");
+		Game.combatLog("info","You gained <strong>" + xpToAdd + "</strong> experience.");
 		if(Game.hasPower(Game.BOOST_CURRENCY)) { currencyToAdd = Math.floor(currencyToAdd*1.2); }
     if(Game.e_isBoss) { currencyToAdd *= 2; }
-		Game.combatLog("","You gained <strong>" + currencyToAdd + "</strong> seeds.");
+		Game.combatLog("info","You gained <strong>" + currencyToAdd + "</strong> seeds.");
 		Game.p_EXP += xpToAdd;
     Game.p_Currency += currencyToAdd;
 		if(Game.p_EXP >= Game.p_NextEXP) {
@@ -263,9 +264,9 @@ Game.endCombat = function() {
 	}
 	else {
 		// Enemy won, dock XP
-		Game.combatLog("","You lost...");
+		Game.combatLog("info","You lost...");
 		var xpDrop = Math.floor(Game.p_EXP/4);
-		Game.combatLog("","You lose <strong>" + xpDrop + "</strong> experience...");
+		Game.combatLog("info","You lose <strong>" + xpDrop + "</strong> experience...");
 		Game.p_EXP -= xpDrop;
 		Game.p_HP = Game.p_MaxHP;
 	}

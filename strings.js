@@ -30,10 +30,12 @@ Game.fast_melee_debuffs = [[Game.DEBUFF_MULTI, "Frenzy", 3, 70],
                            [Game.DEBUFF_MC, "Domination", 1, -1]];
 Game.mid_melee_special = ["Edge of Depravity|I think it's just misunderstood...",
                           "Storm's Herald|Whatever you do, don't hold it above your head.",
-                          "Flametongue|Good for those long cold nights in camp."];
+                          "Flametongue|Good for those long cold nights in camp.",
+                          "Zenith Blade|Glows brighter than the sun."];
 Game.mid_melee_debuffs = [[Game.DEBUFF_SHRED, "Ruthlessness", 5, -1],
                           [Game.DEBUFF_PARAHAX, "Static Shock", 5, 25],
-                          [Game.DEBUFF_DRAIN, "Cauterize", 5, 40]];
+                          [Game.DEBUFF_DRAIN, "Cauterize", 5, 40],
+                          [Game.DEBUFF_DISARM, "Dazzle", 5, -1]];
 Game.slow_melee_special = ["Planetary Edge|Rare, if only because planets are usually spherical.",
                            "Death Sentence|Bears a passing resemblance to Death's own scythe.",
                            "The Ambassador|Diplomacy? I do not think it means what you think it means."];
@@ -59,7 +61,7 @@ Game.slow_range_special = ["The Stakeholder|Raising the stakes, one corpse at a 
 Game.slow_range_debuffs = [[Game.DEBUFF_PARAHAX, "Unbalanced", 5, 20],
                            [Game.DEBUFF_MC, "Charm", 1, -1],
                            [Game.DEBUFF_SHRED, "Ruthlessness", 5, -1],
-                           [Game.DEBUFF_PARAHAX, "Blinding Light", 5, 20]];
+                           [Game.DEBUFF_DISARM, "Arm Shot", 5, 20]];
 Game.fast_magic_special = ["Thundercaller|When used in battle, it chants the name 'Thor' repeatedly.",
                            "Cosmic Fury|Dr. Tyson would like a word with you...",
                            "Spark-Touched Fetish|Rubber gloves are strongly recommended.",
@@ -84,8 +86,20 @@ Game.slow_magic_debuffs = [[Game.DEBUFF_DOOM, "Flames of Tetradigm", 3, 5],
                            [Game.DEBUFF_PARAHAX, "Bitter Cold", 5, 25]];
 // Prefixes for non-great items
 // Yes there's a blank one, it's so the item has no prefix :)
-Game.qualityDescriptors = [["Worthless","Damaged","Inept","Decayed","Flawed","Decrepit"],
+Game.weaponQualityDescriptors = [["Worthless","Damaged","Inept","Decayed","Flawed","Decrepit"],
                            ["Average","Unremarkable","","Passable","Basic","Simple"],
                            ["Pristine","Enhanced","Powerful","Well-Maintained","Powerful","Superior"]];
-Game.armour_generic = [];
-Game.armour_special = ["The Blue Collar|If this won't stop attackers, the guy wearing it will."];
+Game.armourQualityDescriptors = [["Tattered","Frayed","Threadbare","Cracked","Battleworn"],
+                                 ["Average","Unremarkable","","Passable","Basic","Simple"],
+                                 ["Polished","Well-Kept","Reinforced","Tempered","Heavy"]];
+Game.armour_generic = ["Robe","Jerkin","Poncho","Overcoat","Tunic","Cuirass","Brigandine","Chestplate","Buckler","Deflector"];
+Game.armour_special = ["The Blue Collar|If this won't stop attackers, the guy wearing it will.",
+                       "Xena's Breastplate|It was padded all along!",
+                       "Dual-Wielded Shields|But how am I meant to attack?",
+                       "Steel Cage|If they can't hit me, I can't hit them!",
+                       "Golden Helmet|Works purely by distraction value.",
+                       "Iron Boots|Definitely not made for walking.",
+                       "The Emperor's Clothes|Trust me, they're magnificent.",
+                       "Ze Goggles|Zey do nothing!",
+                       "Zenith Shield|Glows brighter than the sun.",
+                       "Generic Armour Name|Relic of a bygone era."];

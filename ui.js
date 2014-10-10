@@ -706,7 +706,9 @@ Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");
 	d.setAttribute("class",combatant);
 	var x = document.createElement("span");
-	x.innerHTML = message;
+  var ct = new Date();
+  x.innerHTML = message;
+  //x.innerHTML = "<span style='font-weight:bold;'>[" + Game.padLeft(ct.getHours(),2) + ":" + Game.padLeft(ct.getMinutes(),2) + ":" + Game.padLeft(ct.getSeconds(),2) + "]</span> " + message;
 	d.appendChild(x);
 	var logBox = document.getElementById("logBody");
 	logBox.appendChild(d);
