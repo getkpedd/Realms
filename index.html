@@ -42,6 +42,12 @@
           case "f":
             if(Game.p_State == Game.STATE_COMBAT) { Game.fleeCombat(); }
             break;
+          case "w":
+            if(Game.p_State == Game.STATE_IDLE) { Game.startWeaponRepair(); }
+            break;
+          case "a":
+            if(Game.p_State == Game.STATE_IDLE) { Game.startArmourRepair(); }
+            break;
         }
       }
       document.onkeypress = keyBindings;
