@@ -9,10 +9,6 @@ Game.equipWeapon = function(index) {
   var newWep = Game.p_WeaponInventory[index].slice(0);
   Game.p_Weapon = newWep.slice(0);
   Game.p_WeaponInventory[index] = currentWep.slice(0);
-  if(Game.p_State == Game.STATE_COMBAT && Game.e_DebuffStacks > 0) {
-    Game.e_DebuffStacks = 0;
-    Game.combatLog("info","Switching weapons has allowed the enemy to recover from inflicted debuffs.");
-  }
   Game.updateInv = true;
   Game.toastNotification("Equipped " + Game.p_Weapon[0].split("|")[0] + ".");
   Game.drawActivePanel();
@@ -114,7 +110,7 @@ Game.scrapArmour = function(index) {
 }
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
-	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay]
+	// [name,level,type,speed,minDmg,maxDmg,dps,quality,decay,[debuffID,debuffName,debuffDuration,debuffStrength]]
 	var type = Game.RNG(Game.WEAPON_MELEE,Game.WEAPON_MAGIC);
 	var sType = Game.RNG(Game.WSPEED_SLOW, Game.WSPEED_FAST);
 	var speed = 0;
@@ -122,6 +118,7 @@ Game.makeWeapon = function(level) {
 	var dps = 0;
 	var decay = 50 + 5*(level-1);
 	var qualityMult = 1; var qualityID = Game.QUALITY_NORMAL;
+  var debuff = [];
 	// Quality generator
 	var qT = Game.RNG(1,100);
 	if(qT == 1) {
@@ -175,7 +172,7 @@ Game.makeWeapon = function(level) {
 	minDmg = Math.floor((base + ((level-1)*perLv)-(1+(variance*(level-1)/2)))*qualityMult);
 	maxDmg = Math.ceil((base + ((level-1)*perLv)+(1+(variance*(level-1)/2)))*qualityMult);
 	dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
-	return new Array(name,level,type,speed,minDmg,maxDmg,dps,qualityID,decay);
+	return new Array(name[0],level,type,speed,minDmg,maxDmg,dps,qualityID,decay,name[1]);
 }
 Game.makeArmour = function(level) {
   // Returns a piece of armour in the following form:
@@ -237,22 +234,26 @@ Game.makeArmour = function(level) {
 }
 Game.getWeaponName = function(type,quality,speedTier) {
   var nameArray = [];
+  var debuffArray = [];
   switch(type) {
     case Game.WEAPON_MELEE:
       switch(speedTier) {
         case Game.WSPEED_SLOW:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.slow_melee_special;
+            debuffArray = Game.slow_melee_debuffs;
           } else { nameArray = Game.slow_melee_generic; }
           break;
         case Game.WSPEED_MID:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.mid_melee_special;
+            debuffArray = Game.mid_melee_debuffs;
           } else { nameArray = Game.mid_melee_generic; }
           break;
         case Game.WSPEED_FAST:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.fast_melee_special;
+            debuffArray = Game.fast_melee_debuffs;
           } else { nameArray = Game.fast_melee_generic; }
           break;
       }
@@ -262,16 +263,19 @@ Game.getWeaponName = function(type,quality,speedTier) {
         case Game.WSPEED_SLOW:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.slow_range_special;
+            debuffArray = Game.slow_range_debuffs;
           } else { nameArray = Game.slow_range_generic; }
           break;
         case Game.WSPEED_MID:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.mid_range_special;
+            debuffArray = Game.mid_range_debuffs;
           } else { nameArray = Game.mid_range_generic; }
           break;
         case Game.WSPEED_FAST:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.fast_range_special;
+            debuffArray = Game.fast_range_debuffs;
           } else { nameArray = Game.fast_range_generic; }
           break;
       }
@@ -281,26 +285,34 @@ Game.getWeaponName = function(type,quality,speedTier) {
         case Game.WSPEED_SLOW:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.slow_magic_special;
+            debuffArray = Game.slow_magic_debuffs;
           } else { nameArray = Game.slow_magic_generic; }
           break;
         case Game.WSPEED_MID:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.mid_magic_special;
+            debuffArray = Game.mid_magic_debuffs;
           } else { nameArray = Game.mid_magic_generic; }
           break;
         case Game.WSPEED_FAST:
           if(quality>=Game.QUALITY_GREAT) {
             nameArray = Game.fast_magic_special;
+            debuffArray = Game.fast_magic_debuffs;
           } else { nameArray = Game.fast_magic_generic; }
           break;
       }
       break;
   }
   if(quality >= Game.QUALITY_GREAT) {
-    return nameArray[Game.RNG(0,nameArray.length-1)];
+    var arrayIndex = Game.RNG(0,nameArray.length-1);
+    return [nameArray[arrayIndex],debuffArray[arrayIndex]];
   } else {
     var qualityState = Game.weaponQualityDescriptors[quality-Game.QUALITY_POOR];
-    return (qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim();
+    if(quality == Game.QUALITY_GOOD) {
+      var debuff = Game.debuffs_generic[Game.RNG(0,Game.debuffs_generic.length-1)];
+      return [(qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim(),debuff.slice()];
+    }
+    return [(qualityState[Game.RNG(0,qualityState.length-1)] + " " + nameArray[Game.RNG(0,nameArray.length-1)]).trim(),[]];
   }
 }
 Game.getArmourName = function(quality) {

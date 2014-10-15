@@ -29,6 +29,18 @@ Game.updateLeftPanel = function() {
 	hp.innerHTML = Game.p_HP;
 	var maxhp = document.getElementById("p_MaxHP");
 	maxhp.innerHTML = Game.p_MaxHP;
+  var debuffFrame = document.getElementById("p_debuffHeader");
+  if(Game.p_Debuff.length > 0) {
+    debuffFrame.style.display = "";
+    var debuffOut = document.getElementById("p_debuffOut");
+    var debuffText = Game.p_Debuff[1] + "("+ Game.player_debuffTimer + "s)";
+    debuffOut.innerHTML = debuffText;
+  }
+  else {
+    debuffFrame.style.display = "none";
+    var debuffOut = document.getElementById("p_debuffOut");
+    debuffOut.innerHTML = "";
+  }
 	var str = document.getElementById("p_Str");
 	str.innerHTML = Game.p_Str;
 	var dex = document.getElementById("p_Dex");
@@ -40,7 +52,7 @@ Game.updateLeftPanel = function() {
   var currency = document.getElementById("CurrencyOut");
   currency.innerHTML = Game.p_Currency;
   var scrap = document.getElementById("ScrapOut");
-  scrap.innerHTML = Game.p_Scrap;
+  scrap.innerHTML = Game.enemy_debuffTimer;
 	// Player weapon
 	var w_name = document.getElementById("w_Name");
   w_name.className = "q" + Game.p_Weapon[7];
@@ -76,6 +88,17 @@ Game.updateLeftPanel = function() {
 	w_DPS.innerHTML = Game.p_Weapon[6];
 	var w_decay = document.getElementById("w_Decay");
 	var pp = document.getElementById("p_PP");
+  // Debuff
+  var debuffPanel = document.getElementById("weaponDebuff");
+  if(Game.p_Weapon[9].length > 0) {
+    debuffPanel.style.display = "";
+    var debuffOut = document.getElementById("weaponDebuffOut");
+    var debuffText = Game.p_Weapon[9][1] + " (" + Game.p_Weapon[9][2] + " sec) ";
+    var debuffPower = 0;
+    if(Game.p_Weapon[9][3] > 0) { debuffText += "(" + Game.p_Weapon[9][3] + "% effect)"; }
+    debuffOut.innerHTML = debuffText;
+  }
+  else { debuffPanel.style.display = "none"; }
   var wrPanel = document.getElementById("weaponRepairPanel");
   if(Game.p_State == Game.STATE_IDLE) { wrPanel.style.display = ""; }
   else { wrPanel.style.display = "none"; }
@@ -142,7 +165,6 @@ Game.updateLeftPanel = function() {
   var arPanel = document.getElementById("armourRepairPanel");
   if(Game.p_State == Game.STATE_IDLE) { arPanel.style.display = ""; }
   else { arPanel.style.display = "none"; }
-  // Need a button here to go to inventory if enemy drops available
 }
 Game.updateCombatPanel = function() {
   var e_panel = document.getElementById("enemyInfo");
@@ -166,19 +188,12 @@ Game.updateCombatPanel = function() {
 			var e_hp = document.getElementById("enemyHealth");
       e_hp.innerHTML = "Health: " + Game.e_HP + " / " + Game.e_MaxHP;
       var e_mainStat = document.getElementById("enemyMainStat");
-      switch(Game.e_Weapon[2]) {
-        case Game.WEAPON_MELEE:
-          e_mainStat.innerHTML = "Main Stat: " + Game.e_Str;
-          break;
-        case Game.WEAPON_RANGE:
-          e_mainStat.innerHTML = "Main Stat: " + Game.e_Dex;
-          break;
-        case Game.WEAPON_MAGIC:
-          e_mainStat.innerHTML = "Main Stat: " + Game.e_Int;
-          break;
-      }
+      e_mainStat.innerHTML = "Main Stat: " + Game.e_MainStat;
 			var e_Debuff = document.getElementById("enemyDebuffOutput");
-      e_Debuff.innerHTML = "Debuff Stacks: " + Game.e_DebuffStacks;
+      if(Game.getEnemyDebuff()[0] > 0) {
+        e_Debuff.innerHTML = "Debuff: " + Game.e_Debuff[1] + " (" + Game.enemy_debuffTimer + "s)";
+      }
+      else { e_Debuff.innerHTML = ""; }
 			// Enemy weapon
 			var e_Weapon = document.getElementById("enemyWeapon");
 			var ew_type = ""
@@ -190,7 +205,10 @@ Game.updateCombatPanel = function() {
 				case Game.WEAPON_MAGIC:
 					ew_type = "Magic"; break;
 			}
-      e_Weapon.innerHTML = "Weapon: <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> (" + ew_type + "), " + Game.e_Weapon[4] + " - " + Game.e_Weapon[5] + " Damage, " + Game.e_Weapon[3] + " speed, " + Game.e_Weapon[6] + " DPS";
+      e_Weapon.innerHTML = "Weapon: <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> (" + ew_type + ")<br /> " + Game.e_Weapon[4] + " - " + Game.e_Weapon[5] + " Damage, " + Game.e_Weapon[3] + " speed, " + Game.e_Weapon[6] + " DPS";
+      if(Game.e_Weapon[9].length > 0) {
+        e_Weapon.innerHTML = e_Weapon.innerHTML + "<br />Applies <strong>" + Game.e_Weapon[9][1] + "</strong>";
+      }
       // Enemy armour
       var e_Armour = document.getElementById("enemyArmour");
       e_Armour.innerHTML = "Armour: <span class='q" + Game.e_Armour[2] + "'>" + Game.e_Armour[0].split("|")[0] + "</span><br />"
@@ -205,7 +223,7 @@ Game.updateCombatPanel = function() {
           case Game.ARMOUR_STR_MAGIC:
             strType = "Magic Resist"; break;
         }
-        e_Armour.innerHTML += "<span style='color:#33cc33;'>+" + thisStr[1] + " " + strType + "</span> ";
+        e_Armour.innerHTML += "<span style='color:#33cc33;'>+" + thisStr[1] + " " + strType + " </span> ";
       }
       for(var vu = 0; vu < Game.e_Armour[5].length; vu++) {
         var thisVul = Game.e_Armour[5][vu];
@@ -218,8 +236,11 @@ Game.updateCombatPanel = function() {
           case Game.ARMOUR_VULN_MAGIC:
             vulType = "Magic Resist"; break;
         }
-        e_Armour.innerHTML += "<span style='color:red;'>-" + thisVul[1] + " " + vulType + "</span> ";
+        e_Armour.innerHTML += "<span style='color:red;'>-" + thisVul[1] + " " + vulType + " </span> ";
       }
+      var specButton = document.getElementById("specialButton");
+      if(Game.p_specUsed) { specButton.innerHTML = "Burst Unavailable"; }
+      else { specButton.innerHTML = "Burst Attack"; }
 			break;
 		case Game.STATE_REPAIR:
       e_panel.style.display = "none";
@@ -421,6 +442,12 @@ Game.updateInventoryPanel = function() {
       var textContent = document.createTextNode(" (" + weaponType + ") - Level " + Game.p_WeaponInventory[x][1] + " - " + Game.p_WeaponInventory[x][3] + " speed - " + Game.p_WeaponInventory[x][4] + "-" + Game.p_WeaponInventory[x][5] + " damage (" + Game.p_WeaponInventory[x][6] + " DPS) - " + Game.p_WeaponInventory[x][8] + " durability");
       infopane.appendChild(document.createElement("br"));
       infopane.appendChild(textContent);
+      if(Game.p_WeaponInventory[x][9].length > 0) {
+        var debuffStr = document.createTextNode("Applies the " + Game.p_WeaponInventory[x][9][1] + " debuff for " + Game.p_WeaponInventory[x][9][2] + "sec.");
+        infopane.appendChild(document.createElement("br"));
+        infopane.appendChild(debuffStr);
+      }
+
       inventoryObject.appendChild(infopane);
       // Column for buttons
       if(Game.p_State !== Game.STATE_REPAIR) {

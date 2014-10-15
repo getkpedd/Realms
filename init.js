@@ -1,27 +1,38 @@
 Game = {};
 /*
 Changes in this version:
-  Armour pieces now have generated names.
-  Visual updates to the combat log.
-  Health gained on level up is now equal to twice your Constitution (plus a small random component)
-  Debuff effects have been changed slightly:
-   - Blood Siphon now heals 10% of damage dealt per stack
-   - Residual Burn now deals 10% additional weapon damage per stack.
-   - Infected Wound now reduces enemy damage dealt by 10% per stack.
-  Fix: Special attacks now update the display properly.
-  Fix: Text can no longer be selected.
+  Debuff changes:
+   - Debuffs are now tied to weapons instead of combat styles.
+   - Debuffs no longer stack.
+   - There are now 9 debuffs:
+     - Armour Shred, negates the victim's beneficial armour effects.
+     - Double Attack, allows the attacker to hit twice for an additional X% damage.
+     - Health Drain, heals the attacker for X% of weapon damage per second.
+     - Slowed Attacks, lowers the victim's attack speed by X%.
+     - Confusion, causes the victim's next attack to damage itself. (NYI)
+     - Damage Over Time, victim takes X% of attacker's weapon damage per second.
+     - Paralysis, X% chance for the victim's attack to not occur. (NYI)
+     - Doom, X% chance to kill the victim outright at the end of the duration.
+     - Disarm, negates the effects of victim's weapon and prevents debuff application (NYI)
+   - Both combatants can now apply debuffs.
+   - Good quality weapons are now generated with a random debuff attached to them.
+   - Great and Amazing quality weapons have specific debuffs attached. These are more powerful than their random counterparts.
+   - Debuffs are no longer removed on weapon switch.
+   - The special attack button has been replaced with a 'burst attack' button, which delivers a normal attack and it available once every 10 seconds.
 TODO:
   Help Tab
   Revisions to the following mechanics:
    - Player powers
-   - Debuffs
+   - Zones and combat areas (there are none)
   Idle system
+  Update save function (stop it saving constants)
   Names
+   - The Player
    - Enemies
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.22; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.224; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -105,17 +116,22 @@ Game.init = function() {
   this.p_Currency = 0;
   this.p_Scrap = 0;
 	this.p_IdleInterval = null;
+  this.p_Debuff = [];
+  this.player_debuffInterval = null;
+  this.player_debuffTimer = 0;
+  this.enemy_debuffInterval = null;
+  this.enemy_debuffTimer = 0;
 	this.combat_enemyInterval = null;
   this.combat_playerInterval = null;
   this.toastTimer = null;
 	// Enemy variables
 	this.e_HP = 0; this.e_MaxHP = 0;
-	this.e_Str = 0; this.e_Dex = 0;
-	this.e_Int = 0; this.e_Level = 0;
+	this.e_MainStat = 0; this.e_Level = 0;
 	this.e_isBoss = false;
 	this.e_Weapon = []; // Enemy weapon
   this.e_Armour = []; // Enemy armour
 	this.e_DebuffStacks = 0;
+  this.e_Debuff = [];
 	this.last_Weapon = []; // Weapon to take
   this.last_Armour = [];
   this.activePanel = "";

@@ -92,6 +92,9 @@
 								<td>Health: </td>
 								<td><div id="HPOut"><span id="p_HP"></span>/<span id="p_MaxHP"></span></div></td>
 							</tr>
+              <tr id="p_debuffHeader">
+                <td colspan="2"><span class="blockHeader">Debuff:</span><br /><span id="p_debuffOut"></span></td>
+              </tr>
               <tr>
                 <td>&nbsp;</td>
               </tr>
@@ -157,6 +160,9 @@
 								<td>Durability: </td>
 								<td><div id="w_Decay"></div></td>
 							</tr>
+              <tr id="weaponDebuff">
+                <td colspan="2"><span class="blockHeader">Applied Debuff:</span><br /><span id="weaponDebuffOut"></span></td>
+              </tr>
               <tr id="weaponRepairPanel">
                 <td colspan="2">
                   <span class="bigButton" id="repairButton" onClick="Game.startWeaponRepair();">Repair Weapon</span>
@@ -232,10 +238,10 @@
                             </td>
                           </tr>
                           <tr>
-                            <td align="left" colspan="3">
+                            <td align="left" colspan="2">
                               <span id="enemyWeapon"></span>
                             </td>
-                            <td align="right">
+                            <td align="right" colspan="2">
                               <span id="enemyDebuffOutput"></span>
                             </td>
                           </tr>
@@ -249,7 +255,7 @@
 										</tr>
                     <tr id="combatActionBar">
                       <td colspan="2">
-                        <span class="bigButton" id="specialButton" onClick="Game.specialAttack();">Use special attack</span>
+                        <span class="bigButton" id="specialButton" onClick="Game.burstAttack();"></span>
                         <span class="bigButton" id="fleeButton" onClick="Game.fleeCombat();">Flee from battle</span>
                       </td>
                     </tr>
@@ -295,7 +301,7 @@
 														<td width="80%"><div class="powerName">Survival Instincts</div>Grants a 20% increased repair and regeneration speed.</td>
 													</tr>
 													<tr id="selected_wspec" style="display:none">
-														<td width="80%"><div class="powerName">Keen Eye</div>Grants a 10% increase in debuff application rate.</td>
+														<td width="80%"><div class="powerName">Keen Eye</div>Increases the debuff application rate to 30%</td>
 													</tr>
 													<tr id="selected_skillpt" style="display:none">
 														<td width="80%"><div class="powerName">Fortuitous Growth</div>Grants a 20% chance to gain an additional free skill point per level.</td>
@@ -354,7 +360,7 @@
 														<td width="20%"><input type="button" id="buy_Heal" onClick="Game.buyPower(Game.BOOST_HEAL);" value="Activate"></td>
 													</tr>
 													<tr id="wspec">
-														<td width="80%"><div class="powerName">Keen Eye</div>Grants a 10% increase in debuff application rate.</td>
+														<td width="80%"><div class="powerName">Keen Eye</div>Increases the debuff application rate to 30%</td>
 														<td width="20%"><input type="button" id="buy_WSpec" onClick="Game.buyPower(Game.BOOST_WSPEC);" value="Activate"></td>
 													</tr>
 													<tr id="skillpt">
