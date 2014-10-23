@@ -90,11 +90,13 @@ Game.idleHeal = function() {
 Game.autoBattleFunc = function() {
   if(Game.p_State == Game.STATE_IDLE) {
     if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) { Game.sellAllWeapons(); }
-    if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.sellAllArmour(); }
+    else if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.sellAllArmour(); }
+    else {
     var repairThreshold = document.getElementById("ab_lowdura").options[ab_lowdura.selectedIndex].value;
     if(Game.p_Weapon[8] < repairThreshold) { Game.startWeaponRepair(); }
-    if(Game.p_Armour[3] < repairThreshold) { Game.startArmourRepair(); }
-    if(Game.p_HP == Game.p_MaxHP) { Game.startCombat(); }
+    else if(Game.p_Armour[3] < repairThreshold) { Game.startArmourRepair(); }
+    else if(Game.p_HP == Game.p_MaxHP) { Game.startCombat(); }
+    }
   }
   if(Game.p_State == Game.STATE_COMBAT) {
     var fleePercent = document.getElementById("ab_fleePercent").options[ab_fleePercent.selectedIndex].value;
