@@ -1,30 +1,27 @@
 Game = {};
 /*
 Changes in this version:
-  Debuff changes:
-   - Debuffs are now tied to weapons instead of combat styles.
-   - Debuffs no longer stack.
-   - There are now 9 debuffs:
-     - Armour Shred, negates the victim's beneficial armour effects.
-     - Double Attack, allows the attacker to hit twice for an additional X% damage.
-     - Health Drain, heals the attacker for X% of weapon damage per second.
-     - Slowed Attacks, lowers the victim's attack speed by X%.
-     - Confusion, causes the victim's next attack to damage itself. (NYI)
-     - Damage Over Time, victim takes X% of attacker's weapon damage per second.
-     - Paralysis, X% chance for the victim's attack to not occur. (NYI)
-     - Doom, X% chance to kill the victim outright at the end of the duration.
-     - Disarm, negates the effects of victim's weapon and prevents debuff application (NYI)
-   - Both combatants can now apply debuffs.
-   - Good quality weapons are now generated with a random debuff attached to them.
-   - Great and Amazing quality weapons have specific debuffs attached. These are more powerful than their random counterparts.
-   - Debuffs are no longer removed on weapon switch.
-   - The special attack button has been replaced with a 'burst attack' button, which delivers a normal attack and it available once every 10 seconds.
+  Fix: Enemies will no longer apply debuffs while disarmed.
+  Fix: Disarm now reduces weapon damage by half instead of ignoring it completely.
+  Fix: Debuffs are now cleared when fleeing combat.
+  Fix: Armour no longer degrades into negative durability.
+  Fix: Broken armour no longer provides benefits (but still has vulnerabilities)
+  FIx: The scrap counter now shows the correct value.
+  Auto-battling has arrived, and works as follows:
+   - First, we check if either inventory is full. If they are, we bulk sell all items below a threshold quality.
+   - Then, we check to see if our weapons or armour are too damaged. If they are, repair them.
+   - After this, we initiate combat if the player is at full health.
+   - When in combat, the player will flee if their health falls below a threshold percentage.
+  The Misc tab has been relabelled to 'Options' and now contains the following controls:
+   - The toggle to enable auto-battle.
+   - The maximum quality at which weapons/armour can be bulk sold.
+   - The threshold at which items should be auto-repaired when auto-battle is active.
+   - The health level threshold at which the player flees combat during auto-battle.
 TODO:
   Help Tab
   Revisions to the following mechanics:
    - Player powers
    - Zones and combat areas (there are none)
-  Idle system
   Update save function (stop it saving constants)
   Names
    - The Player
@@ -139,6 +136,8 @@ Game.init = function() {
   this.p_ArmourInventory = [];
   this.updateInv = true;
   this.flurryActive = false;
+  this.autoBattle = false;
+  this.autoBattleTicker = null;
   if(!this.load()) {
  		this.initPlayer(1);
     this.showPanel("helpTable");

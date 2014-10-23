@@ -66,9 +66,10 @@
 				<span class="tabButton" onclick="Game.showPanel('powersTable');">Powers</span>
 				<span class="tabButton" onclick="Game.showPanel('inventoryTable');">Inventory</span>
 				<span class="tabButton" onclick="Game.showPanel('storeTable');">Store</span>
-				<span class="tabButton" onclick="Game.showPanel('miscTable');">Misc</span>
+				<span class="tabButton" onclick="Game.showPanel('miscTable');">Options</span>
 				<span class="tabButton" onclick="Game.showPanel('helpTable');">Help</span>
-      <!-- Autobattle status output here maybe -->
+        <span style="font-size:14px;float:right;text-align:right;padding-right:15px;">Autobattle status:&nbsp;
+          <span style="font-size:14px;float:right;text-align:right;" id="autoBattleState"></span></span>
 			<table width="900px">
 				<tr>
 					<td id="leftPanel" width="200px" valign="top">
@@ -425,6 +426,8 @@
                     <tr id="weaponCache" style="display:none;">
                       <td>
                         <div class="powerHeader">Weapon Cache</div>
+                          <span onclick="Game.sellAllWeapons()" class="bigButton">Sell All</span>
+                          <span onclick="Game.scrapAllWeapons()" class="bigButton">Scrap All</span>
                       </td>
                     </tr>
                     <tr>
@@ -434,7 +437,9 @@
                     </tr>
                     <tr id="armourCache" style="display:none;">
                       <td>
-                        <div class="powerHeader">Armour Cache</div>
+                        <div class="powerHeader">Armour Cache&nbsp;</div>
+                          <span onclick="Game.sellAllArmour()" class="bigButton">Sell All</span>
+                          <span onclick="Game.scrapAllArmour()" class="bigButton">Scrap All</span>
                       </td>
                     </tr>
                     <tr>
@@ -462,12 +467,58 @@
                       <td>
                         <span class="bigButton" onClick="Game.save();">Save Game</span>
                         <span class="bigButton" onClick="Game.reset();">Reset Game</span>
-                        <!--
-                        <div class="powerHeader">Autobattle Options:</div>
-												<div class="blockHeader">Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable"></span></div>
-												<div class="blockHeader">Health Percentage to Start Combat: <span><input id="ab_startPercent" type="text" maxlength="3" value="100"></span></div>
-												<div class="blockHeader">Health Percentage to Flee From Combat: <span><input id="ab_fleePercent" type="text" maxlength="3" value="10"></span></div>
-                        -->
+                        <br /><br />
+                        <div class="powerHeader">Autobattle Options</div>
+												<div>Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable" onclick="Game.toggleAutoBattle()"></span></div>
+												<div>Health Percentage to Flee From Combat: 
+                          <span>
+                            <select id="ab_fleePercent" style="color:#000000;">
+                              <option value="5">5%</option>
+                              <option value="10" selected="selected">10%</option>
+                              <option value="15">15%</option>
+                              <option value="20">20%</option>
+                              <option value="25">25%</option>
+                              <option value="30">30%</option>
+                            </select>
+                          </span>
+                        </div>
+                        <div>Automatic Repair Threshold: 
+                          <span>
+                            <select id="ab_lowdura" style="color:#000000;">
+                              <option value="5">5</option>
+                              <option value="10" selected="selected">10</option>
+                              <option value="15">15</option>
+                              <option value="20">20</option>
+                              <option value="25">25</option>
+                              <option value="30">30</option>
+                            </select>
+                          </span>
+                        </div>
+                        <br /><br />
+                        <div class="powerHeader">Bulk Options</div>
+                        <div>Weapon Quality Bulk Sell/Scrap Threshold: 
+                          <span>
+                            <select id="wep_minBulk" style="color:#000000;">
+                              <option class="q221" value="221">Poor</option>
+                              <option class="q222" style="color:#000000;" value="222" selected="selected">Normal</option>
+                              <option class="q223" value="223">Good</option>
+                              <option class="q224" value="224">Great</option>
+                              <option class="q225" value="225">Amazing</option>
+                            </select>
+                          </span>
+                        </div>
+                        <div>Armour Quality Bulk Sell/Scrap Threshold: 
+                          <span>
+                            <select id="arm_minBulk" style="color:#000000;">
+                              <option class="q221" value="221">Poor</option>
+                              <option class="q222" style="color:#000000;" value="222" selected="selected">Normal</option>
+                              <option class="q223" value="223">Good</option>
+                              <option class="q224" value="224">Great</option>
+                              <option class="q225" value="225">Amazing</option>
+                            </select>
+                          </span>
+                        </div>
+                        <div>(Items of this quality or less will be eligible for bulk sell/scrap)</div>
                       </td>
                     </tr>
                   </table>
@@ -480,6 +531,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.224 alpha</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.225 alpha</div>
 	</body>
 </html>

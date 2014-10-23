@@ -87,3 +87,18 @@ Game.idleHeal = function() {
 	else { Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000); }
 	Game.drawActivePanel();
 }
+Game.autoBattleFunc = function() {
+  if(Game.p_State == Game.STATE_IDLE) {
+    if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) { Game.sellAllWeapons(); }
+    if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.sellAllArmour(); }
+    var repairThreshold = document.getElementById("ab_lowdura").options[ab_lowdura.selectedIndex].value;
+    if(Game.p_Weapon[8] < repairThreshold) { Game.startWeaponRepair(); }
+    if(Game.p_Armour[3] < repairThreshold) { Game.startArmourRepair(); }
+    if(Game.p_HP == Game.p_MaxHP) { Game.startCombat(); }
+  }
+  if(Game.p_State == Game.STATE_COMBAT) {
+    var fleePercent = document.getElementById("ab_fleePercent").options[ab_fleePercent.selectedIndex].value;
+    var healthThreshold = Math.floor(Game.p_MaxHP / 100 * fleePercent);
+    if(Game.p_HP <= healthThreshold && Game.p_HP > 0) { Game.fleeCombat(); }
+  }
+}

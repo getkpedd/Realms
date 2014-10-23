@@ -9,7 +9,6 @@ Game.levelUp = function() {
 	Game.combatLog("info","Level up! You are now level <strong>" + (Game.p_Level+1) + "</strong>.");
 	var hpUp = Game.p_Con + Game.p_Con + Game.RNG(0,Game.p_Level);
 	Game.p_MaxHP += hpUp
-	Game.p_HP = Game.p_MaxHP;
 	Game.combatLog("info","You gained <strong>" + hpUp + "</strong> HP.")
   var strUp = 1 + (Game.p_Weapon[2] == Game.WEAPON_MELEE ? 1 : 0);
 	Game.p_Str += strUp;
@@ -104,6 +103,18 @@ Game.makeBoss = function(level) {
 	Game.e_isBoss = true;
 	Game.e_Weapon = Game.makeWeapon(level+3);
   Game.e_Armour = Game.makeArmour(level+3);
+}
+Game.toggleAutoBattle = function() {
+  Game.autoBattle = !Game.autoBattle;
+  if(Game.autoBattle) {
+    Game.toastNotification("Auto Battle activated.");
+    Game.autoBattleTicker = window.setInterval(Game.autoBattleFunc, 200);
+  }
+  else {
+    Game.toastNotification("Auto Battle deactivated.");
+    window.clearInterval(Game.autoBattleTicker);
+    Game.autoBattleTicker = null;
+  }
 }
 Game.hasPower = function(power) {
 	return Game.p_Powers.indexOf(power) >= 0;

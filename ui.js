@@ -52,7 +52,7 @@ Game.updateLeftPanel = function() {
   var currency = document.getElementById("CurrencyOut");
   currency.innerHTML = Game.p_Currency;
   var scrap = document.getElementById("ScrapOut");
-  scrap.innerHTML = Game.enemy_debuffTimer;
+  scrap.innerHTML = Game.p_Scrap;
 	// Player weapon
 	var w_name = document.getElementById("w_Name");
   w_name.className = "q" + Game.p_Weapon[7];
@@ -165,6 +165,8 @@ Game.updateLeftPanel = function() {
   var arPanel = document.getElementById("armourRepairPanel");
   if(Game.p_State == Game.STATE_IDLE) { arPanel.style.display = ""; }
   else { arPanel.style.display = "none"; }
+  var abState = document.getElementById("autoBattleState");
+  if(Game.autoBattle) { abState.innerHTML = "Active"; } else { abState.innerHTML = "Inactive"; }
 }
 Game.updateCombatPanel = function() {
   var e_panel = document.getElementById("enemyInfo");

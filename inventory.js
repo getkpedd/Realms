@@ -405,6 +405,40 @@ Game.upgradeWeaponQuality = function(weapon) {
 Game.buyWeaponQualityUpgrade = function() {
   
 }
+Game.upgradeArmourQuality = function() {
+  
+}
+Game.buyArmourQualityUpgrade = function() {
+  
+}
+Game.sellAllWeapons = function() {
+  for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
+    if(Game.p_WeaponInventory[i][7] <= document.getElementById("wep_minBulk").options[wep_minBulk.selectedIndex].value) {
+      Game.sellWeapon(i);
+    }
+  }
+}
+Game.sellAllArmour = function() {
+  for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
+    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[wep_minBulk.selectedIndex].value) {
+      Game.sellArmour(i);
+    }
+  }
+}
+Game.scrapAllWeapons = function() {
+  for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
+    if(Game.p_WeaponInventory[i][7] <= document.getElementById("wep_minBulk").options[wep_minBulk.selectedIndex].value) {
+      Game.scrapWeapon(i);
+    }
+  }
+}
+Game.scrapAllArmour = function() {
+  for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
+    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[wep_minBulk.selectedIndex].value) {
+      Game.scrapArmour(i);
+    }
+  }
+}
 Game.takeWeapon = function() {
   if(Game.p_WeaponInventory.length < Game.MAX_INVENTORY) {
     Game.p_WeaponInventory.push(Game.last_Weapon.slice(0));
