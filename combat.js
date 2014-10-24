@@ -25,7 +25,6 @@ Game.startCombat = function() {
 	}
 	var log = document.getElementById("logBody");
 	log.innerHTML = "";
-  Game.showPanel('combatTable');
 	Game.drawActivePanel();
 }
 Game.playerCombatTick = function() {
