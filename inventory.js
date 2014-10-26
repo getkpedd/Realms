@@ -420,7 +420,7 @@ Game.sellAllWeapons = function() {
 }
 Game.sellAllArmour = function() {
   for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
-    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[wep_minBulk.selectedIndex].value) {
+    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[arm_minBulk.selectedIndex].value) {
       Game.sellArmour(i);
     }
   }
@@ -434,7 +434,7 @@ Game.scrapAllWeapons = function() {
 }
 Game.scrapAllArmour = function() {
   for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
-    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[wep_minBulk.selectedIndex].value) {
+    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[arm_minBulk.selectedIndex].value) {
       Game.scrapArmour(i);
     }
   }
