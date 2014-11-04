@@ -184,7 +184,7 @@ Game.updateCombatPanel = function() {
       ooc_panel.style.display = "none";
       ic_panel.style.display = "";
       var e_name = document.getElementById("enemyName");
-      e_name.innerHTML = "Generic Enemy Name";
+      e_name.innerHTML = Game.e_Name;
 			var e_lv = document.getElementById("enemyLevel");
       e_lv.innerHTML = "Level: " + Game.e_Level;
 			var e_hp = document.getElementById("enemyHealth");
@@ -723,13 +723,29 @@ Game.updateInventoryPanel = function() {
 }
 Game.updateStorePanel = function() {
   var wlUPCost = document.getElementById("weaponLevelUpgradeCost");
-  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   wlUPCost.innerHTML = upgradeCost;
   var alUPCost = document.getElementById("armourLevelUpgradeCost");
-  upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Armour[1]));
+  upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
   alUPCost.innerHTML = upgradeCost;
+ var wepQualityRow = document.getElementById("weaponQualityUpRow");
+  if(Game.p_Weapon[7] == Game.QUALITY_AMAZING) { wepQualityRow.style.display = "none"; }
+  else {
+    wepQualityRow.style.display = "";
+    var wQualityCost = document.getElementById("weaponQualityUpgradeCost");
+    var scrapCost = Math.pow(4,(Game.p_Weapon[7]-Game.QUALITY_POOR));
+    wQualityCost.innerHTML = scrapCost;
+  }
+  var armQualityRow = document.getElementById("armourQualityUpRow");
+  if(Game.p_Armour[2] == Game.QUALITY_AMAZING) { armQualityRow.style.display = "none"; }
+  else {
+    armQualityRow.style.display = "";
+    var wQualityCost = document.getElementById("armourQualityUpgradeCost");
+    var scrapCost = Math.pow(4,(Game.p_Armour[2]-Game.QUALITY_POOR));
+    wQualityCost.innerHTML = scrapCost;
+  }
 }
 Game.combatLog = function(combatant, message) {
 	var d = document.createElement("div");

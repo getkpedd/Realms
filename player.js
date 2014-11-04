@@ -76,7 +76,15 @@ Game.initPlayer = function(level) {
 	Game.p_Weapon = Game.makeWeapon(level);
   Game.p_Armour = Game.makeArmour(level);
 }
+Game.getEnemyName = function(isBoss) {
+  if(isBoss) { return Game.enemy_boss[Game.RNG(0,Game.enemy_boss.length)]; }
+  else {
+    if(Game.RNG(1,10) == 1) { return Game.enemy_special[Game.RNG(0,Game.enemy_special.length)]; }
+    else { return Game.enemy_generic[Game.RNG(0,Game.enemy_generic.length)]; }
+  }
+}
 Game.makeEnemy = function(level) {
+  Game.e_Name = Game.getEnemyName(false);
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MainStat = Game.RNG(5,7) + Game.RNG(level-1,2*(level-1));
   var scalingFactor = Math.min(2.0,0.8+((level-1)*0.04));
@@ -91,6 +99,7 @@ Game.makeEnemy = function(level) {
   Game.e_Armour = Game.makeArmour(Game.RNG(1,5) == 1 ? level+1 : level);
 }
 Game.makeBoss = function(level) {
+  Game.e_Name = Game.getEnemyName(true);
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MainStat = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
   var scalingFactor = Math.min(3.0,1+((level-1)*0.05));

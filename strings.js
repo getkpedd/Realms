@@ -107,3 +107,7 @@ Game.armour_special = ["The Blue Collar|If this won't stop attackers, the guy we
                        "Ze Goggles|Zey do nothing!",
                        "Zenith Shield|Glows brighter than the sun.",
                        "Generic Armour Name|Relic of a bygone era."];
+Game.enemy_generic = ["Rat","Cat","Man","Woman","Angry Redditor","Goat","Boar","Tiger","Skeleton","Unicyclist","Hipster","Desperate Brigand","Wolf","Irradiated Worker","Blacksmith","Gnomish Inventor","Dwarven Miner","Disgruntled Shopkeeper","Treant","Disembodied Tentacle","Incremental Developer","Angry Mob","Gelatinous Blob","Crocodile","Young Dragon","Beholder","Small Child","Unicorn","Lesser Demon","Donut Throwing Policeman"];
+// Mostly friendly redditors...
+Game.enemy_special = ["Sky Monkey","John the Leprechaun","Ragekai","Flirty Lover","Mike Handers","Feld O' Propane","42nd Saren","Reelix","Ralph","Kung Fu Hamster","Detratigm","Kryzodoze","Chromega","Literal Hitler","Seiyria", "Generic Enemy Name"];
+Game.enemy_boss = ["Tetradigm","The Solver","Giant Enemy Dragon","Generic Boss Name","Warlord","Dr. Tyson","Greater Demon"];

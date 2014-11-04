@@ -378,7 +378,7 @@ Game.upgradeArmourLevel = function(armour) {
   return armour;
 }
 Game.buyWeaponLevelUpgrade = function() {
-  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
@@ -389,7 +389,7 @@ Game.buyWeaponLevelUpgrade = function() {
   else { Game.toastNotification("Not enough seeds..."); }
 }
 Game.buyArmourLevelUpgrade = function() {
-  var upgradeCost = Math.floor(200 * Math.pow(1.15,Game.p_Armour[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
@@ -400,16 +400,109 @@ Game.buyArmourLevelUpgrade = function() {
   else { Game.toastNotification("Not enough seeds..."); }
 }
 Game.upgradeWeaponQuality = function(weapon) {
-  
+  var baseMin = Math.floor(weapon[4]/(10+(weapon[7]-Game.QUALITY_NORMAL))*10);
+  var baseMax = Math.ceil(weapon[5]/(10+(weapon[7]-Game.QUALITY_NORMAL))*10);
+  if(weapon[7] == Game.QUALITY_NORMAL) {
+    // Add a random debuff when transitioning from Normal to Good quality
+    var dbIndex = Game.RNG(0,Game.debuffs_generic.length-1);
+    weapon[9] = Game.debuffs_generic[dbIndex];
+  }
+  if(weapon[7] == Game.QUALITY_GOOD) {
+    var validWeaponName = false;
+    var userWeaponName = "";
+    while(!validWeaponName) {
+      userWeaponName = prompt("Please provide a name for your upgraded weapon.\n\n(Max 40 characters)");
+      if(userWeaponName.length > 40) { alert("The text provided was too long, please try something shorter."); }
+      else if(/[<>|]/g.test(userWeaponName)) { alert("The text provided contained invalid characters, please try something else."); }
+      else { userWeaponName = userWeaponName.replace(/[<>|]/g,""); validWeaponName = true; }
+    }
+    var validFlavourText = false;
+    var userFlavourText = "";
+    while(!validFlavourText) {
+      userFlavourText = prompt("Please provide some flavour text for your upgraded weapon.\n\n(Max 60 characters)");
+      if(userFlavourText.length > 60) { alert("The text provided was too long, please try something shorter."); }
+      else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
+      else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
+    }
+    weapon[0] = userWeaponName + "|" + userFlavourText;
+  }
+  weapon[7]++;
+  weapon[4] = Math.ceil(baseMin*(10+(weapon[7]-Game.QUALITY_NORMAL))/10);
+  weapon[5] = Math.ceil(baseMax*(10+(weapon[7]-Game.QUALITY_NORMAL))/10);
+  weapon[6] = Math.floor(((weapon[4]+weapon[5])/2/weapon[3])*100)/100;
+  return weapon;
 }
 Game.buyWeaponQualityUpgrade = function() {
-  
+  var scrapCost = Math.pow(4,(Game.p_Weapon[7]-Game.QUALITY_POOR));
+  if(Game.p_Weapon[7] < Game.QUALITY_AMAZING && Game.p_Scrap >= scrapCost) {
+    Game.p_Scrap -= scrapCost;
+    Game.upgradeWeaponQuality(Game.p_Weapon);
+    Game.toastNotification("Weapon quality upgraded");
+    Game.drawActivePanel();
+  }
+  else {
+    if(Game.p_Weapon[7] == Game.QUALITY_AMAZING) { Game.toastNotification("Weapon already at highest quality."); }
+    else { Game.toastNotification("Not enough scrap..."); }
+  }
 }
-Game.upgradeArmourQuality = function() {
-  
+Game.upgradeArmourQuality = function(armour) {
+  switch(armour[2]) {
+    case Game.QUALITY_POOR:
+      armour[5].pop();
+      break;
+    case Game.QUALITY_NORMAL:
+      var availableTypes = [0,1,2];
+      availableTypes.splice(availableTypes.indexOf(armour[4][0][0] - Game.ARMOUR_STR_MELEE),1);
+      availableTypes.splice(availableTypes.indexOf(armour[5][0][0] - Game.ARMOUR_VULN_MELEE),1);
+      var buffPower = 1 + Math.floor(Game.RNG(Math.floor(armour[1]/2),armour[1]));
+      armour[4].push([availableTypes[0]+Game.ARMOUR_STR_MELEE,buffPower]);
+      break;
+    case Game.QUALITY_GOOD:
+      armour[5].pop();
+      var validArmourName = false;
+      var userArmourName = "";
+      while(!validArmourName) {
+        userArmourName = prompt("Please provide a name for your upgraded armour.\n\n(Max 40 characters)");
+        if(userArmourName.length > 40) { alert("The text provided was too long, please try something shorter."); }
+        else if(/[<>|]/g.test(userArmourName)) { alert("The text provided contained invalid characters, please try something else."); }
+        else { userArmourName = userArmourName.replace(/[<>|]/g,""); validArmourName = true; }
+      }
+      var validFlavourText = false;
+      var userFlavourText = "";
+      while(!validFlavourText) {
+        userFlavourText = prompt("Please provide some flavour text for your upgraded armour.\n\n(Max 60 characters)");
+        if(userFlavourText.length > 60) { alert("The text provided was too long, please try something shorter."); }
+        else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
+        else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
+      }
+      armour[0] = userArmourName + "|" + userFlavourText;
+      break;
+    case Game.QUALITY_GREAT:
+      var availableTypes = [0,1,2];
+      availableTypes.splice(availableTypes.indexOf(armour[4][0][0] - Game.ARMOUR_STR_MELEE),1);
+      availableTypes.splice(availableTypes.indexOf(armour[4][1][0] - Game.ARMOUR_STR_MELEE),1);
+      var buffPower = 3 + Math.floor(Game.RNG(Math.floor(armour[1]/2),armour[1]));
+      armour[4].push([availableTypes[0]+Game.ARMOUR_STR_MELEE,buffPower]);
+      break;
+  }
+  armour[2]++;
+  for(var x = 0; x < armour[4].length; x++) {
+    armour[4][x][1]++;
+  }
+  return armour;
 }
 Game.buyArmourQualityUpgrade = function() {
-  
+  var scrapCost = Math.pow(4,(Game.p_Armour[2]-Game.QUALITY_POOR));
+  if(Game.p_Armour[2] < Game.QUALITY_AMAZING && Game.p_Scrap >= scrapCost) {
+    Game.p_Scrap -= scrapCost;
+    Game.upgradeArmourQuality(Game.p_Armour);
+    Game.toastNotification("Armour quality upgraded");
+    Game.drawActivePanel();
+  }
+  else {
+    if(Game.p_Armour[2] == Game.QUALITY_AMAZING) { Game.toastNotification("Armour already at highest quality."); }
+    else { Game.toastNotification("Not enough scrap..."); }
+  }
 }
 Game.sellAllWeapons = function() {
   for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {

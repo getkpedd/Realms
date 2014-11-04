@@ -1,31 +1,35 @@
 Game = {};
 /*
 Changes in this version:
-  Fix: Enemies will no longer apply debuffs while disarmed.
-  Fix: Disarm now reduces weapon damage by half instead of ignoring it completely.
-  Fix: Debuffs are now cleared when fleeing combat.
-  Fix: Armour no longer degrades into negative durability.
-  Fix: Broken armour no longer provides benefits (but still has vulnerabilities)
-  FIx: The scrap counter now shows the correct value.
-  Auto-battling has arrived, and works as follows:
-   - First, we check if either inventory is full. If they are, we bulk sell all items below a threshold quality.
-   - Then, we check to see if our weapons or armour are too damaged. If they are, repair them.
-   - After this, we initiate combat if the player is at full health.
-   - When in combat, the player will flee if their health falls below a threshold percentage.
-  The Misc tab has been relabelled to 'Options' and now contains the following controls:
-   - The toggle to enable auto-battle.
-   - The maximum quality at which weapons/armour can be bulk sold.
-   - The threshold at which items should be auto-repaired when auto-battle is active.
-   - The health level threshold at which the player flees combat during auto-battle.
+  New Features:
+    Enemies are now given names chosen randomly from a list.
+    Quality upgrades are now available in the Store tab.
+      The costs are as follows:
+        Poor -> Normal: 1 scrap
+        Normal -> Good: 4 scrap
+        Good -> Great: 16 scrap
+        Great -> Amazing: 64 scrap
+      For weapons:
+        All upgrade levels increase the stats of the weapon.
+        Upgrading to 'Good' quality adds a random debuff to the weapon.
+        Upgrading to 'Great' quality lets you set a custom weapon name and flavour text.
+      For armour:
+        All upgrade levels add 1 to the armour's strengths and vulnerabilities.
+        Upgrading to 'Normal' removes the second vulnerability
+        Upgrading to 'Good' adds a new strength
+        Upgrading to 'Great' removes the last vulnerability and allows custom name and flavour text.
+        Upgrading to 'Amazing' adds the last strength.
+  Fixes and Tweaks:
+    Fix: The save function no longer saves unnecessary data (such as game constants).
+    Tweak: The second attack from the 'Flurry' power now only deals half damage.
+    Tweak: The price scaling on upgrading item levels has been lowered.
 TODO:
   Help Tab
   Revisions to the following mechanics:
    - Player powers
    - Zones and combat areas (there are none)
-  Update save function (stop it saving constants)
   Names
    - The Player
-   - Enemies
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -124,6 +128,7 @@ Game.init = function() {
 	// Enemy variables
 	this.e_HP = 0; this.e_MaxHP = 0;
 	this.e_MainStat = 0; this.e_Level = 0;
+  this.e_Name = "";
 	this.e_isBoss = false;
 	this.e_Weapon = []; // Enemy weapon
   this.e_Armour = []; // Enemy armour
@@ -157,8 +162,31 @@ Game.reset = function() {
 	}
 }
 Game.save = function() {
-	var g = JSON.stringify(Game);
-	window.localStorage.setItem("gameSave",g);
+  var STS = {};
+  STS.p_HP = Game.p_HP;
+  STS.p_MaxHP = Game.p_MaxHP;
+  STS.p_Str = Game.p_Str;
+  STS.p_Dex = Game.p_Dex;
+  STS.p_Int = Game.p_Int;
+  STS.p_Con = Game.p_Con;
+  STS.p_EXP = Game.p_EXP;
+  STS.p_NextEXP = Game.p_NextEXP;
+  STS.p_Powers = Game.p_Powers;
+  STS.p_Level = Game.p_Level;
+  STS.p_State = Game.p_State;
+  STS.p_PP = Game.p_PP;
+  STS.p_Currency = Game.p_Currency;
+  STS.p_Scrap = Game.p_Scrap;
+  STS.p_SkillPoints = Game.p_SkillPoints;
+  STS.p_WeaponInventory = Game.p_WeaponInventory
+  STS.p_Weapon = Game.p_Weapon;
+  STS.p_ArmourInventory = Game.p_ArmourInventory;
+  STS.p_Armour = Game.p_Armour;
+  STS.last_Weapon = Game.last_Weapon;
+  STS.last_Armour = Game.last_Armour;
+  STS.activePanel = Game.activePanel;
+  STS.GAME_VERSION = Game.GAME_VERSION;
+  window.localStorage.setItem("gameSave",JSON.stringify(STS));
   Game.toastNotification("Game saved.");
 }
 Game.load = function() {

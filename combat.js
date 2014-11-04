@@ -69,6 +69,7 @@ Game.playerCombatTick = function() {
         }
 				break;
 		}
+    if(Game.flurryActive) { playerDMG = Math.floor(playerDMG/2); }
 		// Decay handling
     if(Game.p_Weapon[8]>0) {
       if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
@@ -102,10 +103,10 @@ Game.playerCombatTick = function() {
     else {
       Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
       if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) {
-        		  Game.combatLog("player","You hit the enemy with your fists for <strong>" + playerDMG + "</strong> damage.");
+        		  Game.combatLog("player","You hit the " + Game.e_Name + " with your fists for <strong>" + playerDMG + "</strong> damage.");
       }
       else {
-        		  Game.combatLog("player","You hit the enemy with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
+        		  Game.combatLog("player","You hit the " + Game.e_Name + " with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
       }
     }
     if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MULTI) {
@@ -119,7 +120,7 @@ Game.playerCombatTick = function() {
 		if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
 		if(Game.p_Weapon[9].length > 0 && Game.e_Debuff.length === 0 && Game.getEnemyDebuff()[0] !== Game.DEBUFF_DISARM && Game.RNG(1,10) <= debuffApplyChance) {
       Game.e_Debuff = Game.p_Weapon[9].slice();
-		  Game.combatLog("player"," - The enemy suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
+		  Game.combatLog("player"," - The " + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
       Game.enemy_debuffTimer = Game.p_Weapon[9][2];
       Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
 		}
@@ -195,22 +196,22 @@ Game.enemyCombatTick = function() {
       else { Game.p_Armour[3] = Math.max(Game.p_Armour[3]-1,0); }
       enemyDMG = Math.max(enemyDMG,0);
       if(Game.getEnemyDebuff()[0] == Game.DEBUFF_PARAHAX && Game.RNG(1,100) <= Game.e_Debuff[3]) {
-        Game.combatLog("enemy","<strong>" + Game.e_Debuff[1] + "</strong> prevented the enemy from attacking.");
+        Game.combatLog("enemy","<strong>" + Game.e_Debuff[1] + "</strong> prevented the " + Game.e_Name + " from attacking.");
       }
       else if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MC) {
         enemyDMG = Game.RNG(Game.e_Weapon[4],Game.e_Weapon[5]);
         enemyDMG += Math.floor(Game.e_MainStat*Game.WEAPON_BASE_MULT*Game.e_Weapon[3]/3.0);
         Game.e_HP = Math.max(Game.e_HP-enemyDMG,0);
-        Game.combatLog("player","<strong>" + Game.e_Debuff[1] + "</strong> causes the enemy to attack itself for <strong>" + enemyDMG + "</strong> damage.");
+        Game.combatLog("player","<strong>" + Game.e_Debuff[1] + "</strong> causes the " + Game.e_Name + " to attack itself for <strong>" + enemyDMG + "</strong> damage.");
         Game.enemy_debuffTimer = 0;
       }
       else {
 			  Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
         if(Game.getEnemyDebuff()[0] == Game.DEBUFF_DISARM) {
-        	Game.combatLog("enemy","The enemy hits you with their fists for <strong>" + enemyDMG + "</strong> damage.");
+        	Game.combatLog("enemy","The " + Game.e_Name + " hits you with their fists for <strong>" + enemyDMG + "</strong> damage.");
         }
         else {
-			    Game.combatLog("enemy","The enemy hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
+			    Game.combatLog("enemy","The " + Game.e_Name + " hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
         }
       }
 		}
@@ -218,7 +219,7 @@ Game.enemyCombatTick = function() {
       // DOUBLE STRIKEU
       var secondDmg = Math.floor(enemyDMG*Game.p_Debuff[3]/100);
       Game.p_HP = Math.max(Game.p_HP-secondDmg,0);
-      Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> allows the enemy to strike again for <strong>" + secondDmg + "</strong> damage.");
+      Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> allows the " + Game.e_Name + " to strike again for <strong>" + secondDmg + "</strong> damage.");
     }
     Game.drawActivePanel();
 		if(Game.e_Weapon[9].length > 0 && Game.p_Debuff.length === 0 && Game.getEnemyDebuff()[0] !== Game.DEBUFF_DISARM && Game.RNG(1,10) <= 2) {
