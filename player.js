@@ -77,10 +77,10 @@ Game.initPlayer = function(level) {
   Game.p_Armour = Game.makeArmour(level);
 }
 Game.getEnemyName = function(isBoss) {
-  if(isBoss) { return Game.enemy_boss[Game.RNG(0,Game.enemy_boss.length)]; }
+  if(isBoss) { return Game.enemy_boss[Game.RNG(0,Game.enemy_boss.length-1)]; }
   else {
-    if(Game.RNG(1,10) == 1) { return Game.enemy_special[Game.RNG(0,Game.enemy_special.length)]; }
-    else { return Game.enemy_generic[Game.RNG(0,Game.enemy_generic.length)]; }
+    if(Game.RNG(1,10) == 1) { return Game.enemy_special[Game.RNG(0,Game.enemy_special.length-1)]; }
+    else { return Game.enemy_generic[Game.RNG(0,Game.enemy_generic.length-1)]; }
   }
 }
 Game.makeEnemy = function(level) {
