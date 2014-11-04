@@ -134,6 +134,7 @@ Game.init = function() {
   this.e_Armour = []; // Enemy armour
 	this.e_DebuffStacks = 0;
   this.e_Debuff = [];
+  this.e_ProperName = false; // Used for name output
 	this.last_Weapon = []; // Weapon to take
   this.last_Armour = [];
   this.activePanel = "";
