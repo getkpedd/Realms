@@ -1,39 +1,18 @@
 Game = {};
 /*
-Changes in this version:
-  New Features:
-    Enemies are now given names chosen randomly from a list.
-    Quality upgrades are now available in the Store tab.
-      The costs are as follows:
-        Poor -> Normal: 1 scrap
-        Normal -> Good: 4 scrap
-        Good -> Great: 16 scrap
-        Great -> Amazing: 64 scrap
-      For weapons:
-        All upgrade levels increase the stats of the weapon.
-        Upgrading to 'Good' quality adds a random debuff to the weapon.
-        Upgrading to 'Great' quality lets you set a custom weapon name and flavour text.
-      For armour:
-        All upgrade levels add 1 to the armour's strengths and vulnerabilities.
-        Upgrading to 'Normal' removes the second vulnerability
-        Upgrading to 'Good' adds a new strength
-        Upgrading to 'Great' removes the last vulnerability and allows custom name and flavour text.
-        Upgrading to 'Amazing' adds the last strength.
-  Fixes and Tweaks:
-    Fix: The save function no longer saves unnecessary data (such as game constants).
-    Tweak: The second attack from the 'Flurry' power now only deals half damage.
-    Tweak: The price scaling on upgrading item levels has been lowered.
 TODO:
+  Reforging (change the debuff on a weapon for a cost of scrap)
+   - Allow for improved versions of debuffs for more scrap (Great or better weapon required)
+  Change boss appearance rate (1% base chance, increasing by 1% per encounter (including fleeing))
   Help Tab
   Revisions to the following mechanics:
-   - Player powers
    - Zones and combat areas (there are none)
   Names
    - The Player
 */
 Game.init = function() {
 	//Define some constants we can use later
-  this.GAME_VERSION = 0.224; // Used to purge older saves between major version changes
+  this.GAME_VERSION = 0.23; // Used to purge older saves between major version changes
 	this.XP_MULT = 1.1;
 	this.XP_RANGEMIN = 2.3;
 	this.XP_RANGEMAX = 3.0;
@@ -44,23 +23,30 @@ Game.init = function() {
 	this.STATE_IDLE = 0;
 	this.STATE_REPAIR = 1;
 	this.STATE_COMBAT = 2;
-	//Available boosts
-	this.BOOST_REPAIR = 101; // High Maintenance
-	this.BOOST_ASPD = 102; // Nimble Fingers
-	this.BOOST_HEAL = 103; // Survival Instincts
-	this.BOOST_WSPEC = 104; // Keen Eye
-	this.BOOST_SKILLPT = 105; // Fortuitous Growth
-	this.BOOST_XP = 106; // Fast Learner
-	this.BOOST_MELEEDMG = 107; // Brutal Strikes
-	this.BOOST_RANGEDMG = 108; // Sniper Training
-	this.BOOST_MAGICDMG = 109; // Unleashed Elements
-	this.BOOST_MELEEDEF = 110; // Stoneskin
-	this.BOOST_RANGEDEF = 111; // Iron Carapace
-	this.BOOST_MAGICDEF = 112; // Aetheric Resilience
-	this.BOOST_DOUBLE = 113; // Flurry
-	this.BOOST_SHIELD = 114; // Divine Shield
-	this.BOOST_CONSERVE = 115; // Proper Care
-  this.BOOST_CURRENCY = 116; // Pickpocket
+  //New Boost Set
+  this.BOOST_CARE = 101; // Proper Care
+  this.BOOST_BROKEN = 1011; // Hanging By a Thread
+  this.BOOST_REPAIR = 1012; // High Maintenance
+  this.BOOST_CURRENCY = 102; // Pickpocket
+  this.BOOST_EXTRA = 1021; // Cavity Search
+  this.BOOST_SCRAP = 1022; // Thorough Looting
+  this.BOOST_CRIT = 103; // Keen Eye
+  this.BOOST_CRITDMG = 1031; // Keener Eye
+  this.BOOST_ENRAGE = 1032; // Adrenaline Rush
+  this.BOOST_SHIELD = 104; // Divine Shield
+  this.BOOST_ABSORB = 1041; // Absorption Shield
+  this.BOOST_REFLECT = 1042; // Reflective Shield
+  this.BOOST_MOREPP = 105; // Luck of the Draw
+  this.BOOST_MORESP = 1051; // Lucky Star
+  this.BOOST_XP = 106; // Fast Learner
+  this.BOOST_STATUP = 1061; // Patience and Discipline
+  this.BOOST_DOUBLE = 107; // Flurry
+  this.BOOST_DBLPOWER = 1071; // Empowered Flurry
+  this.BOOST_REGEN = 108; // Survival Instincts
+  this.BOOST_FULLHEAL = 1081; // Will To Live
+  this.BOOST_DAMAGE = 109; // Deadly Force
+  this.BOOST_DEFENCE = 110; // Ancestral Fortitude
+  this.BOOST_SPEED = 111; // Nimble Fingers
 	//Weapon Types
 	this.WEAPON_MELEE = 201;
 	this.WEAPON_RANGE = 202;
@@ -118,6 +104,13 @@ Game.init = function() {
   this.p_Scrap = 0;
 	this.p_IdleInterval = null;
   this.p_Debuff = [];
+  this.p_Adrenaline = 0;
+  this.activePanel = "";
+  this.p_WeaponInventory = [];
+  this.p_ArmourInventory = [];
+  this.updateInv = true;
+  this.updatePowerPanel = true;
+  this.flurryActive = false;
   this.player_debuffInterval = null;
   this.player_debuffTimer = 0;
   this.enemy_debuffInterval = null;
@@ -137,11 +130,6 @@ Game.init = function() {
   this.e_ProperName = false; // Used for name output
 	this.last_Weapon = []; // Weapon to take
   this.last_Armour = [];
-  this.activePanel = "";
-  this.p_WeaponInventory = [];
-  this.p_ArmourInventory = [];
-  this.updateInv = true;
-  this.flurryActive = false;
   this.autoBattle = false;
   this.autoBattleTicker = null;
   if(!this.load()) {

@@ -275,124 +275,54 @@ Game.updateCombatPanel = function() {
   }
 }
 Game.updatePowersPanel = function() {
-	//Available Powers Panel
-	var ppp = document.getElementById("availablePowers");
-	if(Game.p_PP > 0) {
-		ppp.style.display = "";
-		for(var x = 0; x < Game.p_Powers.length; x++) {
-			var targetControl;
-			switch(Game.p_Powers[x]) {
-				case Game.BOOST_REPAIR: // High Maintenance
-					targetControl = document.getElementById("repair");
-					break;
-				case Game.BOOST_ASPD: // Nimble Fingers
-					targetControl = document.getElementById("aspd");
-					break;
-				case Game.BOOST_HEAL: // Survival Instincts
-					targetControl = document.getElementById("heal");
-					break;
-				case Game.BOOST_WSPEC: // Keen Eye
-					targetControl = document.getElementById("wspec");
-					break;
-				case Game.BOOST_SKILLPT: // Fortuitous Growth
-					targetControl = document.getElementById("skillpt");
-					break;
-				case Game.BOOST_XP: // Fast Learner
-					targetControl = document.getElementById("xp");
-					break;
-				case Game.BOOST_MELEEDMG: // Brutal Strikes
-					targetControl = document.getElementById("meleedmg");
-					break;
-				case Game.BOOST_RANGEDMG: // Sniper Training
-					targetControl = document.getElementById("rangedmg");
-					break;
-				case Game.BOOST_MAGICDMG:// Unleashed Elements
-					targetControl = document.getElementById("magicdmg");
-					break;
-				case Game.BOOST_MELEEDEF: // Stoneskin
-					targetControl = document.getElementById("meleedef");
-					break;
-				case Game.BOOST_RANGEDEF: // Iron Carapace
-					targetControl = document.getElementById("rangedef");
-					break;
-				case Game.BOOST_MAGICDEF: // Aetheric Resilience
-					targetControl = document.getElementById("magicdef");
-					break;
-				case Game.BOOST_DOUBLE: // Flurry
-					targetControl = document.getElementById("double");
-					break;
-				case Game.BOOST_SHIELD:// Divine Shield
-					targetControl = document.getElementById("shield");
-					break;
-				case Game.BOOST_CONSERVE: // Proper Care
-					targetControl = document.getElementById("conserve");
-					break;
-        case Game.BOOST_CURRENCY: // Pickpocket
-					targetControl = document.getElementById("currency");
-					break;
-			}
-			targetControl.style.display = "none";
-		}
-	} else { ppp.style.display = "none"; }
-	//Selected Powers Panel
-	var spp = document.getElementById("selectedPowers");
-	if(Game.p_Powers.length > 0) {
-		spp.style.display = "";
-		for(var x = 0; x < Game.p_Powers.length; x++) {
-			var targetControl;
-			switch(Game.p_Powers[x]) {
-				case Game.BOOST_REPAIR: // High Maintenance
-					targetControl = document.getElementById("selected_repair");
-					break;
-				case Game.BOOST_ASPD: // Nimble Fingers
-					targetControl = document.getElementById("selected_aspd");
-					break;
-				case Game.BOOST_HEAL: // Survival Instincts
-					targetControl = document.getElementById("selected_heal");
-					break;
-				case Game.BOOST_WSPEC: // Keen Eye
-					targetControl = document.getElementById("selected_wspec");
-					break;
-				case Game.BOOST_SKILLPT: // Fortuitous Growth
-					targetControl = document.getElementById("selected_skillpt");
-					break;
-				case Game.BOOST_XP: // Fast Learner
-					targetControl = document.getElementById("selected_xp");
-					break;
-				case Game.BOOST_MELEEDMG: // Brutal Strikes
-					targetControl = document.getElementById("selected_meleedmg");
-					break;
-				case Game.BOOST_RANGEDMG: // Sniper Training
-					targetControl = document.getElementById("selected_rangedmg");
-					break;
-				case Game.BOOST_MAGICDMG:// Unleashed Elements
-					targetControl = document.getElementById("selected_magicdmg");
-					break;
-				case Game.BOOST_MELEEDEF: // Stoneskin
-					targetControl = document.getElementById("selected_meleedef");
-					break;
-				case Game.BOOST_RANGEDEF: // Iron Carapace
-					targetControl = document.getElementById("selected_rangedef");
-					break;
-				case Game.BOOST_MAGICDEF: // Aetheric Resilience
-					targetControl = document.getElementById("selected_magicdef");
-					break;
-				case Game.BOOST_DOUBLE: // Flurry
-					targetControl = document.getElementById("selected_double");
-					break;
-				case Game.BOOST_SHIELD:// Divine Shield
-					targetControl = document.getElementById("selected_shield");
-					break;
-				case Game.BOOST_CONSERVE: // Proper Care
-					targetControl = document.getElementById("selected_conserve");
-					break;
-        case Game.BOOST_CURRENCY: // Pickpocket
-					targetControl = document.getElementById("selected_currency");
-					break;
-			}
-			targetControl.style.display = "";
-		}
-	} else { spp.style.display = "none"; }
+  //The Powers Panel
+  if(Game.updatePowerPanel) {
+    var app = document.getElementById("availablePowers");
+    app.style.display = "";
+    var powerPane = document.getElementById("available_area");
+    powerPane.innerHTML = "";
+    for(var x = 0; x < Game.powerList.length; x++) {
+      var available = true;
+      var viewable = true;
+      // Step 1: Determine if this is a subsidiary power.
+      if(Game.powerList[x][2].toString().length > 3) {
+        //powerList[x][2] is the constant for the power. If it's more than 3 chars long, it's a subsidiary!
+        // Now... we check the level of the base power!
+        var basePower = Math.floor(Game.powerList[x][2] / 10);
+        if(Game.powerLevel(basePower) != Game.getPowerLevelCap(basePower)) {
+          // The base power isn't capped, we can't buy this
+          available = false;
+          viewable = false;
+        }
+        //OK, finally we check the other subsidiary powers on the same level (if there's any)
+        for(var z = 0; z < Game.powerList.length; z++) {
+          // If they're related to this power...
+          if(Math.floor(Game.powerList[z][2] / 10) == basePower) {
+            // ...and they're not this power...
+            if(Game.powerList[x][2] != Game.powerList[z][2]) {
+              // ...and their level is above zero...
+              if(Game.powerLevel(Game.powerList[z][2]) > 0) {
+                // we can't buy this one!
+                available = false;
+              }
+            }
+          }
+        }
+      }
+      // Step 2: Build the HTML element that represents a power purchasing panel.
+      var pe = document.createElement("div");
+      // Fade out unavailable items
+      if(!available || (Game.p_PP === 0 && Game.powerLevel(Game.powerList[x][2]) === 0)) { pe.setAttribute("style","text-align:left;padding-bottom:5px;opacity:0.4;"); }
+      else { pe.setAttribute("style","text-align:left;padding-bottom:5px;"); }
+      pe.innerHTML += "<strong style='font-size:14px;'>" + Game.powerList[x][0] + " (" + Game.powerLevel(Game.powerList[x][2]) + "/" +  Game.getPowerLevelCap(Game.powerList[x][2]) + ")</strong>";
+      if(available && Game.p_PP > 0 && Game.powerLevel(Game.powerList[x][2]) < Game.getPowerLevelCap(Game.powerList[x][2])) {
+        pe.innerHTML += "<span style='float:right;' class='bigButton' onclick='Game.buyPower(" + Game.powerList[x][2] + ");'>Upgrade</span>";
+      }
+      pe.innerHTML += "<br />" + Game.powerList[x][1];
+      if(viewable) { powerPane.appendChild(pe); }
+    }
+    Game.updatePowerPanel = false;
+  }
   // Level up panel
   var lvPanel = document.getElementById("levelUpPanel");
 	if(Game.p_SkillPoints > 0 && Game.p_State != Game.STATE_COMBAT) {

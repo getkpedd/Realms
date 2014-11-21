@@ -7,6 +7,7 @@ and damage calculation.
 
 Game.startCombat = function() {
 	if(Game.p_State == Game.STATE_IDLE) {
+    Game.p_Adrenaline = 0;
 		if(Game.p_Level >= 5 && Game.RNG(1,100) == 1) {
 			Game.makeBoss(Game.p_Level);
 		}
@@ -30,11 +31,11 @@ Game.startCombat = function() {
 Game.playerCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
     var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
+    playerDMG *= 1+(0.02*Game.powerLevel(Game.BOOST_DAMAGE));
     if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) { playerDMG = Math.floor(playerDMG/2); }
 		switch(Game.p_Weapon[2]) {
 			case Game.WEAPON_MAGIC:
 				playerDMG += Math.floor(Game.p_Int*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_MAGICDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
         if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
           for(var a = 0; a < Game.e_Armour[4].length; a++) {
             if(Game.e_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][a][1],0); }
@@ -46,7 +47,6 @@ Game.playerCombatTick = function() {
 				break;
 			case Game.WEAPON_RANGE:
 				playerDMG += Math.floor(Game.p_Dex*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_RANGEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
           if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
             for(var c = 0; c < Game.e_Armour[4].length; c++) {
               if(Game.e_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][c][1],0); }
@@ -58,7 +58,6 @@ Game.playerCombatTick = function() {
 				break;
 			case Game.WEAPON_MELEE:
 				playerDMG += Math.floor(Game.p_Str*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_MELEEDMG)) { playerDMG = Math.floor(playerDMG*1.2); }
           if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
             for(var e = 0; e < Game.e_Armour[4].length; e++) {
               if(Game.e_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][e][1],0); }
@@ -69,16 +68,40 @@ Game.playerCombatTick = function() {
         }
 				break;
 		}
-    if(Game.flurryActive) { playerDMG = Math.floor(playerDMG/2); }
+    if(Game.flurryActive) {
+      var flurryDMG = 0.5+(0.04*Game.powerLevel(Game.BOOST_DBLPOWER));
+      playerDMG = Math.floor(playerDMG*flurryDMG);
+    }
+    if(Game.p_Adrenaline > 0) {
+      playerDMG = Math.floor(playerDMG*(1+(0.05*Game.powerLevel(Game.BOOST_ENRAGE))));
+      Game.p_Adrenaline--;
+      if(Game.p_Adrenaline === 0) { Game.combatLog("player", "The <strong>Adrenaline Rush</strong> fades..."); }
+    }
+    var critChance = 3*Game.powerLevel(Game.BOOST_CRIT);
+    if(Game.RNG(1,100) <= critChance) {
+      var critBoost = 1.5+(0.1*Game.powerLevel(Game.BOOST_CRITDMG));
+      playerDMG = Math.floor(playerDMG*critBoost);
+      Game.combatLog("player", " - <span class='q222'>Critical hit!</span>");
+      if(Game.powerLevel(Game.BOOST_ENRAGE) > 0 && Game.p_Adrenaline === 0) {
+        Game.combatLog("player", " - You feel an <strong>Adrenaline Rush</strong>!");
+        Game.p_Adrenaline = 3;
+      }
+    }
 		// Decay handling
     if(Game.p_Weapon[8]>0) {
-      if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
+      if(Game.RNG(1,100) <= 2*(Game.powerLevel(Game.BOOST_CARE))) {
         Game.combatLog("player"," - <strong>Proper Care</strong> prevented weapon decay.");
       }
-      else { Game.p_Weapon[8]--; }
+      else {
+        Game.p_Weapon[8]--;
+        if(Game.p_Weapon[8] === 0) {
+          Game.combatLog("player", " - Your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> has broken!");
+        }
+      }
     }
     else {
-      playerDMG = Math.floor(playerDMG/2);
+      var preservedDamage = 0.25+(0.1*Game.powerLevel(Game.BOOST_BROKEN));
+      playerDMG = Math.floor(playerDMG*preservedDamage);
     }
     playerDMG = Math.max(playerDMG,0);
     if(Game.getPlayerDebuff()[0] == Game.DEBUFF_PARAHAX && Game.RNG(1,100) <= Game.p_Debuff[3]) {
@@ -116,8 +139,7 @@ Game.playerCombatTick = function() {
       Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> allows you to strike again for <strong>" + secondDmg + "</strong> damage.");
     }
     Game.drawActivePanel();
-		var debuffApplyChance = 2;
-		if(Game.hasPower(Game.BOOST_WSPEC)) { debuffApplyChance++; }
+		var debuffApplyChance = 1;
 		if(Game.p_Weapon[9].length > 0 && Game.e_Debuff.length === 0 && Game.getEnemyDebuff()[0] !== Game.DEBUFF_DISARM && Game.RNG(1,10) <= debuffApplyChance) {
       Game.e_Debuff = Game.p_Weapon[9].slice();
 		  Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
@@ -125,9 +147,8 @@ Game.playerCombatTick = function() {
       Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
 		}
 		if(Game.e_HP > 0 && Game.p_HP > 0) {
-			var timerLength = 1000*Game.p_Weapon[3];
-			if(Game.hasPower(Game.BOOST_ASPD)) { timerLength = Math.floor(timerLength*0.8); }
-			if(Game.hasPower(Game.BOOST_DOUBLE) && Game.RNG(1,5) == 1 && !Game.flurryActive) {
+			var timerLength = 1000*Game.p_Weapon[3]*(1-(0.02*Game.powerLevel(Game.BOOST_SPEED)));
+			if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_DOUBLE) && !Game.flurryActive) {
         Game.flurryActive = true;
 				Game.combatLog("player"," - <strong>Flurry</strong> activated for an additional strike!");
 				Game.playerCombatTick();
@@ -147,11 +168,11 @@ Game.playerCombatTick = function() {
 Game.enemyCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
     var enemyDMG = Game.RNG(Game.e_Weapon[4],Game.e_Weapon[5]);
+    enemyDMG = Math.floor(enemyDMG*(1-0.02*Game.powerLevel(Game.BOOST_DEFENCE)));
     if(Game.getEnemyDebuff()[0] == Game.DEBUFF_DISARM) { enemyDMG = Math.floor(enemyDMG/2); }
 		switch(Game.e_Weapon[2]) {
 			case Game.WEAPON_MAGIC:
 				enemyDMG += Math.floor(Game.e_MainStat*Game.WEAPON_BASE_MULT*Game.e_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_MAGICDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
         if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_SHRED && Game.p_Armour[3] > 0) {
           for(var a = 0; a < Game.p_Armour[4].length; a++) {
             if(Game.p_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][a][1],0); }
@@ -163,7 +184,6 @@ Game.enemyCombatTick = function() {
 				break;
 			case Game.WEAPON_RANGE:
 				enemyDMG += Math.floor(Game.e_MainStat*Game.WEAPON_BASE_MULT*Game.e_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_RANGEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
         if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_SHRED && Game.p_Armour[3] > 0) {
           for(var c = 0; c < Game.p_Armour[4].length; c++) {
             if(Game.p_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][c][1],0); }
@@ -175,7 +195,6 @@ Game.enemyCombatTick = function() {
 				break;
 			case Game.WEAPON_MELEE:
 				enemyDMG += Math.floor(Game.e_MainStat*Game.WEAPON_BASE_MULT*Game.e_Weapon[3]/3.0);
-				if(Game.hasPower(Game.BOOST_MELEEDEF)) { enemyDMG = Math.floor(enemyDMG*0.8); }
         if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_SHRED && Game.p_Armour[3] > 0) {
           for(var e = 0; e < Game.p_Armour[4].length; e++) {
             if(Game.p_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) { enemyDMG = Math.max(enemyDMG-Game.p_Armour[4][e][1],0); }
@@ -186,11 +205,21 @@ Game.enemyCombatTick = function() {
           }
 				break;
 		}
-		if(Game.hasPower(Game.BOOST_SHIELD) && Game.RNG(1,10) == 1) {
-			Game.combatLog("player","Your <strong>Divine Shield</strong> absorbed the damage.");
+		if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_SHIELD)) {
+      if(Game.powerLevel(Game.BOOST_REFLECT) == 1) {
+        Game.e_HP = Math.max(Game.e_HP - enemyDMG, 0);
+        Game.combatLog("player","Your <strong>Reflective Shield</strong> dealt <strong>" + enemyDMG + "</strong> damage.");
+      }
+      else if(Game.powerLevel(Game.BOOST_ABSORB) == 1) {
+        Game.p_HP = Math.min(Game.p_HP + enemyDMG, Game.p_MaxHP);
+        Game.combatLog("player","Your <strong>Absorption Shield</strong> healed you for  <strong>" + enemyDMG + "</strong>.");
+      }
+      else {
+        Game.combatLog("player","Your <strong>Divine Shield</strong> absorbed the damage.");
+      }
 		}
 		else {
-      if(Game.hasPower(Game.BOOST_CONSERVE) && Game.RNG(1,5) == 1) {
+      if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_CARE)) {
         Game.combatLog("player"," - <strong>Proper Care</strong> prevented armour decay.");
       }
       else { Game.p_Armour[3] = Math.max(Game.p_Armour[3]-1,0); }
@@ -258,6 +287,7 @@ Game.fleeCombat = function() {
     Game.player_debuffTimer = 0; }
   Game.p_Debuff = [];
   Game.e_Debuff = [];
+  Game.p_Adrenaline = 0;
 	Game.p_State = Game.STATE_IDLE;
   Game.p_specUsed = false;
 	Game.combatLog("info","You fled from the battle.");
@@ -298,17 +328,38 @@ Game.endCombat = function() {
     Game.updateInv = true;
 		var xpToAdd = Math.floor(Game.XP_BASE+(Game.RNG(Game.XP_RANGEMIN*Game.e_Level,Game.XP_RANGEMAX*Game.e_Level)));
     var currencyToAdd = xpToAdd;
-		if(Game.hasPower(Game.BOOST_XP)) { xpToAdd = Math.floor(xpToAdd*1.2); }
+		xpToAdd = Math.floor(xpToAdd*(1+(0.05*Game.powerLevel(Game.BOOST_XP))));
     if(Game.e_isBoss) { xpToAdd *= 2; }
 		Game.combatLog("info","You gained <strong>" + xpToAdd + "</strong> experience.");
-		if(Game.hasPower(Game.BOOST_CURRENCY)) { currencyToAdd = Math.floor(currencyToAdd*1.2); }
+		currencyToAdd = Math.floor(currencyToAdd*(1+(0.05*Game.powerLevel(Game.BOOST_CURRENCY))));
     if(Game.e_isBoss) { currencyToAdd *= 2; }
+    if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_EXTRA)) {
+      currencyToAdd *= 3;
+      Game.combatLog("info","<strong>Cavity Search</strong> tripled seed gain!");
+    }
+    if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_SCRAP)) {
+      Game.p_Scrap++;
+      Game.combatLog("info","<strong>Thorough Looting</strong> yielded an extra piece of scrap!");
+    }
 		Game.combatLog("info","You gained <strong>" + currencyToAdd + "</strong> seeds.");
 		Game.p_EXP += xpToAdd;
     Game.p_Currency += currencyToAdd;
 		if(Game.p_EXP >= Game.p_NextEXP) {
 			Game.levelUp();
 		}
+    if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_MOREPP)) {
+      Game.p_PP++;
+      Game.combatLog("info","<strong>Luck of the Draw</strong> granted an additional Power Point.");
+    }
+    if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_REPAIR)) {
+      Game.p_Weapon[8] = 50 + (5*(Game.p_Weapon[1]-1));
+      Game.p_Armour[3] = 50 + (5*(Game.p_Armour[1]-1));
+      Game.combatLog("info","<strong>High Maintenance</strong> fully repaired your equipment.");
+    }
+    if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_FULLHEAL)) {
+      Game.p_HP = Game.p_MaxHP;
+      Game.combatLog("info","<strong>Will To Live</strong> restored you to full health.");
+    }
 	}
 	else {
 		// Enemy won, dock XP

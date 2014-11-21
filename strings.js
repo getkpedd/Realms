@@ -111,3 +111,26 @@ Game.enemy_generic = ["Rat","Cat","Man","Woman","Angry Redditor","Goat","Boar","
 // Mostly friendly redditors...
 Game.enemy_special = ["Sky Monkey","John the Leprechaun","Ragekai","Flirty Lover","Mike Handers","Feld O' Propane","42nd Saren","Reelix","Ralph","Kung Fu Hamster","Detratigm","Kryzodoze","Chromega","Literal Hitler","Seiyria", "Generic Enemy Name"];
 Game.enemy_boss = ["Tetradigm","The Solver","Giant Enemy Dragon","Generic Boss Name","Warlord","Dr. Tyson","Greater Demon"];
+Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/weapon decay in combat.",101],
+                  ["Hanging By a Thread","Grants a 2% chance per level to fully repair weapon and armour after combat.",1011],
+                  ["High Maintenance","Preserves an additional 10% per level of your weapon's effect when broken.",1012],
+                  ["Pickpocket","Grants an additional 5% gain per level in seeds from combat.",102],
+                  ["Cavity Search","Grants a 2% chance per level to triple seed gains from combat.",1021],
+                  ["Thorough Looting","Grants a 2% chance per level to salvage a piece of scrap from combat.",1022],
+                  ["Keen Eye","Grants a 3% chance per level to critically strike the target for 50% more damage.",103],
+                  ["Keener Eye","Increases the critical strike damage bonus by 10% per level.",1031],
+                  ["Adrenaline Rush","Increases damage dealt by 5% per level for 3 rounds after a critical strike.",1032],
+                  ["Divine Shield","Grants a 1% chance per level to completely negate an enemy attack.",104],
+                  ["Absorption Shield","Causes your Divine Shield effect to heal you for the damage you would have taken.",1041],
+                  ["Reflective Shield","Causes your Divine Shield effect to deal the damage you would have taken to the enemy.",1042],
+                  ["Luck of the Draw","Grants a 1% chance per level to gain an additional Power Point after combat.",105],
+                  ["Lucky Star","Grants a 1% chance per level to gain an additional Skill Point on level up.",1051],
+                  ["Fast Learner","Grants a 5% increase per level to experience gains.",106],
+                  ["Patience and Discipline","Grants a 3% chance per level to gain an additional point in a random stat on level up.",1061],
+                  ["Flurry","Grants a 1% chance per level to strike a target again after an attack for 50% damage.",107],
+                  ["Empowered Flurry","Grants a 4% increase per level in the damage of Flurry's additional strike.",1071],
+                  ["Survival Instincts","Grants a 2% per level increase in health regeneration and repair speeds.",108],
+                  ["Will To Live","Grants a 2% chance per level to be fully healed after combat.",1081],
+                  ["Deadly Force","Grants a 2% per level increase to all damage dealt.",109],
+                  ["Ancestral Fortitude","Grants a 2% per level reduction to all damage taken",110],
+                  ["Nimble Fingers","Grants a 2% increase per level in attack speeds.",111]];

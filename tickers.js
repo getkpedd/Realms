@@ -7,7 +7,6 @@ Holds functions relating to idle tickers
 
 Game.startWeaponRepair = function() {
   var maxRepair = 50 + (5*(Game.p_Weapon[1]-1));
-  if(Game.hasPower(Game.BOOST_REPAIR)) { maxRepair*=2; }
 	if(Game.p_Weapon[8] >= maxRepair) {
 		Game.toastNotification("Repair not required.")
 	}
@@ -15,17 +14,13 @@ Game.startWeaponRepair = function() {
 		Game.p_State = Game.STATE_REPAIR;
 		Game.p_RepairValue = Game.p_Weapon[1];
     Game.toastNotification("Repairing weapon...");
-		if(Game.hasPower(Game.BOOST_HEAL)) {
-			Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,800);
-		}
-		else { Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,1000); }
+    Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,1000-(20*Game.powerLevel(Game.BOOST_REGEN)))
 	}
   Game.updateInv = true;
 	Game.drawActivePanel();
 }
 Game.startArmourRepair = function() {
   var maxRepair = 50 + (5*(Game.p_Armour[1]-1));
-  if(Game.hasPower(Game.BOOST_REPAIR)) { maxRepair*=2; }
 	if(Game.p_Armour[3] >= maxRepair) {
 		Game.toastNotification("Repair not required.")
 	}
@@ -33,18 +28,14 @@ Game.startArmourRepair = function() {
 		Game.p_State = Game.STATE_REPAIR;
 		Game.p_RepairValue = Game.p_Armour[1];
     Game.toastNotification("Repairing armour...");
-		if(Game.hasPower(Game.BOOST_HEAL)) {
-			Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,800);
-		}
-		else { Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,1000); }
-	}
+		Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,1000-(20*Game.powerLevel(Game.BOOST_REGEN)));
+  }
   Game.updateInv = true;
 	Game.drawActivePanel();
 }
 Game.repairWeaponTick = function() {
 	if(Game.p_RepairValue === 0) {
 		Game.p_Weapon[8] = 50 + 5*(Game.p_Weapon[1]-1);
-		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Weapon[8]*=2; }
 		Game.p_State = Game.STATE_IDLE;
     Game.toastNotification("Weapon repaired.");
     Game.updateInv = true;
@@ -60,7 +51,6 @@ Game.repairWeaponTick = function() {
 Game.repairArmourTick = function() {
 	if(Game.p_RepairValue === 0) {
 		Game.p_Armour[3] = 50 + 5*(Game.p_Armour[1]-1);
-		if(Game.hasPower(Game.BOOST_REPAIR)) { Game.p_Armour[3]*=2; }
 		Game.p_State = Game.STATE_IDLE;
     Game.toastNotification("Armour repaired.");
     Game.updateInv = true;
@@ -81,10 +71,7 @@ Game.idleHeal = function() {
 			Game.save();
 		}
 	}
-	if(Game.hasPower(Game.BOOST_HEAL)) {
-		Game.p_IdleInterval = window.setTimeout(Game.idleHeal,800);
-	}
-	else { Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000); }
+  Game.p_IdleInterval = window.setTimeout(Game.idleHeal,1000-(20*Game.powerLevel(Game.BOOST_REGEN)));
 	Game.drawActivePanel();
 }
 Game.autoBattleFunc = function() {

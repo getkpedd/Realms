@@ -179,7 +179,6 @@ Game.makeArmour = function(level) {
   // [name,level,quality,durability,[[str1,value],[str2,value],[str3,value]],[[vuln1,value],[vuln2,value]]]
   var armLevel = level;
   var armDura = 50+(5*(level-1));
-  if(Game.hasPower(Game.BOOST_REPAIR)) { armDura *= 2; }
   var armQuality = 0;
   var qualityPlus = 1;
   var armStrengths = 0; var armVulns = 0;

@@ -4,6 +4,7 @@
 		<title>Realm of Decay</title>
     <script type="text/javascript" src="init.js"></script>
     <script type="text/javascript" src="strings.js"></script>
+    <script type="text/javascript" src="powers.js"></script>
     <script type="text/javascript" src="combat.js"></script>
     <script type="text/javascript" src="inventory.js"></script>
     <script type="text/javascript" src="player.js"></script>
@@ -283,131 +284,16 @@
 													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
 												</div>
-												<table id="selectedPowers" class="selectedPowersPanel"  style="display:none">
-													<tr id="selected_header">
-														<td colspan="2" class="powerHeader">
-															Selected Powers
-														</td>
-													</tr>
-													<tr id="selected_conserve" style="display:none">
-														<td width="80%"><div class="powerName">Proper Care</div>Grants a 20% chance per hit for weapon decay to be ignored.</td>
-													</tr>
-													<tr id="selected_repair" style="display:none">
-														<td width="80%"><div class="powerName">High Maintenance</div>Doubles the durability of all weapons.</td>
-													</tr>
-													<tr id="selected_aspd" style="display:none">
-														<td width="80%"><div class="powerName">Nimble Fingers</div>Grants a 20% faster attack speed with all weapons.</td>
-													</tr>
-													<tr id="selected_heal" style="display:none">
-														<td width="80%"><div class="powerName">Survival Instincts</div>Grants a 20% increased repair and regeneration speed.</td>
-													</tr>
-													<tr id="selected_wspec" style="display:none">
-														<td width="80%"><div class="powerName">Keen Eye</div>Increases the debuff application rate to 30%</td>
-													</tr>
-													<tr id="selected_skillpt" style="display:none">
-														<td width="80%"><div class="powerName">Fortuitous Growth</div>Grants a 20% chance to gain an additional free skill point per level.</td>
-													</tr>
-													<tr id="selected_xp" style="display:none">
-														<td width="80%"><div class="powerName">Fast Learner</div>Grants a 20% increase to all experience gained.</td>
-													</tr>
-													<tr id="selected_meleedmg" style="display:none">
-														<td width="80%"><div class="powerName">Brutal Strikes</div>Grants a 20% increase to melee damage.</td>
-													</tr>
-													<tr id="selected_rangedmg" style="display:none">
-														<td width="80%"><div class="powerName">Sniper Training</div>Grants a 20% increase to ranged damage.</td>
-													</tr>
-													<tr id="selected_magicdmg" style="display:none">
-														<td width="80%"><div class="powerName">Unleashed Elements</div>Grants a 20% increase to magic damage.</td>
-													</tr>
-													<tr id="selected_meleedef" style="display:none">
-														<td width="80%"><div class="powerName">Stoneskin</div>Grants a 20% reduction in melee damage taken.</td>
-													</tr>
-													<tr id="selected_rangedef" style="display:none">
-														<td width="80%"><div class="powerName">Iron Carapace</div>Grants a 20% reduction in ranged damage taken.</td>
-													</tr>
-													<tr id="selected_magicdef" style="display:none">
-														<td width="80%"><div class="powerName">Aetheric Resilience</div>Grants a 20% reduction in magic damage taken.</td>
-													</tr>
-													<tr id="selected_double" style="display:none">
-														<td width="80%"><div class="powerName">Flurry</div>Grants a 20% chance to perform a second attack on each combat tick.</td>
-													</tr>
-													<tr id="selected_shield" style="display:none">
-														<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
-													</tr>
-                          <tr id="selected_currency" style="display:none">
-														<td width="80%"><div class="powerName">Pickpocket</div>Grants 20% more seeds from defeated enemies.</td>
-													</tr>
-												</table>
 												<table id="availablePowers" class="availablePowersPanel">
 													<tr>
 														<td colspan="2" class="powerHeader">
-															Special Powers (<span id="p_PP"></span> point(s) available)
+															Powers List (<span id="p_PP"></span> point(s) available)
 														</td>
 													</tr>
-													<tr id="conserve">
-														<td width="80%"><div class="powerName">Proper Care</div>Grants a 20% chance per hit for weapon decay to be ignored.</td>
-														<td width="20%"><input type="button" id="buy_Conserve" onClick="Game.buyPower(Game.BOOST_CONSERVE);" value="Activate"></td>
-													</tr>
-													<tr id="repair">
-														<td width="80%"><div class="powerName">High Maintenance</div>Doubles the durability of all weapons.</td>
-														<td width="20%"><input type="button" id="buy_Repair" onClick="Game.buyPower(Game.BOOST_REPAIR);" value="Activate"></td>
-													</tr>
-													<tr id="aspd">
-														<td width="80%"><div class="powerName">Nimble Fingers</div>Grants a 20% faster attack speed with all weapons.</td>
-														<td width="20%"><input type="button" id="buy_ASPD" onClick="Game.buyPower(Game.BOOST_ASPD);" value="Activate"></td>
-													</tr>
-													<tr id="heal">
-														<td width="80%"><div class="powerName">Survival Instincts</div>Grants a 20% increased repair and regeneration speed.</td>
-														<td width="20%"><input type="button" id="buy_Heal" onClick="Game.buyPower(Game.BOOST_HEAL);" value="Activate"></td>
-													</tr>
-													<tr id="wspec">
-														<td width="80%"><div class="powerName">Keen Eye</div>Increases the debuff application rate to 30%</td>
-														<td width="20%"><input type="button" id="buy_WSpec" onClick="Game.buyPower(Game.BOOST_WSPEC);" value="Activate"></td>
-													</tr>
-													<tr id="skillpt">
-														<td width="80%"><div class="powerName">Fortuitous Growth</div>Grants a 20% chance to gain an additional free skill point per level.</td>
-														<td width="20%"><input type="button" id="buy_SkillPT" onClick="Game.buyPower(Game.BOOST_SKILLPT);" value="Activate"></td>
-													</tr>
-													<tr id="xp">
-														<td width="80%"><div class="powerName">Fast Learner</div>Grants a 20% increase to all experience gained.</td>
-														<td width="20%"><input type="button" id="buy_XP" onClick="Game.buyPower(Game.BOOST_XP);" value="Activate"></td>
-													</tr>
-													<tr id="meleedmg">
-														<td width="80%"><div class="powerName">Brutal Strikes</div>Grants a 20% increase to melee damage.</td>
-														<td width="20%"><input type="button" id="buy_MeleeDMG" onClick="Game.buyPower(Game.BOOST_MELEEDMG);" value="Activate"></td>
-													</tr>
-													<tr id="rangedmg">
-														<td width="80%"><div class="powerName">Sniper Training</div>Grants a 20% increase to ranged damage.</td>
-														<td width="20%"><input type="button" id="buy_RangeDMG" onClick="Game.buyPower(Game.BOOST_RANGEDMG);" value="Activate"></td>
-													</tr>
-													<tr id="magicdmg">
-														<td width="80%"><div class="powerName">Unleashed Elements</div>Grants a 20% increase to magic damage.</td>
-														<td width="20%"><input type="button" id="buy_MagicDMG" onClick="Game.buyPower(Game.BOOST_MAGICDMG);" value="Activate"></td>
-													</tr>
-													<tr id="meleedef">
-														<td width="80%"><div class="powerName">Stoneskin</div>Grants a 20% reduction in melee damage taken.</td>
-														<td width="20%"><input type="button" id="buy_MeleeDEF" onClick="Game.buyPower(Game.BOOST_MELEEDEF);" value="Activate"></td>
-													</tr>
-													<tr id="rangedef">
-														<td width="80%"><div class="powerName">Iron Carapace</div>Grants a 20% reduction in ranged damage taken.</td>
-														<td width="20%"><input type="button" id="buy_RangeDEF" onClick="Game.buyPower(Game.BOOST_RANGEDEF);" value="Activate"></td>
-													</tr>
-													<tr id="magicdef">
-														<td width="80%"><div class="powerName">Aetheric Resilience</div>Grants a 20% reduction in magic damage taken.</td>
-														<td width="20%"><input type="button" id="buy_MagicDEF" onClick="Game.buyPower(Game.BOOST_MAGICDEF);" value="Activate"></td>
-													</tr>
-													<tr id="double">
-														<td width="80%"><div class="powerName">Flurry</div>Grants a 20% chance to perform a second attack on each combat tick.</td>
-														<td width="20%"><input type="button" id="buy_Double" onClick="Game.buyPower(Game.BOOST_DOUBLE);" value="Activate"></td>
-													</tr>
-													<tr id="shield">
-														<td width="80%"><div class="powerName">Divine Shield</div>Grants a 10% chance to nullify damage taken in a combat round.</td>
-														<td width="20%"><input type="button" id="buy_Shield" onClick="Game.buyPower(Game.BOOST_SHIELD);" value="Activate"></td>
-													</tr>
-                          <tr id="currency">
-														<td width="80%"><div class="powerName">Pickpocket</div>Grants 20% more seeds from defeated enemies.</td>
-														<td width="20%"><input type="button" id="buy_Currency" onClick="Game.buyPower(Game.BOOST_CURRENCY);" value="Activate"></td>
-													</tr>
+													<tr id="available_row">
+                            <td id="available_area">
+                            </td>
+                          </tr>
 												</table>
 											</td>
 										</tr>
@@ -544,6 +430,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.226</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.23</div>
 	</body>
 </html>
