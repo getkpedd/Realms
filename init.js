@@ -1,12 +1,48 @@
 Game = {};
 /*
+Changes in this version (0.231):
+  Headline Changes:
+    There is now content on the 'Help' tab. Feedback is requested on this.
+    New Powers:
+      Last Bastion
+        Reduces damage taken by 10% per level when health remaining drops below 30%.
+        Requires 10 points in Ancestral Fortitude
+        5 Levels available
+        Cannot be used in conjunction with Vengeance
+      Vengeance
+        Grants a 2% chance per level to deal 50% of damage taken from an attack to the attacker.
+        Requires 10 points in Ancestral Fortitude
+        5 Levels available
+        Cannot be used in conjunction with Last Bastion
+      Wild Swings
+        Changes the 'Burst Attack' button to fire a number of 50% damage attacks equal to this power's level plus one.
+        Requires 10 points in Deadly Force
+        5 Levels available
+        Cannot be used in conjunction with Execute
+      Execute
+        Grants a 5% chance per level to instantly kill a target below 25% health.
+        Requires 10 points in Deadly Force
+        5 Levels available
+        Cannot be used in conjunction with Wild Swings
+      Sneak Attack
+        Increases the chance of you attacking first by 10% per level.
+        Requires 10 points in Nimble Fingers
+        5 Levels available
+        Cannot be used in conjunction with Five-Finger Discount
+      Five-Finger Discount
+        Grants a 1% chance per level to steal seeds from the target equal to your character level when attacking.
+        Requires 10 points in Nimble Fingers
+        5 Levels available
+        Cannot be used in conjunction with Sneak Attack
+  Fixes and Tweaks:
+    Fix: Deadly Force no longer causes rounding errors.
+    Fix: Luck of the Draw now activates on level up, instead of after combat.
+    Tweak: There are now options to scrap items instead of selling them during auto-battle's inventory cleanup process.
+    Tweak: The base chance to spawn a boss-level enemy is now 1%, increasing by 1% for each non-boss fight conducted.
 TODO:
   Reforging (change the debuff on a weapon for a cost of scrap)
    - Allow for improved versions of debuffs for more scrap (Great or better weapon required)
-  Change boss appearance rate (1% base chance, increasing by 1% per encounter (including fleeing))
-  Help Tab
-  Revisions to the following mechanics:
-   - Zones and combat areas (there are none)
+  Power Reset (no cost)
   Names
    - The Player
 */
@@ -45,8 +81,14 @@ Game.init = function() {
   this.BOOST_REGEN = 108; // Survival Instincts
   this.BOOST_FULLHEAL = 1081; // Will To Live
   this.BOOST_DAMAGE = 109; // Deadly Force
+  this.BOOST_BURST = 1091; // Wild Swings
+  this.BOOST_EXECUTE = 1092; // Execute
   this.BOOST_DEFENCE = 110; // Ancestral Fortitude
+  this.BOOST_LASTSTAND = 1101; // Last Bastion
+  this.BOOST_VENGEANCE = 1102; // Vengeance
   this.BOOST_SPEED = 111; // Nimble Fingers
+  this.BOOST_FIRST = 1111; // Sneak Attack
+  this.BOOST_PICKPOCKET = 1112; // Five-Finger Discount
 	//Weapon Types
 	this.WEAPON_MELEE = 201;
 	this.WEAPON_RANGE = 202;
@@ -105,6 +147,7 @@ Game.init = function() {
 	this.p_IdleInterval = null;
   this.p_Debuff = [];
   this.p_Adrenaline = 0;
+  this.bossChance = 1;
   this.activePanel = "";
   this.p_WeaponInventory = [];
   this.p_ArmourInventory = [];
@@ -174,6 +217,7 @@ Game.save = function() {
   STS.last_Weapon = Game.last_Weapon;
   STS.last_Armour = Game.last_Armour;
   STS.activePanel = Game.activePanel;
+  STS.bossChance = Game.bossChance;
   STS.GAME_VERSION = Game.GAME_VERSION;
   window.localStorage.setItem("gameSave",JSON.stringify(STS));
   Game.toastNotification("Game saved.");
@@ -211,6 +255,8 @@ Game.load = function() {
 		Game.last_Weapon = g.last_Weapon;
     Game.last_Armour = g.last_Armour;
     Game.activePanel = g.activePanel;
+    if(g.bossChance === undefined) { Game.bossChance = 1; }
+    else { Game.bossChance = g.bossChance; }
 		return true;
 	}
 	else { return false; }

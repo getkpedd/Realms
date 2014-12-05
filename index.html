@@ -393,6 +393,22 @@
                             </select>
                           </span>
                         </div>
+                        <div>Full Weapon Inventory Handling Method: 
+                          <span>
+                            <select id="ab_wepfull" style="color:#000000;">
+                              <option value="SELL" selected="selected">Sell</option>
+                              <option value="SCRAP">Scrap</option>
+                            </select>
+                          </span>
+                        </div>
+                        <div>Full Armour Inventory Handling Method: 
+                          <span>
+                            <select id="ab_armfull" style="color:#000000;">
+                              <option value="SELL" selected="selected">Sell</option>
+                              <option value="SCRAP">Scrap</option>
+                            </select>
+                          </span>
+                        </div>
                         <br /><br />
                         <div class="powerHeader">Bulk Options</div>
                         <div>Weapon Quality Bulk Sell/Scrap Threshold: 
@@ -421,7 +437,86 @@
                       </td>
                     </tr>
                   </table>
-									<table id="helpTable"></table>
+									<table id="helpTable">
+                    <tr>
+                      <td>
+                        <div class="powerHeader">Introduction</div>
+                        <br>
+                        <p>Welcome to the Realm of Decay! If you hadn't already guessed from the name, this is not a nice place to find yourself waking up in. The aftermath of Inevitable Cliche Magical Control War has ravaged the land, and left some rather odd side effects on you, one of the few human survivors of the conflict.</p>
+<p>Mutations brought on through years of magical abuse have caused your hands to emit a strange aura that accelerates the decomposition of non-organic objects in the near vicinity to them. Every man-made object you touch begins to break apart and require reconstruction after a short period of time.</p>
+<p>An annoying enough problem to deal with in normal civilisation, made worse by the collapse of modern society. Now you have to fight off large numbers of hostile creatures (both natural and unnatural) while making sure your gear is kept in check. Good luck!</p>
+                        <div class="powerHeader">Core Stats</div>
+                        <p>While in the Realm of Decay, you'll spend a lot of your time fighting. As such, you'll need a good grasp of the mechanics and statistics needed to ensure you come out on top. You have several main statistics, four of which can be upgraded with Skill Points on the Powers tab:</p>
+                        <p><strong>Strength</strong> influences the damage dealt with melee weapons.<br />
+                          <strong>Dexterity</strong> influences the damage dealt with ranged weapons.<br />
+                          <strong>Intelligence</strong> influences the damage dealt with magical weapons.<br />
+                          <strong>Constitution</strong> influences your health regeneration rate, as well as health gain per level.</p>
+                        <p>In addition to these, you also have a number of hitpoints, a measure of how close to incapacitation you are; experience points, which are a measure of how close you are to the next level of power, and Power Points, which can be spent on various beneficial effects detailed on the Powers tab.</p>
+                        <p>Each of the four main statistics gains a point on level up. You'll gain an additional point in the dominant statistic for your equipped weapon, and you have a chance to gain an extra constitution point on level up. You will also gain a Skill Point and a Power Point every level to be freely allocated.</p>
+                        <div class="powerHeader">Equipment</div>
+                        <p>Speaking of weapons, your equipment is perhaps the most important aspect of survival in the realm. There are two types of equipment - weapons and armour.</p>
+                        <p><strong>Weapons</strong> influence the damage you deal, both in type and value. There are three damage types (melee, ranged and magic) although there is no mechanical difference between them. There are also 'speed tiers' of weapons, where the speed of the weapon determines the delay between hits, as well as the degree to which the dominant stat affects their damage.</p>
+                        <p><strong>Fast Weapons</strong> have an attack speed between 1.6 and 2.0 seconds, and low damage per hit.<br />
+                          <strong>Normal Weapons</strong> have an attack speed between 2.1 and 2.5 seconds, and average damage per hit.<br />
+                          <strong>Slow Weapons</strong> have an attack speed between 2.6 and 3.0 seconds, and high damage per hit.<br /></p>
+                        <p><strong>Armour</strong> influences the damage taken from incoming attacks. Armour provides a flat modifier to damage taken from specific weapon types. Faster weapons will be more affected by armour than slower weapons due to the flat nature of the damage reduction.<br />
+                          It is worth noting that armour can also carry a weakness to one or more damage types, which increases the damage taken from attacks.</p>
+                        <div class="powerHeader">Item Quality</div>
+                        <p>There are 5 quality tiers available for items that are obtained in the Realm of Decay. These are as follows:</p>
+                        <p><span class="q221">Poor (grey)</span> items are the lowest quality of item.<br />
+                           - Weapons of poor quality have 90% of their intended damage values.<br />
+                           - Armours of poor quality carry 1 strength, and 2 vulnerabilities.<br />
+                          <span class="q222">Normal (white)</span> items are the most common quality of item in the Realm of Decay.<br />
+                           - Weapons of normal quality have no distinguishing features.<br />
+                           - Armours of normal quality carry 1 strength and 1 vulnerability.<br />
+                          <span class="q223">Good (green)</span> items are a step above normal items.<br />
+                           - Weapons of good quality have 110% of their intended damage values, as well as an assigned debuff.<br />
+                           - Armours of good quality carry 2 strengths and 1 vulnerability.<br />
+                          <span class="q224">Great (blue)</span> items represent superior craftsmanship.<br />
+                           - Weapons of great quality have 120% of their intended damage values, and also have unique names and flavour text, as well as a strong debuff.<br />
+                           - Armours of great quality carry 2 strengths and no vulnerabilities.<br />
+                          <span class="q225">Amazing (purple)</span> items represent the pinnacle of items obtainable in the Realm.<br />
+                           - Weapons of amazing quality have 130% of their intended damage values, and also have unique names and flavour text, as well as a strong debuff.<br />
+                           - Armours of amazing quality carry 3 strengths and no vulnerabilities.</p>
+                        <div class="powerHeader">Debuffs</div>
+                        <p>Weapons of Good quality or higher carry a debuff, which has a 10% chance of activating in combat and producing one of a number of beneficial effects. These are as follows:</p>
+                        <p><strong>Armour Shred</strong> - Ruthlessness - negates any beneficial effects of the target's armour.<br />
+                          <strong>Double Strike</strong> - Frenzy - causes every attack to deliver a second strike for reduced damage.<br />
+                          <strong>Health Drain</strong> - Bloodthirst - restores a percentage of weapon damage as health every second.<br />
+                          <strong>Slowed Attacks</strong> - Cripple - increases the delay between the victim's attacks.<br />
+                          <strong>Confusion</strong> - Mind Control - causes the victim's next attack to be targeted at themselves, ignoring any armour they are wearing.<br />
+                          <strong>Damage Over Time</strong> - Wound Poison - deals a percentage of weapon damage to the victim every second.<br />
+                          <strong>Paralysis</strong> - Nerve Strike - grants a chance for the victim's attacks to fail.<br />
+                          <strong>Doom</strong> - Mounting Dread - grants a small chance to kill the victim outright at the end of the debuff duration.<br />
+                          <strong>Disarm</strong> - Disarmed - causes the victim's weapon damage to be reduced by half, and also prevents debuffs from being applied.</p>
+                          <p>Some debuffs may have differing names from the ones listed above, specifically those on found Great or Amazing quality weapons.</p>
+                        <div class="powerHeader">Combat</div>
+                        <p>Combat in the Realm of Decay can be initiated by clicking the 'Look for something to kill' button on the Combat tab. This tab holds all information relevant to combat, including health bars of the combatants, information on the enemy, and a detailed combat log.</p>
+                        <p>The actual process of combat is mostly a passive affair - you and your enemy trade blows at a speed determined by your weapons and any powers or debuff that influence those speeds. The player will only need to interact with the system to either flee from combat, or to initiate a 'Burst Attack'</p>
+                        <p>A 'Burst Attack' is a single instant attack delivered just like any other, with the exception that it can only be used once every 10 seconds, and that it resets your attack delay timer. It applies debuffs and is affected by armour just like a normal attack would be. The best timing to use this attack depends on a few factors, although typically you'd want to use it to gain an extra boost from an on-hit debuff (Armour Shred or Double Strike for example)</p>
+                        <p>If you win the fight, you gain an amount of experience and also some 'seeds' - these are the currency in the Realm, used to upgrade weaponry and armour. Additionally, you also get the items the enemy had equipped.</p>
+                        <p>If you lose the fight, you are penalised by losing a quarter of your accumulated experience, but can otherwise continue. If you are in danger of losing, you may flee combat at no cost.</p>
+                        <div class="powerHeader">Decay</div>
+                        <p>During combat, your weapons and armour will suffer durability damage. While an item has any durability, it will perform at full capacity. Weapons with 0 durability operate at 25% strength, while armour with 0 durability loses all of its positive effects (negative ones are still applied).</p>
+                        <p>Whenever you are not in combat, you have the ability to repair weapons and armour that you currently have equipped. This process takes 1 second, plus an additional 1 second per level of the item. It does not cost anything to repair equipment. Quality does not influence the time repairs take.</p>
+                        <div class="powerHeader">Inventory</div>
+                        <p>Your inventories store all of your accumulated items, and present options as to how they can be used. Equipment can be changed freely in combat, so bear this in mind if you have any additional items lying around that may help you break through armour or protect yourself better.</p>
+                        <p>Items in the inventory can be sold for seeds, or converted into scrap. Scrap is a resource used to increase the quality of your equipped items, and a substantial amount is required to perform higher quality upgrades. The amount of seeds you gain from selling an item depends on the quality and level of the item, whereas the amount of scrap you gain from an item is dependant solely on the item's quality.</p>
+                        <div class="powerHeader">Store</div>
+                        <p>The Store tab contains a few options for upgrading the items you currently have equipped. It does not affect anything in your inventory. Raising an item's level costs an amount of seeds, which scales with the item's current level and quality.</p>
+                        <p>Raising an item's quality is a little different, first in that it costs seeds, and second in that certain effects apply when reaching certain quality thresholds. When an item is upgraded to <span class='q224'>Great</span> quality, you gain the ability to assign a custom name and flavour text to it.</p>
+                        <p>For weapons, the weapon will also gain a random debuff when it is upgraded to <span class='q223'>Good</span> quality. This debuff will remain on the weapon after further upgrades. For armour, the available strengths and weaknesses will change as listed above when you upgrade through the various quality tiers.</p>
+                        <div class="powerHeader">Options</div>
+                        <p>The Options tab contains numerous miscellaneous features which may be useful. There is a manual save button here, as well as a reset button, controls for bulk item selling, and configuration for the auto-battle system.</p>
+                        <p>The auto-battle system comprises the idle element of the game. It will handle basic inventory management (selling or scrapping items if the inventory is full) as well as automatically repairing items, initiating combat, and fleeing from combat.</p>
+                        <p>What it will not do is upgrade or switch out weapons and armour for better alternatives, nor will it perform bulk buy/sell operations on items whose quality is above the thresholds set on the Options tab. It will also not attempt to use the 'Burst Attack' function on the Combat tab, nor will it spend Skill Points or Power Points.</p>
+                        <p>The autosave feature has a few conditions that need to be met before it will activate:<br />
+                          - The player must be in an idle state (not repairing or fighting)<br />
+                          - The player must be at their maximum health<br />
+                          - Once autosave has activated, it will not be able to activate again until after a battle is won or lost. Fleeing does not count.</p>
+                      </td>
+                    </tr>
+                  </table>
 								</td>
 							</tr>
 						</table>
@@ -430,6 +525,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.23</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014 - Version 0.231</div>
 	</body>
 </html>

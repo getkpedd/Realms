@@ -129,6 +129,60 @@ Game.buyPower = function(power) {
             canUpgrade = false;
           }
           break;
+        case Game.BOOST_BURST:
+          if(Game.powerLevel(Game.BOOST_DAMAGE) < 10) {
+            Game.toastNotification("You need maximum level in Deadly Force to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_EXECUTE) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Execute.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_EXECUTE:
+          if(Game.powerLevel(Game.BOOST_DAMAGE) < 10) {
+            Game.toastNotification("You need maximum level in Deadly Force to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_BURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Wild Swings.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_LASTSTAND:
+          if(Game.powerLevel(Game.BOOST_DEFENCE) < 10) {
+            Game.toastNotification("You need maximum level in Ancestral Fortitude to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_VENGEANCE) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Vengeance.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_VENGEANCE:
+          if(Game.powerLevel(Game.BOOST_DEFENCE) < 10) {
+            Game.toastNotification("You need maximum level in Ancestral Fortitude to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_LASTSTAND) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Last Bastion.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_FIRST:
+          if(Game.powerLevel(Game.BOOST_SPEED) < 10) {
+            Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_PICKPOCKET) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Five-Finger Discount");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_PICKPOCKET:
+          if(Game.powerLevel(Game.BOOST_SPEED) < 10) {
+            Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_FIRST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Sneak Attack");
+            canUpgrade = false;
+          }
+          break;
       }
     }
     if(canUpgrade) {
@@ -170,6 +224,12 @@ Game.getPowerLevelCap = function(power) {
     case Game.BOOST_STATUP:
     case Game.BOOST_DBLPOWER:
     case Game.BOOST_FULLHEAL:
+    case Game.BOOST_BURST:
+    case Game.BOOST_EXECUTE:
+    case Game.BOOST_LASTSTAND:
+    case Game.BOOST_VENGEANCE:
+    case Game.BOOST_FIRST:
+    case Game.BOOST_PICKPOCKET:
       return 5;
     case Game.BOOST_ABSORB:
     case Game.BOOST_REFLECT:
@@ -203,6 +263,12 @@ Game.getPowerName = function(power) {
     case Game.BOOST_DAMAGE: return "Deadly Force";
     case Game.BOOST_DEFENCE: return "Ancestral Fortitude";
     case Game.BOOST_SPEED: return "Nimble Fingers";
+    case Game.BOOST_BURST: return "Wild Swings";
+    case Game.BOOST_EXECUTE: return "Execute";
+    case Game.BOOST_LASTSTAND: return "Last Bastion";
+    case Game.BOOST_VENGEANCE: return "Vengeance";
+    case Game.BOOST_FIRST: return "Sneak Attack";
+    case Game.BOOST_PICKPOCKET: return "Five-Finger Discount";
   }
 }
 Game.getPowerDesc = function(power) {
@@ -230,5 +296,11 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_DAMAGE: return "Grants a 2% per level increase to all damage dealt.";
     case Game.BOOST_DEFENCE: return "Grants a 2% per level reduction to all damage taken";
     case Game.BOOST_SPEED: return "Grants a 2% increase per level in attack speeds.";
+    case Game.BOOST_BURST: return "Causes your Burst Attack to deal a number of 50% damage hits equal to this power's level plus 1.";
+    case Game.BOOST_EXECUTE: return "Grants a 5% chance per level to instantly kill a target below 25% health.";
+    case Game.BOOST_LASTSTAND: return "Reduces damage taken by 10% per level when your health is below 30%.";
+    case Game.BOOST_VENGEANCE: return "Grants a 2% chance per level to return 50% of damage taken to the target.";
+    case Game.BOOST_FIRST: return "Increases your chance to attack first by 10% per level.";
+    case Game.BOOST_PICKPOCKET: return "Grants a 1% chance per level to steal seeds equal to your character level on attack.";
   }
 }

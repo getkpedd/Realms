@@ -76,8 +76,20 @@ Game.idleHeal = function() {
 }
 Game.autoBattleFunc = function() {
   if(Game.p_State == Game.STATE_IDLE) {
-    if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) { Game.sellAllWeapons(); }
-    else if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.sellAllArmour(); }
+    if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) {
+      if(document.getElementById("ab_wepfull").options[ab_wepfull.selectedIndex].value == "SELL") {
+        Game.sellAllWeapons();
+      } else {
+        Game.scrapAllWeapons();
+      }
+    }
+    else if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) {
+      if(document.getElementById("ab_armfull").options[ab_armfull.selectedIndex].value == "SELL") {
+        Game.sellAllArmour();
+      } else {
+        Game.scrapAllArmour();
+      }
+    }
     else {
     var repairThreshold = document.getElementById("ab_lowdura").options[ab_lowdura.selectedIndex].value;
     if(Game.p_Weapon[8] < repairThreshold) { Game.startWeaponRepair(); }

@@ -8,14 +8,15 @@ and damage calculation.
 Game.startCombat = function() {
 	if(Game.p_State == Game.STATE_IDLE) {
     Game.p_Adrenaline = 0;
-		if(Game.p_Level >= 5 && Game.RNG(1,100) == 1) {
+		if(Game.p_Level >= 5 && Game.RNG(1,100) <= Game.bossChance) {
 			Game.makeBoss(Game.p_Level);
+      Game.bossChance = 0;
 		}
 		else {
 			Game.makeEnemy(Game.p_Level);
 		}
 		Game.p_State = Game.STATE_COMBAT;
-		if(Game.RNG(1,2) == 1) {
+		if(Game.RNG(1,10) <= 5+Game.powerLevel(Game.BOOST_FIRST)) {
 			Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,100);
 			Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1100);
 		}
@@ -31,7 +32,7 @@ Game.startCombat = function() {
 Game.playerCombatTick = function() {
 	if(Game.p_State == Game.STATE_COMBAT) {
     var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
-    playerDMG *= 1+(0.02*Game.powerLevel(Game.BOOST_DAMAGE));
+    playerDMG = Math.floor(playerDMG*(1+(0.02*Game.powerLevel(Game.BOOST_DAMAGE))));
     if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) { playerDMG = Math.floor(playerDMG/2); }
 		switch(Game.p_Weapon[2]) {
 			case Game.WEAPON_MAGIC:
@@ -107,6 +108,12 @@ Game.playerCombatTick = function() {
     if(Game.getPlayerDebuff()[0] == Game.DEBUFF_PARAHAX && Game.RNG(1,100) <= Game.p_Debuff[3]) {
       Game.combatLog("player","<strong>" + Game.p_Debuff[1] + "</strong> prevented you from attacking.");
     }
+    else if(Game.e_HP / Game.e_MaxHP <= 0.25 && Game.RNG(1,20) < Game.powerLevel(Game.BOOST_EXECUTE)) {
+      Game.e_HP = 0;
+      Game.combatLog("player","<strong>Execute</strong> activated, instantly dealing a killing blow.");
+      Game.endCombat();
+      return;
+    }
     else if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC) {
       playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
       var mainStat = 0;
@@ -124,6 +131,7 @@ Game.playerCombatTick = function() {
       Game.player_debuffTimer = 0;
     }
     else {
+      if(Game.wildSwing) { playerDMG = Math.floor(playerDMG/2); }
       Game.e_HP = Math.max(Game.e_HP-playerDMG,0);
       if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) {
         Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your fists for <strong>" + playerDMG + "</strong> damage.");
@@ -131,6 +139,10 @@ Game.playerCombatTick = function() {
       else {
       Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
       }
+    }
+    if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_PICKPOCKET)) {
+      Game.p_Currency += Game.p_Level;
+      Game.combatLog("player","<strong>Five-Finger Discount</strong> allowed you to steal " + Game.p_Level + " seeds.");
     }
     if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MULTI) {
       // DOUBLE STRIKEU
@@ -235,12 +247,20 @@ Game.enemyCombatTick = function() {
         Game.enemy_debuffTimer = 0;
       }
       else {
+        if(Game.powerLevel(Game.BOOST_LASTSTAND) > 0 && (Game.p_HP / Game.p_MaxHP <= 0.3)) {
+          enemyDMG = Math.floor(enemyDMG * (1-(0.1*Game.powerLevel(Game.BOOST_LASTSTAND))));
+        }
 			  Game.p_HP = Math.max(Game.p_HP-enemyDMG,0);
         if(Game.getEnemyDebuff()[0] == Game.DEBUFF_DISARM) {
         	Game.combatLog("enemy",(Game.e_ProperName ? "" : "The ") + Game.e_Name + " hits you with their fists for <strong>" + enemyDMG + "</strong> damage.");
         }
         else {
 			    Game.combatLog("enemy",(Game.e_ProperName ? "" : "The ") + Game.e_Name + " hits you with their <span class='q" + Game.e_Weapon[7] + "'>" + Game.e_Weapon[0].split("|")[0] + "</span> for <strong>" + enemyDMG + "</strong> damage.");
+        }
+        if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_VENGEANCE)) {
+          var vengDMG = Math.floor(enemyDMG/2);
+          Game.e_HP = Math.max(Game.e_HP-vengDMG,0);
+          Game.combatLog("player","Your <strong>Vengeance</strong> effect dealt " + vengDMG + " damage.");
         }
       }
 		}
@@ -269,7 +289,19 @@ Game.enemyCombatTick = function() {
 Game.burstAttack = function() {
   if(Game.e_HP > 0 && !Game.p_specUsed) {
 	  Game.p_specUsed = true;
-    Game.playerCombatTick();
+    if(Game.powerLevel(Game.BOOST_BURST) > 0) {
+      Game.combatLog("player","<strong>Wild Swings</strong> activated.");
+      Game.wildSwing = true;
+      for(var x = Game.powerLevel(Game.BOOST_BURST); x >= 0; x--) {
+        Game.playerCombatTick();
+      }
+      Game.combatLog("player","<strong>Wild Swings</strong> ended.");
+      Game.wildSwing = false;
+    }
+    else {
+      Game.combatLog("player","<strong>Burst Attack</strong> activated.");
+      Game.playerCombatTick();
+    }
     window.setTimeout(function() { Game.p_specUsed = false; },10000);
     Game.drawActivePanel();
   }
@@ -288,6 +320,7 @@ Game.fleeCombat = function() {
   Game.p_Debuff = [];
   Game.e_Debuff = [];
   Game.p_Adrenaline = 0;
+  if(Game.p_Level >= 5) { Game.bossChance++; }
 	Game.p_State = Game.STATE_IDLE;
   Game.p_specUsed = false;
 	Game.combatLog("info","You fled from the battle.");
@@ -347,10 +380,6 @@ Game.endCombat = function() {
 		if(Game.p_EXP >= Game.p_NextEXP) {
 			Game.levelUp();
 		}
-    if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_MOREPP)) {
-      Game.p_PP++;
-      Game.combatLog("info","<strong>Luck of the Draw</strong> granted an additional Power Point.");
-    }
     if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_REPAIR)) {
       Game.p_Weapon[8] = 50 + (5*(Game.p_Weapon[1]-1));
       Game.p_Armour[3] = 50 + (5*(Game.p_Armour[1]-1));
@@ -368,6 +397,7 @@ Game.endCombat = function() {
 		Game.combatLog("info","You lose <strong>" + xpDrop + "</strong> experience...");
 		Game.p_EXP -= xpDrop;
 	}
+  if(Game.p_Level >= 5) { Game.bossChance++; }
 	Game.p_autoSaved = false;
 	Game.drawActivePanel();
 }

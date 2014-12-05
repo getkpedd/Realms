@@ -52,6 +52,10 @@ Game.levelUp = function() {
 	}
   Game.p_PP += 1;
 	Game.combatLog("info","You gained a Power point.");
+  if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_MOREPP)) {
+    Game.p_PP++;
+    Game.combatLog("info","<strong>Luck of the Draw</strong> granted an additional Power Point.");
+  }
   Game.updatePowerPanel = true;
 }
 Game.addStat = function(stat) {

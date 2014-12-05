@@ -132,5 +132,11 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Survival Instincts","Grants a 2% per level increase in health regeneration and repair speeds.",108],
                   ["Will To Live","Grants a 2% chance per level to be fully healed after combat.",1081],
                   ["Deadly Force","Grants a 2% per level increase to all damage dealt.",109],
+                  ["Wild Swings","Causes your Burst Attack to deal a number of 50% damage hits equal to this power's level plus 1.",1091],
+                  ["Execute","Grants a 5% chance per level to instantly kill a target below 25% health.",1092],
                   ["Ancestral Fortitude","Grants a 2% per level reduction to all damage taken",110],
-                  ["Nimble Fingers","Grants a 2% increase per level in attack speeds.",111]];
+                  ["Last Bastion","Reduces damage taken by 10% per level when your health is below 30%.",1101],
+                  ["Vengeance","Grants a 2% chance per level to return 50% of damage taken to the target.",1102],
+                  ["Nimble Fingers","Grants a 2% increase per level in attack speeds.",111],
+                  ["Sneak Attack","Increases your chance to attack first by 10% per level.",1111],
+                  ["Five-Finger Discount","Grants a 1% chance per level to steal seeds equal to your character level on attack.",1112]];
