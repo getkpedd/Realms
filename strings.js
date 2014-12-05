@@ -123,7 +123,7 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Divine Shield","Grants a 1% chance per level to completely negate an enemy attack.",104],
                   ["Absorption Shield","Causes your Divine Shield effect to heal you for the damage you would have taken.",1041],
                   ["Reflective Shield","Causes your Divine Shield effect to deal the damage you would have taken to the enemy.",1042],
-                  ["Luck of the Draw","Grants a 1% chance per level to gain an additional Power Point after combat.",105],
+                  ["Luck of the Draw","Grants a 1% chance per level to gain an additional Power Point on level up.",105],
                   ["Lucky Star","Grants a 1% chance per level to gain an additional Skill Point on level up.",1051],
                   ["Fast Learner","Grants a 5% increase per level to experience gains.",106],
                   ["Patience and Discipline","Grants a 3% chance per level to gain an additional point in a random stat on level up.",1061],

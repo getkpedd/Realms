@@ -285,7 +285,7 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_SHIELD: return "Grants a 1% chance per level to completely negate an enemy attack.";
     case Game.BOOST_ABSORB: return "Causes your Divine Shield effect to heal you for the damage you would have taken.";
     case Game.BOOST_REFLECT: return "Causes your Divine Shield effect to deal the damage you would have taken to the enemy.";
-    case Game.BOOST_MOREPP: return "Grants a 1% chance per level to gain an additional Power Point after combat.";
+    case Game.BOOST_MOREPP: return "Grants a 1% chance per level to gain an additional Power Point on level up.";
     case Game.BOOST_MORESP: return "Grants a 1% chance per level to gain an additional Skill Point on level up.";
     case Game.BOOST_XP: return "Grants a 5% increase per level to experience gains.";
     case Game.BOOST_STATUP: return "Grants a 3% chance per level to gain an additional point in a random stat on level up.";
