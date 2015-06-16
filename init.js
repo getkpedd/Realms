@@ -1,7 +1,7 @@
 Game = {};
 /*
 Changes in this version (0.232)
-  None yet!
+  Balance changes
 TODO:
   Reforging (change the debuff on a weapon for a cost of scrap)
    - Allow for improved versions of debuffs for more scrap (Great or better weapon required)
