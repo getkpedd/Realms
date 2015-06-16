@@ -121,7 +121,7 @@ Game.makeBoss = function(level) {
   Game.e_Name = Game.getEnemyName(true);
 	Game.e_MaxHP = Game.RNG(80,100) + Game.RNG(25*(level-1),30*(level-1));
 	Game.e_MainStat = Game.RNG(5,7) + Game.RNG(Math.floor((level-1)*1.5),2*(level-1));
-  var scalingFactor = 1+((level-1)*0.05);
+  var scalingFactor = 0.9+((level-1)*0.05);
   Game.e_MaxHP = Math.floor(Game.e_MaxHP*scalingFactor);
   Game.e_MainStat = Math.floor(Game.e_MainStat*scalingFactor);
   Game.e_HP = Game.e_MaxHP;
@@ -131,11 +131,11 @@ Game.makeBoss = function(level) {
 	Game.e_isBoss = true;
   Game.e_Weapon = [];
   do {
-    Game.e_Weapon = Game.makeWeapon(level+3);
+    Game.e_Weapon = Game.makeWeapon(Game.RNG(1,5) == 1 ? level+1 : level);
   } while(Game.e_Weapon[7] < Game.QUALITY_GREAT);
   Game.e_Armour = [];
   do {
-  Game.e_Armour = Game.makeArmour(level+3);
+  Game.e_Armour = Game.makeArmour(Game.RNG(1,5) == 1 ? level+1 : level);
   } while(Game.e_Armour[2] < Game.QUALITY_GREAT);
 }
 Game.toggleAutoBattle = function() {

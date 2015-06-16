@@ -1,44 +1,7 @@
 Game = {};
 /*
-Changes in this version (0.231):
-  Headline Changes:
-    There is now content on the 'Help' tab. Feedback is requested on this.
-    New Powers:
-      Last Bastion
-        Reduces damage taken by 10% per level when health remaining drops below 30%.
-        Requires 10 points in Ancestral Fortitude
-        5 Levels available
-        Cannot be used in conjunction with Vengeance
-      Vengeance
-        Grants a 2% chance per level to deal 50% of damage taken from an attack to the attacker.
-        Requires 10 points in Ancestral Fortitude
-        5 Levels available
-        Cannot be used in conjunction with Last Bastion
-      Wild Swings
-        Changes the 'Burst Attack' button to fire a number of 50% damage attacks equal to this power's level plus one.
-        Requires 10 points in Deadly Force
-        5 Levels available
-        Cannot be used in conjunction with Execute
-      Execute
-        Grants a 5% chance per level to instantly kill a target below 25% health.
-        Requires 10 points in Deadly Force
-        5 Levels available
-        Cannot be used in conjunction with Wild Swings
-      Sneak Attack
-        Increases the chance of you attacking first by 10% per level.
-        Requires 10 points in Nimble Fingers
-        5 Levels available
-        Cannot be used in conjunction with Five-Finger Discount
-      Five-Finger Discount
-        Grants a 1% chance per level to steal seeds from the target equal to your character level when attacking.
-        Requires 10 points in Nimble Fingers
-        5 Levels available
-        Cannot be used in conjunction with Sneak Attack
-  Fixes and Tweaks:
-    Fix: Deadly Force no longer causes rounding errors.
-    Fix: Luck of the Draw now activates on level up, instead of after combat.
-    Tweak: There are now options to scrap items instead of selling them during auto-battle's inventory cleanup process.
-    Tweak: The base chance to spawn a boss-level enemy is now 1%, increasing by 1% for each non-boss fight conducted.
+Changes in this version (0.232)
+  None yet!
 TODO:
   Reforging (change the debuff on a weapon for a cost of scrap)
    - Allow for improved versions of debuffs for more scrap (Great or better weapon required)
