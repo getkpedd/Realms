@@ -549,3 +549,65 @@ Game.takeArmour = function() {
   Game.updateInv = true;
 	Game.drawActivePanel();
 }
+Game.reforgeWeapon = function(debuff, isSuperior) {
+  var debuffCost = isSuperior ? 2 : 1;
+  if(debuff >= Game.DEBUFF_SHRED) {
+    debuffCost *= 4;
+  }
+  if(Game.p_Weapon[7] < Game.QUALITY_GREAT && isSuperior) {
+    Game.toastNotification("Only Great or Amazing weapons can be given Superior debuffs.");
+  }
+  else if(Game.p_Weapon[7] < Game.QUALITY_GOOD) {
+    Game.toastNotification("Reforging is not available for weapons below 'Good' quality.")
+  }
+  else if(Game.p_Scrap < debuffCost) {
+    Game.toastNotification("You cannot afford this reforge.");
+  }
+  else {
+    var isRandom = false;
+    if(debuff < Game.DEBUFF_SHRED) { debuff = Game.RNG(Game.DEBUFF_SHRED, Game.DEBUFF_DISARM); isRandom = true; }
+    var dbName = "";
+    if((isSuperior || debuff == Game.DEBUFF_MC) && !isRandom) {
+       dbName = prompt("Debuff name? Leave blank to use default. \n\n (Selected type: " + Game.debuff_names[debuff-Game.DEBUFF_SHRED] + ")");
+    }
+    switch(debuff) {
+      case 241:
+        if(isSuperior) { Game.p_Weapon[9] = [241,(dbName.trim === "" ? "Ruthlessness" : dbName),15,-1]; }
+        else { Game.p_Weapon[9] = [241,"Ruthlessness",10,-1]; }
+        break;
+      case 242:
+        if(isSuperior) { Game.p_Weapon[9] = [242,(dbName.trim === "" ? "Frenzy" : dbName),15,70]; }
+        else { Game.p_Weapon[9] = [242,"Frenzy",10,50]; }
+        break;
+      case 243:
+        if(isSuperior) { Game.p_Weapon[9] = [243,(dbName.trim === "" ? "Bloodthirst" : dbName),15,30]; }
+        else { Game.p_Weapon[9] = [243,"Bloodthirst",10,20]; }
+        break;
+      case 244:
+        if(isSuperior) { Game.p_Weapon[9] = [244,(dbName.trim === "" ? "Cripple" : dbName),15,25]; }
+        else { Game.p_Weapon[9] = [244,"Cripple",10,15]; }
+        break;
+      case 245:
+        Game.p_Weapon[9] = [245,(dbName.trim === "" ? "Charm" : dbName),5,-1];
+        break;
+      case 246:
+        if(isSuperior) { Game.p_Weapon[9] = [246,(dbName.trim === "" ? "Wound Poison" : dbName),15,30]; }
+        else { Game.p_Weapon[9] = [246,"Wound Poison",10,20]; }
+        break;
+      case 247:
+        if(isSuperior) { Game.p_Weapon[9] = [247,(dbName.trim === "" ? "Nerve Strike" : dbName),15,25]; }
+        else { Game.p_Weapon[9] = [247,"Nerve Strike",10,15]; }
+        break;
+      case 248:
+        if(isSuperior) { Game.p_Weapon[9] = [248,(dbName.trim === "" ? "Mounting Dread" : dbName),5,10]; }
+        else { Game.p_Weapon[9] = [248,"Mounting Dread",5,6]; }
+        break;
+      case 249:
+        if(isSuperior) { Game.p_Weapon[9] = [249,(dbName.trim === "" ? "Disarmed" : dbName),15,-1]; }
+        else { Game.p_Weapon[9] = [249,"Disarmed",10,-1]; }
+        break;
+    }
+    Game.p_Scrap -= debuffCost;
+    Game.toastNotification("Weapon has been reforged.");
+  }
+}

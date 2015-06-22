@@ -14,8 +14,8 @@ Game.drawActivePanel = function() {
       Game.updatePowersPanel(); break;
     case "inventoryTable":
       Game.updateInventoryPanel(); break;
-    case "storeTable":
-      Game.updateStorePanel(); break;
+    case "forgeTable":
+      Game.updateForgePanel(); break;
   }
 }
 Game.updateLeftPanel = function() {
@@ -53,6 +53,8 @@ Game.updateLeftPanel = function() {
   currency.innerHTML = Game.p_Currency;
   var scrap = document.getElementById("ScrapOut");
   scrap.innerHTML = Game.p_Scrap;
+  var BC = document.getElementById("bossChanceOut");
+  BC.innerHTML = Game.bossChance + "%";
 	// Player weapon
 	var w_name = document.getElementById("w_Name");
   w_name.className = "q" + Game.p_Weapon[7];
@@ -651,11 +653,25 @@ Game.updateInventoryPanel = function() {
     Game.updateInv = false;
   }
 }
-Game.updateStorePanel = function() {
+Game.updateForgePanel = function() {
+  var wlName = document.getElementById("weaponLevelUpgradeName");
+  if(Game.p_Weapon[7] >= Game.QUALITY_GREAT) {
+    wlName.innerHTML = Game.p_Weapon[0].split("|")[0];
+  } else {
+    wlName.innerHTML = Game.p_Weapon[0];
+  }
+  wlName.className = "q" + Game.p_Weapon[7];
   var wlUPCost = document.getElementById("weaponLevelUpgradeCost");
   var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   wlUPCost.innerHTML = upgradeCost;
+  var alName = document.getElementById("armourLevelUpgradeName");
+  if(Game.p_Armour[2] >= Game.QUALITY_GREAT) {
+    alName.innerHTML = Game.p_Armour[0].split("|")[0];
+  } else {
+    alName.innerHTML = Game.p_Armour[0];
+  }
+  alName.className = "q" + Game.p_Armour[2];
   var alUPCost = document.getElementById("armourLevelUpgradeCost");
   upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
@@ -663,6 +679,13 @@ Game.updateStorePanel = function() {
  var wepQualityRow = document.getElementById("weaponQualityUpRow");
   if(Game.p_Weapon[7] == Game.QUALITY_AMAZING) { wepQualityRow.style.display = "none"; }
   else {
+    var wqName = document.getElementById("weaponQualityUpgradeName");
+    if(Game.p_Weapon[7] >= Game.QUALITY_GREAT) {
+      wqName.innerHTML = Game.p_Weapon[0].split("|")[0];
+    } else {
+      wqName.innerHTML = Game.p_Weapon[0];
+    }
+    wqName.className = "q" + Game.p_Weapon[7];
     wepQualityRow.style.display = "";
     var wQualityCost = document.getElementById("weaponQualityUpgradeCost");
     var scrapCost = Math.pow(4,(Game.p_Weapon[7]-Game.QUALITY_POOR));
@@ -671,6 +694,13 @@ Game.updateStorePanel = function() {
   var armQualityRow = document.getElementById("armourQualityUpRow");
   if(Game.p_Armour[2] == Game.QUALITY_AMAZING) { armQualityRow.style.display = "none"; }
   else {
+    var aqName = document.getElementById("armourQualityUpgradeName");
+    if(Game.p_Armour[2] >= Game.QUALITY_GREAT) {
+      aqName.innerHTML = Game.p_Armour[0].split("|")[0];
+    } else {
+      aqName.innerHTML = Game.p_Armour[0];
+    }
+    aqName.className = "q" + Game.p_Armour[2];
     armQualityRow.style.display = "";
     var wQualityCost = document.getElementById("armourQualityUpgradeCost");
     var scrapCost = Math.pow(4,(Game.p_Armour[2]-Game.QUALITY_POOR));
@@ -693,9 +723,15 @@ Game.showPanel = function(panelID) {
 	for(var x = 0; x < panelList.length; x++) {
 		if(panelList[x].id == panelID) {
 			panelList[x].style.display = "";
+      var tabHeader = document.getElementById(panelList[x].id.slice(0,-2));
+      tabHeader.style.backgroundColor = "#991010";
+      tabHeader.style.fontWeight = "bold";
 		}
 		else if(panelList[x].id.match(/(\w+)Table/g) !== null) {
 			panelList[x].style.display = "none";
+      var tabHeader = document.getElementById(panelList[x].id.slice(0,-2));
+      tabHeader.style.backgroundColor = "";
+      tabHeader.style.fontWeight = "";
 		}
 	}
   Game.activePanel = panelID;

@@ -1,13 +1,16 @@
 Game = {};
 /*
-Changes in this version (0.232)
-  Balance changes
 TODO:
   Reforging (change the debuff on a weapon for a cost of scrap)
-   - Allow for improved versions of debuffs for more scrap (Great or better weapon required)
-  Power Reset (no cost)
-  Names
-   - The Player
+  - Only available if the weapon is of 'Good' quality or better.
+  - Normal debuffs cost 1 scrap for a randomised debuff, or 4 scrap for a specific debuff.
+  - For weapons that are at 'Great' or 'Amazing' quality, the option for superior debuffs is available.
+  - Superior debuffs cost 2 scrap for a randomised debuff, or 8 scrap for a specific debuff.
+  - Superior debuffs can also be given custom names.
+  Shop Stock
+  - Generate a number of weapons and armour pieces every few minutes that can be purchased by the player with seeds.
+  Save Options
+  - Autobattle options to be written to and read from savefile.
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -110,7 +113,7 @@ Game.init = function() {
 	this.p_IdleInterval = null;
   this.p_Debuff = [];
   this.p_Adrenaline = 0;
-  this.bossChance = 1;
+  this.bossChance = 0;
   this.activePanel = "";
   this.p_WeaponInventory = [];
   this.p_ArmourInventory = [];
@@ -218,7 +221,7 @@ Game.load = function() {
 		Game.last_Weapon = g.last_Weapon;
     Game.last_Armour = g.last_Armour;
     Game.activePanel = g.activePanel;
-    if(g.bossChance === undefined) { Game.bossChance = 1; }
+    if(g.bossChance === undefined) { Game.bossChance = Game.p_Level >= 5 ? 1 : 0; }
     else { Game.bossChance = g.bossChance; }
 		return true;
 	}

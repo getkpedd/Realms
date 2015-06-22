@@ -82,6 +82,7 @@ Game.autoBattleFunc = function() {
       } else {
         Game.scrapAllWeapons();
       }
+      if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) { Game.toggleAutoBattle(); }
     }
     else if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) {
       if(document.getElementById("ab_armfull").options[ab_armfull.selectedIndex].value == "SELL") {
@@ -89,6 +90,7 @@ Game.autoBattleFunc = function() {
       } else {
         Game.scrapAllArmour();
       }
+      if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.toggleAutoBattle(); }
     }
     else {
     var repairThreshold = document.getElementById("ab_lowdura").options[ab_lowdura.selectedIndex].value;

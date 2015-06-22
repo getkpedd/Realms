@@ -304,3 +304,16 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_PICKPOCKET: return "Grants a 1% chance per level to steal seeds equal to your character level on attack.";
   }
 }
+Game.resetPowers = function() {
+  if(confirm("Are you sure you wish to reset your power point allocation? This cannot be undone.")) {
+    var totalSpent = 0;
+    for(var a = 0; a < Game.p_Powers.length; a++) {
+      totalSpent += Game.p_Powers[a][1];
+    }
+    Game.p_Powers = [];
+    Game.p_PP += totalSpent;
+    Game.toastNotification("Power points have been reset.");
+    Game.updatePowerPanel = true;
+    Game.drawActivePanel();
+  }
+}

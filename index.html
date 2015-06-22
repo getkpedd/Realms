@@ -26,7 +26,7 @@
             Game.showPanel('inventoryTable');
             break;
           case "4":
-            Game.showPanel('storeTable');
+            Game.showPanel('forgeTable');
             break;
           case "5":
             Game.showPanel('miscTable');
@@ -34,9 +34,13 @@
           case "6":
             Game.showPanel('helpTable');
             break;
+          case "7":
+            Game.showPanel('updateTable');
+            break;
           case " ":
             Game.startCombat();
             Game.showPanel('combatTable');
+            break;
           case "s":
             if(Game.p_State == Game.STATE_COMBAT) { Game.specialAttack(); }
             break;
@@ -53,7 +57,7 @@
       }
       document.onkeypress = keyBindings;
     </script>
-		<link rel="stylesheet" type="text/css" href="style.css"></link>
+		<link rel="stylesheet" type="text/css" href="style.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
@@ -63,13 +67,14 @@
 				</tr>
 			</table>
 				<span class="tabBar" style="padding-left:205px;">&nbsp;</span>
-				<span class="tabButton" onclick="Game.showPanel('combatTable');">Combat</span>
-				<span class="tabButton" onclick="Game.showPanel('powersTable');">Powers</span>
-				<span class="tabButton" onclick="Game.showPanel('inventoryTable');">Inventory</span>
-				<span class="tabButton" onclick="Game.showPanel('storeTable');">Store</span>
-				<span class="tabButton" onclick="Game.showPanel('miscTable');">Options</span>
-				<span class="tabButton" onclick="Game.showPanel('helpTable');">Help</span>
-        <span style="font-size:14px;float:right;text-align:right;padding-right:15px;">Autobattle status:&nbsp;
+				<span class="tabButton" id="combatTab" onclick="Game.showPanel('combatTable');">Combat</span>
+				<span class="tabButton" id="powersTab" onclick="Game.showPanel('powersTable');">Powers</span>
+				<span class="tabButton" id="inventoryTab" onclick="Game.showPanel('inventoryTable');">Inventory</span>
+				<span class="tabButton" id="forgeTab" onclick="Game.showPanel('forgeTable');">Forge</span>
+				<span class="tabButton" id="miscTab" onclick="Game.showPanel('miscTable');">Options</span>
+				<span class="tabButton" id="helpTab" onclick="Game.showPanel('helpTable');">Help</span>
+        <span class="tabButton" id="updateTab" onclick="Game.showPanel('updateTable');">Updates</span>
+        <span style="font-size:14px;float:right;text-align:right;padding-right:15px;">Autobattle:&nbsp;
           <span style="font-size:14px;float:right;text-align:right;" id="autoBattleState"></span></span>
 			<table width="900px">
 				<tr>
@@ -126,6 +131,11 @@
               <tr>
                 <td>Scrap: </td>
                 <td><div id="ScrapOut"></div></td>
+              </tr>
+              <tr><td>&nbsp;</td></tr>
+              <tr>
+                <td>Boss Chance: </td>
+                <td><div id="bossChanceOut"></div></td>
               </tr>
 						</table>
 						<table class="weaponInfo">
@@ -215,10 +225,10 @@
                     <tr>
 											<td colspan="2">
 												<div class="playerHPBorder">
-													<img id="playerHPBar" class="playerHPBar" src="Clear.gif"></img>
+													<img id="playerHPBar" class="playerHPBar" src="Clear.gif" />
 												</div>
 												<div class="enemyHPBorder">
-													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif"></img>
+													<img id="enemyHPBar" class="enemyHPBar" src="Clear.gif" />
 												</div>
 											</td>
 										</tr>
@@ -294,6 +304,11 @@
                             <td id="available_area">
                             </td>
                           </tr>
+                          <tr>
+                            <td>
+                              <span class="bigButton" id="powerReset" onclick="Game.resetPowers();">Reset Powers</span>
+                            </td>
+                          </tr>
 												</table>
 											</td>
 										</tr>
@@ -334,31 +349,136 @@
                       </td>
                     </tr>
                   </table>
-									<table id="storeTable"style="display:none;">
+									<table id="forgeTable" style="display:none;">
+                    <tr>
+                      <td colspan="2">
+                        <div class="powerHeader">The Forge</div>
+                      </td>
+                    </tr>
                     <tr>
                       <td>
-                        Increase Weapon Level for <span id="weaponLevelUpgradeCost"></span> seeds
+                        Raise the level of <span id="weaponLevelUpgradeName"></span> by one.<br />
+                        Cost: <span id="weaponLevelUpgradeCost"></span> seeds
                       </td>
                       <td><span class="bigButton" onClick="Game.buyWeaponLevelUpgrade();">Raise Weapon Level</span></td>
                     </tr>
                     <tr>
                       <td>
-                        Increase Armour Level for <span id="armourLevelUpgradeCost"></span> seeds
+                        Raise the level of <span id="armourLevelUpgradeName"></span> by one.<br />
+                        Cost: <span id="armourLevelUpgradeCost"></span> seeds
                       </td>
                       <td><span class="bigButton" onClick="Game.buyArmourLevelUpgrade();">Raise Armour Level</span></td>
                     </tr>
                     <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
                     <tr id="weaponQualityUpRow">
                       <td>
-                        Increase Weapon quality for <span id="weaponQualityUpgradeCost"></span> scrap
+                        Raise the quality of <span id="weaponQualityUpgradeName"></span><br />
+                        Cost: <span id="weaponQualityUpgradeCost"></span> scrap
                       </td>
                       <td><span class="bigButton" onClick="Game.buyWeaponQualityUpgrade();">Raise Weapon Quality</span>
                     </tr>
                     <tr id="armourQualityUpRow">
                       <td>
-                        Increase Armour quality for <span id="armourQualityUpgradeCost"></span> scrap
+                        Raise the quality of <span id=armourQualityUpgradeName></span><br />
+                        Cost: <span id="armourQualityUpgradeCost"></span> scrap
                       </td>
                       <td><span class="bigButton" onClick="Game.buyArmourQualityUpgrade();">Raise Armour Quality</span>
+                    </tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr>
+                      <td colspan="2">
+                        <div class="powerHeader">Debuff Reforging</div>
+                        <table>
+                          <thead style="font-weight:bold">
+                            <tr>
+                              <td style="width:50%;">Debuff Type</td>
+                              <td style="width:25%;">Normal</td>
+                              <td style="width:25%;">Superior</td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Random</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(240,false);">1 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(240,true);">2 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">Picks one debuff at random from any of those listed below.</td>
+                            </tr>
+                            <tr>
+                              <td>Armour Shred</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(241,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(241,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">Causes all of your attacks to ignore positive armour effects for 10 (15) seconds.</td>
+                            </tr>
+                            <tr>
+                              <td>Double Attack</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(242,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(242,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">All attacks cause a second strike against the target for 50% (70%) more damage for 10 (15) seconds.</td>
+                            </tr>
+                            <tr>
+                              <td>Health Drain</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(243,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(243,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">You are healed for 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
+                            </tr>
+                            <tr>
+                              <td>Slower Attacks</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(244,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(244,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">The target's attack speed is lowered by 15% (25%) for 10 (15) seconds.</td>
+                            </tr>
+                            <tr>
+                              <td>Confusion</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(245,false);">4 scrap</span></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">Causes the target's next attack to be aimed at themselves, ignoring their armour.</td>
+                            </tr>
+                            <tr>
+                              <td>Damage Over Time</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(246,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(246,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">The target takes an additional 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
+                            </tr>
+                            <tr>
+                              <td>Paralysis</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(247,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(247,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target has a 15% (25%) chance for their attack to be nullified.</td>
+                            </tr>
+                            <tr>
+                              <td>Doom</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(248,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(248,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">Grants a 6% (10%) chance to instantly kill the target. Deals 300% (500%) weapon damage if it fails.</td>
+                            </tr>
+                            <tr>
+                              <td>Disarm</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(249,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(249,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target's attacks will not factor their weapon into damage, or apply debuffs.</td>
+                            </tr>
+                        </table>
+                      </td>
                     </tr>
                   </table>
 									<table id="miscTable" style="display:none;">
@@ -487,7 +607,7 @@
                           <strong>Confusion</strong> - Mind Control - causes the victim's next attack to be targeted at themselves, ignoring any armour they are wearing.<br />
                           <strong>Damage Over Time</strong> - Wound Poison - deals a percentage of weapon damage to the victim every second.<br />
                           <strong>Paralysis</strong> - Nerve Strike - grants a chance for the victim's attacks to fail.<br />
-                          <strong>Doom</strong> - Mounting Dread - grants a small chance to kill the victim outright at the end of the debuff duration.<br />
+                          <strong>Doom</strong> - Mounting Dread - grants a small chance to kill the victim outright at the end of the debuff duration, or dealing a significant amount of damage if it does not.<br />
                           <strong>Disarm</strong> - Disarmed - causes the victim's weapon damage to be reduced by half, and also prevents debuffs from being applied.</p>
                           <p>Some debuffs may have differing names from the ones listed above, specifically those on found Great or Amazing quality weapons.</p>
                         <div class="powerHeader">Combat</div>
@@ -504,7 +624,7 @@
                         <p>Items in the inventory can be sold for seeds, or converted into scrap. Scrap is a resource used to increase the quality of your equipped items, and a substantial amount is required to perform higher quality upgrades. The amount of seeds you gain from selling an item depends on the quality and level of the item, whereas the amount of scrap you gain from an item is dependant solely on the item's quality.</p>
                         <div class="powerHeader">Store</div>
                         <p>The Store tab contains a few options for upgrading the items you currently have equipped. It does not affect anything in your inventory. Raising an item's level costs an amount of seeds, which scales with the item's current level and quality.</p>
-                        <p>Raising an item's quality is a little different, first in that it costs seeds, and second in that certain effects apply when reaching certain quality thresholds. When an item is upgraded to <span class='q224'>Great</span> quality, you gain the ability to assign a custom name and flavour text to it.</p>
+                        <p>Raising an item's quality is a little different, first in that it costs scrap, and second in that certain effects apply when reaching certain quality thresholds. When an item is upgraded to <span class='q224'>Great</span> quality, you gain the ability to assign a custom name and flavour text to it.</p>
                         <p>For weapons, the weapon will also gain a random debuff when it is upgraded to <span class='q223'>Good</span> quality. This debuff will remain on the weapon after further upgrades. For armour, the available strengths and weaknesses will change as listed above when you upgrade through the various quality tiers.</p>
                         <div class="powerHeader">Options</div>
                         <p>The Options tab contains numerous miscellaneous features which may be useful. There is a manual save button here, as well as a reset button, controls for bulk item selling, and configuration for the auto-battle system.</p>
@@ -517,6 +637,43 @@
                       </td>
                     </tr>
                   </table>
+                  <table id="updateTable" style="display:none;">
+                    <tr>
+                      <td>
+                        <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.24</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>The Forge<ul>
+                            <li>The Shop has been renamed to The Forge, and the ability to change weapon debuffs has been added into the game.</li>
+                            <li>Any Good or better weapon can be assigned a debuff or have its' debuff changed via The Forge.</li>
+                            <li>There are two levels of debuff quality to be applied to weapons, the superior ones requiring a Great or Amazing weapon to use.</li>
+                            <li>A description of each debuff's effect is included below their buttons. Bracketed numbers indicate values for the superior version of the debuff.</li>
+                            <li>Superior versions of debuffs can also be given a custom name.</li>
+                            <li>Because Confusion's buff effect does not have a superior version, the normal version is able to be named as if it was a superior debuff.</li>
+                          </ul></li>
+                          <li>Combat Changes:<ul>
+                            <li>Weapons and armour wielded by boss monsters now match the monster's level instead of being 3 levels higher.</li>
+                            <li>Monsters have had their power scaling slightly lowered.</li>
+                            <li>The 'Mounting Dread' debuff now deals 300% weapon damage (500% weapon damage for superior versions) if it fails to kill the target outright.</li>
+                            <li>The 'Wound Poison' debuff has had its potency increased to 20% of weapon damage (30% for superior versions).</li>
+                            <li>The 'Paralysis' debuff now has a 15% chance to prevent the target from attacking (down from 20%). Superior versions of the debuff are unchanged at 25% chance.</li>
+                          </ul></li>
+                          <li>UI Changes:<ul>
+                            <li>The currently active UI tab is now highlighted.</li>
+                            <li>A new tab containing game update information has been added.</li>
+                            <li>Minor corrections have been made to the text on the help screen.</li>
+                            <li>An indicator has been added to the player info panel to show the chance of a boss encounter occurring.</li>
+                          </ul></li>
+                          <li>Miscellaneous Changes:<ul>
+                            <li>The autobattle function will now halt if the player's weapon or armour inventories are full after the auto sell operation concludes.</li>
+                            <li>Power Points can now be reset at no cost, at the bottom of the Powers tab.</li>
+                            <li>The proc chance for the 'Mounting Dread' debuff now shows correctly on the left sidebar.</li>
+                          </ul></li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </table>
 								</td>
 							</tr>
 						</table>
@@ -525,6 +682,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.232</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.24</div>
 	</body>
 </html>

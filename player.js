@@ -56,6 +56,7 @@ Game.levelUp = function() {
     Game.p_PP++;
     Game.combatLog("info","<strong>Luck of the Draw</strong> granted an additional Power Point.");
   }
+  if(Game.p_Level == 5) { Game.bossChance = 1; }
   Game.updatePowerPanel = true;
 }
 Game.addStat = function(stat) {

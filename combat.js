@@ -437,7 +437,9 @@ Game.playerDebuffTicker = function() {
             Game.p_HP = 0;
           }
           else {
-            Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> had no effect...");
+            var doomDMG = Math.floor(Game.RNG(Game.e_Weapon[4],Game.e_Weapon[5]) * Game.e_Weapon[9][3] / 2);
+            Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> explodes, dealing <strong>" + doomDMG + "</strong> damage.")
+            Game.p_HP = Math.max(Game.p_HP - doomDMG, 0)
           }
         }
         break;
@@ -469,12 +471,14 @@ Game.enemyDebuffTicker = function() {
       case Game.DEBUFF_DOOM:
         // YOU GONNA DIE
         if(Game.enemy_debuffTimer === 0) {
-          if(Game.RNG(1,50) <= Game.e_Debuff[3]) {
+          if(Game.RNG(1,100) <= Game.e_Debuff[3]) {
             Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> activates, instantly killing the target.");
             Game.e_HP = 0;
           }
           else {
-            Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> had no effect...");
+            var doomDMG = Math.floor(Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]) * Game.p_Weapon[9][3] / 2);
+            Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> explodes, dealing <strong>" + doomDMG + "</strong> damage.")
+            Game.e_HP = Math.max(Game.e_HP - doomDMG, 0)
           }
         }
         break;
