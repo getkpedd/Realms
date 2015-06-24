@@ -1,16 +1,15 @@
 Game = {};
 /*
 TODO:
-  Reforging (change the debuff on a weapon for a cost of scrap)
-  - Only available if the weapon is of 'Good' quality or better.
-  - Normal debuffs cost 1 scrap for a randomised debuff, or 4 scrap for a specific debuff.
-  - For weapons that are at 'Great' or 'Amazing' quality, the option for superior debuffs is available.
-  - Superior debuffs cost 2 scrap for a randomised debuff, or 8 scrap for a specific debuff.
-  - Superior debuffs can also be given custom names.
   Shop Stock
   - Generate a number of weapons and armour pieces every few minutes that can be purchased by the player with seeds.
   Save Options
   - Autobattle options to be written to and read from savefile.
+  Additional Stat Effects
+  - Strength grants the player the ability to block incoming strikes, reducing damage taken by 50% at the cost of a point of armour durability (1% chance per 20 points in strength.)
+  - Dexterity grants the player the ability to counterattack instantly after they are struck by an attack. (1% chance per 20 points in dexterity.)
+  - Intelligence grants the player the ability to predict where incoming strikes may land and dodge them, at the cost of delaying their next attack. (1% chance per 20 points in intelligence.)
+  - Constitution grants the player additional inventory spaces (1 space per 20 points in constitution.)
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -55,6 +54,10 @@ Game.init = function() {
   this.BOOST_SPEED = 111; // Nimble Fingers
   this.BOOST_FIRST = 1111; // Sneak Attack
   this.BOOST_PICKPOCKET = 1112; // Five-Finger Discount
+  this.BOOST_DEBUFF = 112; // Expose Weakness
+  this.BOOST_PRICES = 113; // Bartering
+  this.BOOST_SELL = 1131; // Haggling
+  this.BOOST_MORESCRAP = 1132; // Disassembly
 	//Weapon Types
 	this.WEAPON_MELEE = 201;
 	this.WEAPON_RANGE = 202;

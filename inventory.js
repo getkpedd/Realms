@@ -4,7 +4,10 @@ inventory.js
 Functions for inventory control
 and management. Includes store.
 -----------------------------*/
+
+// Yes, I'm doing a lot of array slicing in here. Weird things can happen if you pass them around by reference, it's safer this way :)
 Game.equipWeapon = function(index) {
+  // How do you like my new pointy.
   var currentWep = Game.p_Weapon.slice(0);
   var newWep = Game.p_WeaponInventory[index].slice(0);
   Game.p_Weapon = newWep.slice(0);
@@ -14,6 +17,7 @@ Game.equipWeapon = function(index) {
   Game.drawActivePanel();
 }
 Game.discardWeapon = function(index) {
+  // Don't let them throw me away!
   var thrownWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
@@ -21,7 +25,7 @@ Game.discardWeapon = function(index) {
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index) {
-  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1]));
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_WeaponInventory[index][7]-Game.QUALITY_NORMAL))/10);
   var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   Game.p_WeaponInventory.splice(index,1);
@@ -31,6 +35,7 @@ Game.sellWeapon = function(index) {
   Game.drawActivePanel();
 }
 Game.scrapWeapon = function(index) {
+  // Breaking things willingly.
   var salePrice = 0;
   var scrappedWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   switch(Game.p_WeaponInventory[index][7]) {
@@ -50,6 +55,7 @@ Game.scrapWeapon = function(index) {
       salePrice = Game.RNG(0,1);
       break;
   }
+  if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Scrap += salePrice;
@@ -73,7 +79,7 @@ Game.discardArmour = function(index) {
   Game.drawActivePanel();
 }
 Game.sellArmour = function(index) {
-  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_ArmourInventory[index][1]));
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_ArmourInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_ArmourInventory[index][2]-Game.QUALITY_NORMAL))/10);
   var soldArmName = Game.p_ArmourInventory[index][0].split("|")[0];
   Game.p_ArmourInventory.splice(index,1);
@@ -102,6 +108,7 @@ Game.scrapArmour = function(index) {
       salePrice = Game.RNG(0,1);
       break;
   }
+  if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Scrap += salePrice;
@@ -153,22 +160,24 @@ Game.makeWeapon = function(level) {
 	var base = 0; var variance = 0; var perLv = 0;
 	switch(sType) {
 		case Game.WSPEED_FAST:
-			base = Game.RNG(8,9);
+			base = Game.RNG(8,10);
 			perLv = 2;
 			variance = 0.3;
 			break;
 		case Game.WSPEED_MID:
-			base = Game.RNG(10,12);
+			base = Game.RNG(11,13);
 			perLv = 2.5;
 			variance = 0.4;
 			break;
 		case Game.WSPEED_SLOW:
-			base = Game.RNG(12,15);
+			base = Game.RNG(14,16);
 			perLv = 3;
 			variance = 0.5;
 			break;
 	}
   var name = Game.getWeaponName(type,qualityID,sType);
+  // Logic time!
+  // Weapon damage = (Base + Bonus based on weapon level +/- Variance based on level) * Quality multiplier
 	minDmg = Math.floor((base + ((level-1)*perLv)-(1+(variance*(level-1)/2)))*qualityMult);
 	maxDmg = Math.ceil((base + ((level-1)*perLv)+(1+(variance*(level-1)/2)))*qualityMult);
 	dps = Math.floor((minDmg + maxDmg)/2/speed*100)/100;
@@ -202,11 +211,15 @@ Game.makeArmour = function(level) {
   var availableTypes = [0,1,2];
   var armStrList = [];
   var armVulnList = [];
+  // Add blocking values here
   for(var x = 0; x < armStrengths; x++) {
     var added = false;
     while(!added) {
+      // This loop is to ensure that armours don't boost the same stat multiple times.
       var strType = Game.RNG(Game.ARMOUR_STR_MELEE, Game.ARMOUR_STR_MAGIC);
       if(availableTypes.indexOf(strType - Game.ARMOUR_STR_MELEE) != -1) {
+        // The bonus values are based off level and quality, with minor variance
+        // Variances are small in early game and open up as you gain levels.
         var strPower = 1 + Math.floor(qualityPlus + Game.RNG(Math.floor(level/2),level));
         var str = [strType, strPower];
         armStrList.push(str.slice(0));
@@ -215,9 +228,11 @@ Game.makeArmour = function(level) {
       }
     }
   }
+  // Now we put holes in it.
   for(var y = 0; y < armVulns; y++) {
     var added = false;
     while(!added) {
+      // See above for loop explanation
       var vulnType = Game.RNG(Game.ARMOUR_VULN_MELEE, Game.ARMOUR_VULN_MAGIC);
       if(availableTypes.indexOf(vulnType - Game.ARMOUR_VULN_MELEE) != -1) {
         var vulnPower = 1 + Math.floor(qualityPlus + Game.RNG(Math.floor(level/2),level));
@@ -232,9 +247,11 @@ Game.makeArmour = function(level) {
   return [armName, armLevel, armQuality, armDura, armStrList.slice(0), armVulnList.slice(0)];
 }
 Game.getWeaponName = function(type,quality,speedTier) {
+  // The lengths we go to for making names.
   var nameArray = [];
   var debuffArray = [];
   switch(type) {
+    // Weapons are named differently based on how fast their attack is and what type of attack it is.
     case Game.WEAPON_MELEE:
       switch(speedTier) {
         case Game.WSPEED_SLOW:
@@ -306,6 +323,7 @@ Game.getWeaponName = function(type,quality,speedTier) {
     var arrayIndex = Game.RNG(0,nameArray.length-1);
     return [nameArray[arrayIndex],debuffArray[arrayIndex]];
   } else {
+    // We get to add a prefix to non-awesome weapons to show their usefulness or lack thereof
     var qualityState = Game.weaponQualityDescriptors[quality-Game.QUALITY_POOR];
     if(quality == Game.QUALITY_GOOD) {
       var debuff = Game.debuffs_generic[Game.RNG(0,Game.debuffs_generic.length-1)];
@@ -325,17 +343,18 @@ Game.getArmourName = function(quality) {
   }
 }
 Game.upgradeWeaponLevel = function(weapon) {
+  // We make it better now.
   weapon[1]++;
   var qualityMult = 1.0;
   switch(weapon[7]) {
     case Game.QUALITY_POOR:
-      qualityMult = 0.8; break;
+      qualityMult = 0.9; break;
     case Game.QUALITY_GOOD:
       qualityMult = 1.1; break;
     case Game.QUALITY_GREAT:
       qualityMult = 1.2; break;
     case Game.QUALITY_AMAZING:
-      qualityMult = 1.4; break;
+      qualityMult = 1.3; break;
   }
   switch(weapon[3]) {
     case 1.6:
@@ -377,7 +396,7 @@ Game.upgradeArmourLevel = function(armour) {
   return armour;
 }
 Game.buyWeaponLevelUpgrade = function() {
-  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
@@ -388,7 +407,7 @@ Game.buyWeaponLevelUpgrade = function() {
   else { Game.toastNotification("Not enough seeds..."); }
 }
 Game.buyArmourLevelUpgrade = function() {
-  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
@@ -423,7 +442,7 @@ Game.upgradeWeaponQuality = function(weapon) {
       else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
       else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
     }
-    weapon[0] = userWeaponName + "|" + userFlavourText;
+    weapon[0] = (userWeaponName.trim() !== "" ? userWeaponName : weapon[0]) + "|" + (userFlavourText.trim() !== "" ? userFlavourText : "I have no flavour.");
   }
   weapon[7]++;
   weapon[4] = Math.ceil(baseMin*(10+(weapon[7]-Game.QUALITY_NORMAL))/10);
@@ -475,6 +494,7 @@ Game.upgradeArmourQuality = function(armour) {
         else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
       }
       armour[0] = userArmourName + "|" + userFlavourText;
+      armour[0] = (userArmourName.trim() !== "" ? userArmourName : armour[0]) + "|" + (userFlavourText.trim() !== "" ? userFlavourText : "I have no flavour.");
       break;
     case Game.QUALITY_GREAT:
       var availableTypes = [0,1,2];
@@ -503,6 +523,7 @@ Game.buyArmourQualityUpgrade = function() {
     else { Game.toastNotification("Not enough scrap..."); }
   }
 }
+// These all just call the individual functions on each item in the stack. It's easier this way.
 Game.sellAllWeapons = function() {
   for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
     if(Game.p_WeaponInventory[i][7] <= document.getElementById("wep_minBulk").options[wep_minBulk.selectedIndex].value) {
@@ -531,6 +552,7 @@ Game.scrapAllArmour = function() {
     }
   }
 }
+// These two don't get called often, because they're only for the lazy who don't sell their stuff.
 Game.takeWeapon = function() {
   if(Game.p_WeaponInventory.length < Game.MAX_INVENTORY) {
     Game.p_WeaponInventory.push(Game.last_Weapon.slice(0));
@@ -549,6 +571,7 @@ Game.takeArmour = function() {
   Game.updateInv = true;
 	Game.drawActivePanel();
 }
+
 Game.reforgeWeapon = function(debuff, isSuperior) {
   var debuffCost = isSuperior ? 2 : 1;
   if(debuff >= Game.DEBUFF_SHRED) {

@@ -95,9 +95,8 @@ Game.updateLeftPanel = function() {
   if(Game.p_Weapon[9].length > 0) {
     debuffPanel.style.display = "";
     var debuffOut = document.getElementById("weaponDebuffOut");
-    var debuffText = Game.p_Weapon[9][1] + " (" + Game.p_Weapon[9][2] + " sec) ";
+    var debuffText = Game.p_Weapon[9][1] + " (" + Game.debuff_names[Game.p_Weapon[9][0]-Game.DEBUFF_SHRED] + ")<br />Lasts " + Game.p_Weapon[9][2] + " sec ";
     var debuffPower = 0;
-    if(Game.p_Weapon[9][3] > 0) { debuffText += "(" + Game.p_Weapon[9][3] + "% effect)"; }
     debuffOut.innerHTML = debuffText;
   }
   else { debuffPanel.style.display = "none"; }
@@ -278,6 +277,7 @@ Game.updateCombatPanel = function() {
 }
 Game.updatePowersPanel = function() {
   //The Powers Panel
+  //This bit is important - we set in other functions whether the power panel needs rebuilding, because mass DOM changes cause lag problems when they're done once a second.
   if(Game.updatePowerPanel) {
     var app = document.getElementById("availablePowers");
     app.style.display = "";
@@ -662,7 +662,7 @@ Game.updateForgePanel = function() {
   }
   wlName.className = "q" + Game.p_Weapon[7];
   var wlUPCost = document.getElementById("weaponLevelUpgradeCost");
-  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]));
+  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
   wlUPCost.innerHTML = upgradeCost;
   var alName = document.getElementById("armourLevelUpgradeName");
@@ -673,7 +673,7 @@ Game.updateForgePanel = function() {
   }
   alName.className = "q" + Game.p_Armour[2];
   var alUPCost = document.getElementById("armourLevelUpgradeCost");
-  upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]));
+  upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
   upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
   alUPCost.innerHTML = upgradeCost;
  var wepQualityRow = document.getElementById("weaponQualityUpRow");

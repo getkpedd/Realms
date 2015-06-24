@@ -44,11 +44,11 @@ Game.levelUp = function() {
 	Game.p_EXP = 0;
 	Game.p_NextEXP = Math.floor(100*Math.pow(Game.XP_MULT,Game.p_Level-1));
 	Game.p_SkillPoints++;
-	Game.combatLog("info","You gained a skill point.");
+	Game.combatLog("info","You gained a Stat Point.");
   var SPChance = Game.powerLevel(Game.BOOST_MORESP);
 	if(Game.RNG(1,100) <= SPChance) {
 		Game.p_SkillPoints++;
-		Game.combatLog("info","Your <strong>Lucky Star</strong> power granted another skill point!");
+		Game.combatLog("info","Your <strong>Lucky Star</strong> power granted another Stat Point.");
 	}
   Game.p_PP += 1;
 	Game.combatLog("info","You gained a Power point.");

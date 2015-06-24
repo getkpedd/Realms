@@ -12,7 +12,7 @@ Game.startWeaponRepair = function() {
 	}
 	else {
 		Game.p_State = Game.STATE_REPAIR;
-		Game.p_RepairValue = Game.p_Weapon[1];
+		Game.p_RepairValue = 1 + Math.floor(Game.p_Weapon[1]/5);
     Game.toastNotification("Repairing weapon...");
     Game.p_RepairInterval = window.setInterval(Game.repairWeaponTick,1000-(20*Game.powerLevel(Game.BOOST_REGEN)))
 	}
@@ -26,7 +26,7 @@ Game.startArmourRepair = function() {
 	}
 	else {
 		Game.p_State = Game.STATE_REPAIR;
-		Game.p_RepairValue = Game.p_Armour[1];
+		Game.p_RepairValue = 1 + Math.floor(Game.p_Armour[1]/5);
     Game.toastNotification("Repairing armour...");
 		Game.p_RepairInterval = window.setInterval(Game.repairArmourTick,1000-(20*Game.powerLevel(Game.BOOST_REGEN)));
   }

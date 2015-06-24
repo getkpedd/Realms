@@ -42,7 +42,7 @@
             Game.showPanel('combatTable');
             break;
           case "s":
-            if(Game.p_State == Game.STATE_COMBAT) { Game.specialAttack(); }
+            if(Game.p_State == Game.STATE_COMBAT && !Game.p_specUsed) { Game.p_specUsed = true; Game.burstAttack(); }
             break;
           case "f":
             if(Game.p_State == Game.STATE_COMBAT) { Game.fleeCombat(); }
@@ -267,7 +267,7 @@
 										</tr>
                     <tr id="combatActionBar">
                       <td colspan="2">
-                        <span class="bigButton" id="specialButton" onClick="Game.burstAttack();"></span>
+                        <span class="bigButton" id="specialButton" onClick="if(!Game.p_specUsed) { Game.p_specUsed = true; Game.burstAttack(); }"></span>
                         <span class="bigButton" id="fleeButton" onClick="Game.fleeCombat();">Flee from battle</span>
                       </td>
                     </tr>
@@ -287,7 +287,7 @@
 										<tr>
 											<td>
                         <div id="levelUpPanel">
-													<span class="powerHeader">Skill Point Allocation - <span id="skillPoints"></span> point(s) available</span>
+													<span class="powerHeader">Stat Point Allocation (<span id="skillPoints"></span> point(s) available)</span>
 													<br />
 													<span><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></span>
 													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
@@ -406,7 +406,7 @@
                               <td colspan="3" style="text-align:left;">Picks one debuff at random from any of those listed below.</td>
                             </tr>
                             <tr>
-                              <td>Armour Shred</td>
+                              <td>Armour Shred (Ruthlessness)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(241,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(241,true);">8 scrap</span></td>
                             </tr>
@@ -414,7 +414,7 @@
                               <td colspan="3" style="text-align:left;">Causes all of your attacks to ignore positive armour effects for 10 (15) seconds.</td>
                             </tr>
                             <tr>
-                              <td>Double Attack</td>
+                              <td>Double Attack (Frenzy)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(242,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(242,true);">8 scrap</span></td>
                             </tr>
@@ -422,7 +422,7 @@
                               <td colspan="3" style="text-align:left;">All attacks cause a second strike against the target for 50% (70%) more damage for 10 (15) seconds.</td>
                             </tr>
                             <tr>
-                              <td>Health Drain</td>
+                              <td>Health Drain (Bloodthirst)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(243,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(243,true);">8 scrap</span></td>
                             </tr>
@@ -430,7 +430,7 @@
                               <td colspan="3" style="text-align:left;">You are healed for 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
                             </tr>
                             <tr>
-                              <td>Slower Attacks</td>
+                              <td>Slower Attacks (Cripple)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(244,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(244,true);">8 scrap</span></td>
                             </tr>
@@ -438,7 +438,7 @@
                               <td colspan="3" style="text-align:left;">The target's attack speed is lowered by 15% (25%) for 10 (15) seconds.</td>
                             </tr>
                             <tr>
-                              <td>Confusion</td>
+                              <td>Confusion (Charm)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(245,false);">4 scrap</span></td>
                               <td>&nbsp;</td>
                             </tr>
@@ -446,7 +446,7 @@
                               <td colspan="3" style="text-align:left;">Causes the target's next attack to be aimed at themselves, ignoring their armour.</td>
                             </tr>
                             <tr>
-                              <td>Damage Over Time</td>
+                              <td>Damage Over Time (Wound Poison)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(246,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(246,true);">8 scrap</span></td>
                             </tr>
@@ -454,7 +454,7 @@
                               <td colspan="3" style="text-align:left;">The target takes an additional 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
                             </tr>
                             <tr>
-                              <td>Paralysis</td>
+                              <td>Paralysis (Nerve Strike)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(247,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(247,true);">8 scrap</span></td>
                             </tr>
@@ -462,7 +462,7 @@
                               <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target has a 15% (25%) chance for their attack to be nullified.</td>
                             </tr>
                             <tr>
-                              <td>Doom</td>
+                              <td>Doom (Mounting Dread)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(248,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(248,true);">8 scrap</span></td>
                             </tr>
@@ -470,7 +470,7 @@
                               <td colspan="3" style="text-align:left;">Grants a 6% (10%) chance to instantly kill the target. Deals 300% (500%) weapon damage if it fails.</td>
                             </tr>
                             <tr>
-                              <td>Disarm</td>
+                              <td>Disarm (Disarmed)</td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(249,false);">4 scrap</span></td>
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(249,true);">8 scrap</span></td>
                             </tr>
@@ -590,13 +590,13 @@
                            - Weapons of normal quality have no distinguishing features.<br />
                            - Armours of normal quality carry 1 strength and 1 vulnerability.<br />
                           <span class="q223">Good (green)</span> items are a step above normal items.<br />
-                           - Weapons of good quality have 110% of their intended damage values, as well as an assigned debuff.<br />
+                           - Weapons of good quality have 110% of their intended damage values, as well as a normal debuff.<br />
                            - Armours of good quality carry 2 strengths and 1 vulnerability.<br />
                           <span class="q224">Great (blue)</span> items represent superior craftsmanship.<br />
-                           - Weapons of great quality have 120% of their intended damage values, and also have unique names and flavour text, as well as a strong debuff.<br />
+                           - Weapons of great quality have 120% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
                            - Armours of great quality carry 2 strengths and no vulnerabilities.<br />
                           <span class="q225">Amazing (purple)</span> items represent the pinnacle of items obtainable in the Realm.<br />
-                           - Weapons of amazing quality have 130% of their intended damage values, and also have unique names and flavour text, as well as a strong debuff.<br />
+                           - Weapons of amazing quality have 130% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
                            - Armours of amazing quality carry 3 strengths and no vulnerabilities.</p>
                         <div class="powerHeader">Debuffs</div>
                         <p>Weapons of Good quality or higher carry a debuff, which has a 10% chance of activating in combat and producing one of a number of beneficial effects. These are as follows:</p>
@@ -618,7 +618,7 @@
                         <p>If you lose the fight, you are penalised by losing a quarter of your accumulated experience, but can otherwise continue. If you are in danger of losing, you may flee combat at no cost.</p>
                         <div class="powerHeader">Decay</div>
                         <p>During combat, your weapons and armour will suffer durability damage. While an item has any durability, it will perform at full capacity. Weapons with 0 durability operate at 25% strength, while armour with 0 durability loses all of its positive effects (negative ones are still applied).</p>
-                        <p>Whenever you are not in combat, you have the ability to repair weapons and armour that you currently have equipped. This process takes 1 second, plus an additional 1 second per level of the item. It does not cost anything to repair equipment. Quality does not influence the time repairs take.</p>
+                        <p>Whenever you are not in combat, you have the ability to repair weapons and armour that you currently have equipped. This process takes 1 second, plus an additional 1 second for every 5 levels of the item. It does not cost anything to repair equipment. Quality does not influence the time repairs take.</p>
                         <div class="powerHeader">Inventory</div>
                         <p>Your inventories store all of your accumulated items, and present options as to how they can be used. Equipment can be changed freely in combat, so bear this in mind if you have any additional items lying around that may help you break through armour or protect yourself better.</p>
                         <p>Items in the inventory can be sold for seeds, or converted into scrap. Scrap is a resource used to increase the quality of your equipped items, and a substantial amount is required to perform higher quality upgrades. The amount of seeds you gain from selling an item depends on the quality and level of the item, whereas the amount of scrap you gain from an item is dependant solely on the item's quality.</p>
@@ -641,10 +641,38 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.241</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>New Powers: <ul>
+                            <li>'Expose Weakness' grants a 1% increase per level in the debuff application rate, and has 10 levels available.</li>
+                            <li>'Bartering' lowers the cost of item level upgrades by 2% per level, and has 10 levels available.</li>
+                            <li>'Haggling' increases the seed gain from selling items by 5% per level, and has 5 levels available.</li>
+                            <li>'Disassembly' guarantees an additional piece of scrap when destroying items, and has 1 level available.</li>
+                            <li>'Haggling' and 'Disassembly' cannot be used together, and both require maximum level in 'Bartering' to advance.</li>
+                          </ul></li>
+                          <li>Miscellaneous Changes:<ul>
+                            <li>Weapon and armour repair times now increase by one tick every 5 levels (down from 1 tick per level)</li>
+                            <li>The default names for debuffs have been added to the Forge tab.</li>
+                            <li>The base damage values for weapons have been tweaked slightly.</li>
+                            <li>A few new weapon and enemy names have been added.</li>
+                            <li>The debuff type of a player's weapon is now shown in the sidebar.</li>
+                          </ul></li>
+                          <li>Bug Fixes:<ul>
+                            <li>Changes have been made to prevent activating Burst Attack multiple times.</li>
+                            <li>Players can now critically strike themselves under the influence of the Confusion debuff.</li>
+                            <li>Players can no longer apply debuffs with broken weapons.</li>
+                            <li>Enemies now have a 10% chance to apply debuffs to match the player (down from 20%).</li>
+                            <li>Upgrading Poor or Amazing weapons now gives the proper stat increases.</li>
+                            <li>A message now appears in the combat log when your armour breaks.</li>
+                            <li>Setting an item's name to be blank now keeps the original name.</li>
+                            <li>Setting an item's flavour text to be blank now replaces it with the words 'I have no flavour.'</li>
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 0.24</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
-                          <li>The Forge<ul>
+                          <li>The Forge:<ul>
                             <li>The Shop has been renamed to The Forge, and the ability to change weapon debuffs has been added into the game.</li>
                             <li>Any Good or better weapon can be assigned a debuff or have its' debuff changed via The Forge.</li>
                             <li>There are two levels of debuff quality to be applied to weapons, the superior ones requiring a Great or Amazing weapon to use.</li>
@@ -655,8 +683,8 @@
                           <li>Combat Changes:<ul>
                             <li>Weapons and armour wielded by boss monsters now match the monster's level instead of being 3 levels higher.</li>
                             <li>Monsters have had their power scaling slightly lowered.</li>
-                            <li>The 'Mounting Dread' debuff now deals 300% weapon damage (500% weapon damage for superior versions) if it fails to kill the target outright.</li>
-                            <li>The 'Wound Poison' debuff has had its potency increased to 20% of weapon damage (30% for superior versions).</li>
+                            <li>The 'Doom' debuff now deals 300% weapon damage (500% weapon damage for superior versions) if it fails to kill the target outright.</li>
+                            <li>The 'Damage Over Time' debuff has had its potency increased to 20% of weapon damage (30% for superior versions).</li>
                             <li>The 'Paralysis' debuff now has a 15% chance to prevent the target from attacking (down from 20%). Superior versions of the debuff are unchanged at 25% chance.</li>
                           </ul></li>
                           <li>UI Changes:<ul>
@@ -668,7 +696,7 @@
                           <li>Miscellaneous Changes:<ul>
                             <li>The autobattle function will now halt if the player's weapon or armour inventories are full after the auto sell operation concludes.</li>
                             <li>Power Points can now be reset at no cost, at the bottom of the Powers tab.</li>
-                            <li>The proc chance for the 'Mounting Dread' debuff now shows correctly on the left sidebar.</li>
+                            <li>The proc chance for the 'Doom' debuff now shows correctly on the left sidebar.</li>
                           </ul></li>
                         </ul>
                       </td>
@@ -682,6 +710,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.24</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.241</div>
 	</body>
 </html>

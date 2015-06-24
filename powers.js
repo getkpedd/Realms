@@ -5,6 +5,7 @@ Game.buyPower = function(power) {
     switch(power) {
       case Game.BOOST_ABSORB:
       case Game.BOOST_REFLECT:
+      case Game.BOOST_MORESCRAP:
         if(selectionLevel === 1) {
           Game.toastNotification("This power is at maximum level.");
           canUpgrade = false;
@@ -20,6 +21,8 @@ Game.buyPower = function(power) {
       case Game.BOOST_DOUBLE:
       case Game.BOOST_DAMAGE:
       case Game.BOOST_DEFENCE:
+      case Game.BOOST_DEBUFF:
+      case Game.BOOST_PRICES:
         if(selectionLevel === 10) {
           Game.toastNotification("This power is at maximum level.");
           canUpgrade = false;
@@ -56,7 +59,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Pickpocket to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_SCRAP) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Thorough Looting");
+            Game.toastNotification("This power cannot be used in conjunction with Thorough Looting.");
             canUpgrade = false;
           }
           break;
@@ -65,7 +68,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Pickpocket to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_EXTRA) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Cavity Search");
+            Game.toastNotification("This power cannot be used in conjunction with Cavity Search.");
             canUpgrade = false;
           }
           break;
@@ -74,7 +77,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Keen Eye to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_ENRAGE) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Adrenaline Rush");
+            Game.toastNotification("This power cannot be used in conjunction with Adrenaline Rush.");
             canUpgrade = false;
           }
           break;
@@ -83,7 +86,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Keen Eye to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_CRITDMG) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Keener Eye");
+            Game.toastNotification("This power cannot be used in conjunction with Keener Eye.");
             canUpgrade = false;
           }
           break;
@@ -92,7 +95,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Divine Shield to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_REFLECT) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Reflective Shield");
+            Game.toastNotification("This power cannot be used in conjunction with Reflective Shield.");
             canUpgrade = false;
           }
           break;
@@ -101,7 +104,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Divine Shield to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_ABSORB) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Absorption Shield");
+            Game.toastNotification("This power cannot be used in conjunction with Absorption Shield.");
             canUpgrade = false;
           }
           break;
@@ -170,7 +173,7 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_PICKPOCKET) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Five-Finger Discount");
+            Game.toastNotification("This power cannot be used in conjunction with Five-Finger Discount.");
             canUpgrade = false;
           }
           break;
@@ -179,7 +182,25 @@ Game.buyPower = function(power) {
             Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_FIRST) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Sneak Attack");
+            Game.toastNotification("This power cannot be used in conjunction with Sneak Attack.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_SELL:
+          if(Game.powerLevel(Game.BOOST_PRICES) < 10) {
+            Game.toastNotification("You need maximum level in Bartering to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_MORESCRAP) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Disassembly.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_MORESCRAP:
+          if(Game.powerLevel(Game.BOOST_PRICES) < 10) {
+            Game.toastNotification("You need maximum level in Bartering to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_SELL) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Haggling.");
             canUpgrade = false;
           }
           break;
@@ -212,6 +233,8 @@ Game.getPowerLevelCap = function(power) {
     case Game.BOOST_DAMAGE:
     case Game.BOOST_DEFENCE:
     case Game.BOOST_SPEED:
+    case Game.BOOST_DEBUFF:
+    case Game.BOOST_PRICES:
       return 10;
     case Game.BOOST_BROKEN:
     case Game.BOOST_REPAIR:
@@ -230,9 +253,11 @@ Game.getPowerLevelCap = function(power) {
     case Game.BOOST_VENGEANCE:
     case Game.BOOST_FIRST:
     case Game.BOOST_PICKPOCKET:
+    case Game.BOOST_SELL:
       return 5;
     case Game.BOOST_ABSORB:
     case Game.BOOST_REFLECT:
+    case Game.BOOST_MORESCRAP:
       return 1;
     default:
       return 0;
@@ -269,6 +294,10 @@ Game.getPowerName = function(power) {
     case Game.BOOST_VENGEANCE: return "Vengeance";
     case Game.BOOST_FIRST: return "Sneak Attack";
     case Game.BOOST_PICKPOCKET: return "Five-Finger Discount";
+    case Game.BOOST_DEBUFF: return "Expose Weakness";
+    case Game.BOOST_PRICES: return "Bartering";
+    case Game.BOOST_SELL: return "Haggling";
+    case Game.BOOST_MORESCRAP: return "Disassembly";
   }
 }
 Game.getPowerDesc = function(power) {
@@ -286,7 +315,7 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_ABSORB: return "Causes your Divine Shield effect to heal you for the damage you would have taken.";
     case Game.BOOST_REFLECT: return "Causes your Divine Shield effect to deal the damage you would have taken to the enemy.";
     case Game.BOOST_MOREPP: return "Grants a 1% chance per level to gain an additional Power Point on level up.";
-    case Game.BOOST_MORESP: return "Grants a 1% chance per level to gain an additional Skill Point on level up.";
+    case Game.BOOST_MORESP: return "Grants a 1% chance per level to gain an additional Stat Point on level up.";
     case Game.BOOST_XP: return "Grants a 5% increase per level to experience gains.";
     case Game.BOOST_STATUP: return "Grants a 3% chance per level to gain an additional point in a random stat on level up.";
     case Game.BOOST_DOUBLE: return "Grants a 2% chance per level to strike a target again after an attack for 50% damage.";
@@ -302,6 +331,10 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_VENGEANCE: return "Grants a 2% chance per level to return 50% of damage taken to the target.";
     case Game.BOOST_FIRST: return "Increases your chance to attack first by 10% per level.";
     case Game.BOOST_PICKPOCKET: return "Grants a 1% chance per level to steal seeds equal to your character level on attack.";
+    case Game.BOOST_DEBUFF: return "Grants a 1% increase per level to the debuff application rate.";
+    case Game.BOOST_PRICES: return "Lowers the cost of item level upgrades by 2% per level.";
+    case Game.BOOST_SELL: return "Increases the amount of seeds received from selling items by 5% per level.";
+    case Game.BOOST_MORESCRAP: return "Guarantees an additional piece of scrap from destroying items.";
   }
 }
 Game.resetPowers = function() {
