@@ -589,44 +589,49 @@ Game.reforgeWeapon = function(debuff, isSuperior) {
   else {
     var isRandom = false;
     if(debuff < Game.DEBUFF_SHRED) { debuff = Game.RNG(Game.DEBUFF_SHRED, Game.DEBUFF_DISARM); isRandom = true; }
-    var dbName = "";
+    var dbName = ""; var validDebuffName = false;
     if((isSuperior || debuff == Game.DEBUFF_MC) && !isRandom) {
-       dbName = prompt("Debuff name? Leave blank to use default. \n\n (Selected type: " + Game.debuff_names[debuff-Game.DEBUFF_SHRED] + ")");
+       while(!validDebuffName) {
+         dbName = prompt("Please provide a new debuff name. Leave blank to use default. Max 30 characters. \n\n(Selected type: " + Game.debuff_names[debuff-Game.DEBUFF_SHRED] + ")");
+         if(dbName.length > 30) { alert("The text provided was too long, please try something shorter."); }
+         else if(/[<>|]/g.test(dbName)) { alert("The text provided contained invalid characters, please try something else."); }
+         else { dbName = dbName.replace(/[<>|]/g,""); validDebuffName = true; }
+      }
     }
     switch(debuff) {
       case 241:
-        if(isSuperior) { Game.p_Weapon[9] = [241,(dbName.trim === "" ? "Ruthlessness" : dbName),15,-1]; }
+        if(isSuperior) { Game.p_Weapon[9] = [241,(dbName.trim() === "" ? "Ruthlessness" : dbName),15,-1]; }
         else { Game.p_Weapon[9] = [241,"Ruthlessness",10,-1]; }
         break;
       case 242:
-        if(isSuperior) { Game.p_Weapon[9] = [242,(dbName.trim === "" ? "Frenzy" : dbName),15,70]; }
+        if(isSuperior) { Game.p_Weapon[9] = [242,(dbName.trim() === "" ? "Frenzy" : dbName),15,70]; }
         else { Game.p_Weapon[9] = [242,"Frenzy",10,50]; }
         break;
       case 243:
-        if(isSuperior) { Game.p_Weapon[9] = [243,(dbName.trim === "" ? "Bloodthirst" : dbName),15,30]; }
+        if(isSuperior) { Game.p_Weapon[9] = [243,(dbName.trim() === "" ? "Bloodthirst" : dbName),15,30]; }
         else { Game.p_Weapon[9] = [243,"Bloodthirst",10,20]; }
         break;
       case 244:
-        if(isSuperior) { Game.p_Weapon[9] = [244,(dbName.trim === "" ? "Cripple" : dbName),15,25]; }
+        if(isSuperior) { Game.p_Weapon[9] = [244,(dbName.trim() === "" ? "Cripple" : dbName),15,25]; }
         else { Game.p_Weapon[9] = [244,"Cripple",10,15]; }
         break;
       case 245:
-        Game.p_Weapon[9] = [245,(dbName.trim === "" ? "Charm" : dbName),5,-1];
+        Game.p_Weapon[9] = [245,(dbName.trim() === "" ? "Charm" : dbName),5,-1];
         break;
       case 246:
-        if(isSuperior) { Game.p_Weapon[9] = [246,(dbName.trim === "" ? "Wound Poison" : dbName),15,30]; }
+        if(isSuperior) { Game.p_Weapon[9] = [246,(dbName.trim() === "" ? "Wound Poison" : dbName),15,30]; }
         else { Game.p_Weapon[9] = [246,"Wound Poison",10,20]; }
         break;
       case 247:
-        if(isSuperior) { Game.p_Weapon[9] = [247,(dbName.trim === "" ? "Nerve Strike" : dbName),15,25]; }
+        if(isSuperior) { Game.p_Weapon[9] = [247,(dbName.trim() === "" ? "Nerve Strike" : dbName),15,25]; }
         else { Game.p_Weapon[9] = [247,"Nerve Strike",10,15]; }
         break;
       case 248:
-        if(isSuperior) { Game.p_Weapon[9] = [248,(dbName.trim === "" ? "Mounting Dread" : dbName),5,10]; }
+        if(isSuperior) { Game.p_Weapon[9] = [248,(dbName.trim() === "" ? "Mounting Dread" : dbName),5,10]; }
         else { Game.p_Weapon[9] = [248,"Mounting Dread",5,6]; }
         break;
       case 249:
-        if(isSuperior) { Game.p_Weapon[9] = [249,(dbName.trim === "" ? "Disarmed" : dbName),15,-1]; }
+        if(isSuperior) { Game.p_Weapon[9] = [249,(dbName.trim() === "" ? "Disarmed" : dbName),15,-1]; }
         else { Game.p_Weapon[9] = [249,"Disarmed",10,-1]; }
         break;
     }

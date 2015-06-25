@@ -127,8 +127,8 @@ Game.enemy_generic = ["Rat","Cat","Man","Woman","Angry Redditor","Goat","Boar","
 Game.enemy_special = ["Sky Monkey","John the Leprechaun","Ragekai","Flirty Lover","Mike Handers","Feld O' Propane","42nd Saren","Reelix","Ralph","Kung Fu Hamster","Detratigm","Kryzodoze","Chromega","Literal Hitler","Seiyria", "Generic Enemy Name","Paranoid Android","Scary Bee","Mitschu"];
 Game.enemy_boss = ["Tetradigm","The Solver","Giant Enemy Dragon","Generic Boss Name","Warlord","Dr. Tyson","Greater Demon","Brave Powerful Ruler","The Emperor"];
 Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/weapon decay in combat.",101],
-                  ["Hanging By a Thread","Grants a 2% chance per level to fully repair weapon and armour after combat.",1011],
-                  ["High Maintenance","Preserves an additional 10% per level of your weapon's effect when broken.",1012],
+                  ["High Maintenance","Grants a 2% chance per level to fully repair weapon and armour after combat.",1011],
+                  ["Hanging By A Thread","Preserves an additional 10% per level of your weapon's effect when broken.",1012],
                   ["Pickpocket","Grants an additional 5% gain per level in seeds from combat.",102],
                   ["Cavity Search","Grants a 2% chance per level to triple seed gains from combat.",1021],
                   ["Thorough Looting","Grants a 2% chance per level to salvage a piece of scrap from combat.",1022],
@@ -144,11 +144,11 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Patience and Discipline","Grants a 3% chance per level to gain an additional point in a random stat on level up.",1061],
                   ["Flurry","Grants a 1% chance per level to strike a target again after an attack for 50% damage.",107],
                   ["Empowered Flurry","Grants a 4% increase per level in the damage of Flurry's additional strike.",1071],
+                  ["Wild Swings","Causes your Burst Attack to deal a number of 50% damage hits equal to this power's level plus 1.",1072],
                   ["Survival Instincts","Grants a 2% per level increase in health regeneration and repair speeds.",108],
                   ["Will To Live","Grants a 2% chance per level to be fully healed after combat.",1081],
                   ["Deadly Force","Grants a 2% per level increase to all damage dealt.",109],
-                  ["Wild Swings","Causes your Burst Attack to deal a number of 50% damage hits equal to this power's level plus 1.",1091],
-                  ["Execute","Grants a 5% chance per level to instantly kill a target below 25% health.",1092],
+                  ["Execute","Grants a 5% chance per level to instantly kill a target below 25% health.",1091],
                   ["Ancestral Fortitude","Grants a 2% per level reduction to all damage taken",110],
                   ["Last Bastion","Reduces damage taken by 10% per level when your health is below 30%.",1101],
                   ["Vengeance","Grants a 2% chance per level to return 50% of damage taken to the target.",1102],
@@ -156,6 +156,9 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Sneak Attack","Increases your chance to attack first by 10% per level.",1111],
                   ["Five-Finger Discount","Grants a 1% chance per level to steal seeds equal to your character level on attack.",1112],
                   ["Expose Weakness", "Grants a 1% increase per level in the debuff application rate.",112],
+		              ["Press The Advantage", "Decreases the cooldown on Burst Attack by 1 second per level on debuffed targets.",1121],
+                  ["Turn The Tables", "Increases the debuff application rate when using Burst Attack by 20% per level.",1122],
                   ["Bartering", "Lowers the cost of item level upgrades by 2% per level.",113],
                   ["Haggling", "Increases the amount of seeds received from selling items by 5% per level",1131],
                   ["Disassembly", "Guarantees an additional piece of scrap from destroying items.",1132]];
+// ["Down But Not Out","When your health reaches zero, grants an additional attack before death.",1082]

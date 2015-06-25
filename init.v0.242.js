@@ -3,13 +3,18 @@ Game = {};
 TODO:
   Shop Stock
   - Generate a number of weapons and armour pieces every few minutes that can be purchased by the player with seeds.
+
   Save Options
   - Autobattle options to be written to and read from savefile.
+
   Additional Stat Effects
   - Strength grants the player the ability to block incoming strikes, reducing damage taken by 50% at the cost of a point of armour durability (1% chance per 20 points in strength.)
-  - Dexterity grants the player the ability to counterattack instantly after they are struck by an attack. (1% chance per 20 points in dexterity.)
+  - Dexterity grants the player the ability to parry incoming strikes, dealing 50% of the damage you would have taken to the attacker. (1% chance per 20 points in dexterity.)
   - Intelligence grants the player the ability to predict where incoming strikes may land and dodge them, at the cost of delaying their next attack. (1% chance per 20 points in intelligence.)
   - Constitution grants the player additional inventory spaces (1 space per 20 points in constitution.)
+
+  Rearragement of existing powers
+   - Wild Swings to be moved 
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -43,11 +48,11 @@ Game.init = function() {
   this.BOOST_STATUP = 1061; // Patience and Discipline
   this.BOOST_DOUBLE = 107; // Flurry
   this.BOOST_DBLPOWER = 1071; // Empowered Flurry
+  this.BOOST_BURST = 1072; // Wild Swings
   this.BOOST_REGEN = 108; // Survival Instincts
   this.BOOST_FULLHEAL = 1081; // Will To Live
   this.BOOST_DAMAGE = 109; // Deadly Force
-  this.BOOST_BURST = 1091; // Wild Swings
-  this.BOOST_EXECUTE = 1092; // Execute
+  this.BOOST_EXECUTE = 1091; // Execute
   this.BOOST_DEFENCE = 110; // Ancestral Fortitude
   this.BOOST_LASTSTAND = 1101; // Last Bastion
   this.BOOST_VENGEANCE = 1102; // Vengeance
@@ -55,6 +60,8 @@ Game.init = function() {
   this.BOOST_FIRST = 1111; // Sneak Attack
   this.BOOST_PICKPOCKET = 1112; // Five-Finger Discount
   this.BOOST_DEBUFF = 112; // Expose Weakness
+  this.BOOST_FASTBURST = 1121; // Into Your Own Hands
+  this.BOOST_DEBUFFBURST = 1122; // Turn The Tables
   this.BOOST_PRICES = 113; // Bartering
   this.BOOST_SELL = 1131; // Haggling
   this.BOOST_MORESCRAP = 1132; // Disassembly

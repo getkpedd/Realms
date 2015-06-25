@@ -28,6 +28,12 @@ Game.buyPower = function(power) {
           canUpgrade = false;
         }
         break;
+      case Game.BOOST_DEBUFFBURST: {
+        if(selectionLevel === 4) {
+          Game.toastNotification("This power is at maximum level.");
+          canUpgrade = false;
+        }
+      }
       default:
         if(selectionLevel === 5) {
           Game.toastNotification("This power is at maximum level.");
@@ -124,6 +130,9 @@ Game.buyPower = function(power) {
           if(Game.powerLevel(Game.BOOST_DOUBLE) < 10) {
             Game.toastNotification("You need maximum level in Flurry to upgrade this power.");
             canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_BURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Wind Swings.");
+            canUpgrade = false;
           }
           break;
         case Game.BOOST_FULLHEAL:
@@ -133,11 +142,11 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_BURST:
-          if(Game.powerLevel(Game.BOOST_DAMAGE) < 10) {
-            Game.toastNotification("You need maximum level in Deadly Force to upgrade this power.");
+          if(Game.powerLevel(Game.BOOST_DOUBLE) < 10) {
+            Game.toastNotification("You need maximum level in Flurry to upgrade this power.");
             canUpgrade = false;
-          } else if(Game.powerLevel(Game.BOOST_EXECUTE) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Execute.");
+          } else if(Game.powerLevel(Game.BOOST_DBLPOWER) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Empowered Flurry.");
             canUpgrade = false;
           }
           break;
@@ -183,6 +192,24 @@ Game.buyPower = function(power) {
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_FIRST) > 0) {
             Game.toastNotification("This power cannot be used in conjunction with Sneak Attack.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_FASTBURST:
+          if(Game.powerLevel(Game.BOOST_DEBUFF) < 10) {
+            Game.toastNotification("You need maximum level in Expose Weakness to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_DEBUFFBURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Turn The Tables.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_DEBUFFBURST:
+          if(Game.powerLevel(Game.BOOST_DEBUFF) < 10) {
+            Game.toastNotification("You need maximum level in Expose Weakness to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_FASTBURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Press The Advantage.");
             canUpgrade = false;
           }
           break;
@@ -254,7 +281,10 @@ Game.getPowerLevelCap = function(power) {
     case Game.BOOST_FIRST:
     case Game.BOOST_PICKPOCKET:
     case Game.BOOST_SELL:
+    case Game.BOOST_FASTBURST:
       return 5;
+    case Game.BOOST_DEBUFFBURST:
+      return 4;
     case Game.BOOST_ABSORB:
     case Game.BOOST_REFLECT:
     case Game.BOOST_MORESCRAP:
@@ -295,6 +325,8 @@ Game.getPowerName = function(power) {
     case Game.BOOST_FIRST: return "Sneak Attack";
     case Game.BOOST_PICKPOCKET: return "Five-Finger Discount";
     case Game.BOOST_DEBUFF: return "Expose Weakness";
+    case Game.BOOST_FASTBURST: return "Press The Advantage";
+    case Game.BOOST_DEBUFFBURST: return "Turn The Tables";
     case Game.BOOST_PRICES: return "Bartering";
     case Game.BOOST_SELL: return "Haggling";
     case Game.BOOST_MORESCRAP: return "Disassembly";
@@ -303,8 +335,8 @@ Game.getPowerName = function(power) {
 Game.getPowerDesc = function(power) {
   switch(power) {
     case Game.BOOST_CARE: return "Grants a 2% chance per level to ignore armour/weapon decay in combat.";
-    case Game.BOOST_BROKEN: return "Grants a 2% chance per level to fully repair weapon and armour after combat.";
-    case Game.BOOST_REPAIR: return "Preserves an additional 10% per level of your weapon's effect when broken.";
+    case Game.BOOST_REPAIR: return "Grants a 2% chance per level to fully repair weapon and armour after combat.";
+    case Game.BOOST_BROKEN: return "Preserves an additional 10% per level of your weapon's effect when broken.";
     case Game.BOOST_CURRENCY: return "Grants an additional 5% gain per level in seeds from combat.";
     case Game.BOOST_EXTRA: return "Grants a 2% chance per level to triple seed gains from combat.";
     case Game.BOOST_SCRAP: return "Grants a 2% chance per level to salvage a piece of scrap from combat.";
@@ -332,6 +364,8 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_FIRST: return "Increases your chance to attack first by 10% per level.";
     case Game.BOOST_PICKPOCKET: return "Grants a 1% chance per level to steal seeds equal to your character level on attack.";
     case Game.BOOST_DEBUFF: return "Grants a 1% increase per level to the debuff application rate.";
+    case Game.BOOST_FASTBURST: return "Lowers the cooldown of Burst Attack by 1 second per level on debuffed targets.";
+    case Game.BOOST_DEBUFFBURST: return "Increases the debuff application rate when using Burst Attack by 20% per level.";
     case Game.BOOST_PRICES: return "Lowers the cost of item level upgrades by 2% per level.";
     case Game.BOOST_SELL: return "Increases the amount of seeds received from selling items by 5% per level.";
     case Game.BOOST_MORESCRAP: return "Guarantees an additional piece of scrap from destroying items.";

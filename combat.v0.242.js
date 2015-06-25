@@ -20,20 +20,20 @@ Game.startCombat = function() {
 		Game.p_State = Game.STATE_COMBAT;
 		if(Game.RNG(1,10) <= 5+Game.powerLevel(Game.BOOST_FIRST)) {
       // Pick me pick me!
-			Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,100);
+			Game.combat_playerInterval = window.setTimeout(function() { Game.playerCombatTick(false); },100);
 			Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1100);
 		}
 		else {
       // Aww...
 			Game.combat_playerInterval = window.setTimeout(Game.enemyCombatTick,100);
-			Game.combat_enemyInterval = window.setTimeout(Game.playerCombatTick,1100);
+			Game.combat_enemyInterval = window.setTimeout(function() { Game.playerCombatTick(false); },1100);
 		}
 	}
 	var log = document.getElementById("logBody");
 	log.innerHTML = "";
 	Game.drawActivePanel();
 }
-Game.playerCombatTick = function() {
+Game.playerCombatTick = function(isBurst) {
 	if(Game.p_State == Game.STATE_COMBAT) {
     // Humble beginnings...
     var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
@@ -113,6 +113,8 @@ Game.playerCombatTick = function() {
         if(Game.p_Weapon[8] === 0) {
           // We broke the pointy =(
           Game.combatLog("player", " - Your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> has broken!");
+          var preservedDamage = 0.25+(0.1*Game.powerLevel(Game.BOOST_BROKEN));
+          playerDMG = Math.floor(playerDMG*preservedDamage);
         }
       }
     }
@@ -175,13 +177,14 @@ Game.playerCombatTick = function() {
     }
     Game.drawActivePanel(); // I like to be able to see when I do damage.
 		var debuffApplyChance = 10 + Game.powerLevel(Game.BOOST_DEBUFF);
+    if(isBurst) { debuffApplyChance += 20*Game.powerLevel(Game.BOOST_DEBUFFBURST); }
     // This is meaty:
     // 1. Does our weapon have a debuff
     // 2. Does the enemy have no debuff
     // 3. Is our player not disarmed
     // 4. Is our weapon not broken
     // 5. Did we get lucky?
-		if(Game.p_Weapon[9].length > 0 && Game.e_Debuff.length === 0 && Game.getPlayerDebuff()[0] !== Game.DEBUFF_DISARM && Game.p_Weapon[8] >= 0 && Game.RNG(1,100) <= debuffApplyChance) {
+		if(Game.p_Weapon[9].length > 0 && Game.e_Debuff.length === 0 && Game.getPlayerDebuff()[0] !== Game.DEBUFF_DISARM && Game.p_Weapon[8] > 0 && Game.RNG(1,100) <= debuffApplyChance) {
       Game.e_Debuff = Game.p_Weapon[9].slice();
 		  Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
       Game.enemy_debuffTimer = Game.p_Weapon[9][2];
@@ -194,13 +197,13 @@ Game.playerCombatTick = function() {
 			if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_DOUBLE) && !Game.flurryActive) {
         Game.flurryActive = true;
 				Game.combatLog("player"," - <strong>Flurry</strong> activated for an additional strike!");
-				Game.playerCombatTick();
+				Game.playerCombatTick(false);
 			}
 			else {
         Game.flurryActive = false;
 				window.clearTimeout(Game.combat_playerInterval);
         var mult = Game.getPlayerDebuff()[0] == Game.DEBUFF_SLOW ? (1 + Game.p_Debuff[3]/100) : 1;
-        Game.combat_playerInterval = window.setTimeout(Game.playerCombatTick,timerLength*mult);
+        Game.combat_playerInterval = window.setTimeout(function() { Game.playerCombatTick(false); },timerLength*mult);
 			}
 		}
 		else { Game.endCombat(); }
@@ -341,19 +344,23 @@ Game.enemyCombatTick = function() {
 Game.burstAttack = function() {
   if(Game.e_HP > 0) {
     if(Game.powerLevel(Game.BOOST_BURST) > 0) {
+      if(Game.e_Debuff !== []) {
+        window.setTimeout(function() { Game.p_specUsed = false; },10000-(1000*Game.powerLevel(Game.BOOST_FASTBURST)));
+      } else {
+        window.setTimeout(function() { Game.p_specUsed = false; },10000);
+      }
       Game.combatLog("player","<strong>Wild Swings</strong> activated.");
       Game.wildSwing = true;
       for(var x = Game.powerLevel(Game.BOOST_BURST); x >= 0; x--) {
-        Game.playerCombatTick();
+        Game.playerCombatTick(true);
       }
       Game.combatLog("player","<strong>Wild Swings</strong> ended.");
       Game.wildSwing = false;
     }
     else {
       Game.combatLog("player","<strong>Burst Attack</strong> activated.");
-      Game.playerCombatTick();
+      Game.playerCombatTick(true);
     }
-    window.setTimeout(function() { Game.p_specUsed = false; },10000);
     Game.drawActivePanel();
   }
 }

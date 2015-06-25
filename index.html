@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<title>Realm of Decay</title>
-    <script type="text/javascript" src="init.js"></script>
-    <script type="text/javascript" src="strings.js"></script>
-    <script type="text/javascript" src="powers.js"></script>
-    <script type="text/javascript" src="combat.js"></script>
-    <script type="text/javascript" src="inventory.js"></script>
-    <script type="text/javascript" src="player.js"></script>
-    <script type="text/javascript" src="tickers.js"></script>
-    <script type="text/javascript" src="ui.js"></script>
+    <script type="text/javascript" src="init.v0.242.js"></script>
+    <script type="text/javascript" src="strings.v0.242.js"></script>
+    <script type="text/javascript" src="powers.v0.242.js"></script>
+    <script type="text/javascript" src="combat.v0.242.js"></script>
+    <script type="text/javascript" src="inventory.v0.242.js"></script>
+    <script type="text/javascript" src="player.v0.242.js"></script>
+    <script type="text/javascript" src="tickers.v0.242.js"></script>
+    <script type="text/javascript" src="ui.v0.242.js"></script>
     <script type="text/javascript">
       function keyBindings(key) {
         var eventObj = window.event ? event : key;
@@ -57,7 +57,7 @@
       }
       document.onkeypress = keyBindings;
     </script>
-		<link rel="stylesheet" type="text/css" href="style.css" />
+		<link rel="stylesheet" type="text/css" href="style.v0.242.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
@@ -663,6 +663,25 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.242</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>New Powers: <ul>
+                            <li>'Press The Advantage' reduces the cooldown of Burst Attack by 1 second per level when used on a debuffed foe, and has 5 levels available.</li>
+                            <li>'Turn The Tables' increases the chance to apply debuffs with Burst Attack by 20% per level, and has 4 levels available.</li>
+                            <li>'Press The Advantage' and 'Turn The Tables' cannot be used together, and both require maximum level in 'Expose Weakness' to advance.</li>
+                            <li>'Wild Swings' now requires maximum level in 'Flurry' to advance instead of 'Deadly Force'. Points that were previously placed in 'Wild Swings' currently appear in 'Execute', the sole subsidiary power of 'Deadly Force'.</li>
+                          </ul></li>
+                          <li>Miscellaneous Changes:<ul>
+                            <li>The maximum length of a debuff name is now 30 characters.</li>
+                            <li>Switched to a numbered naming convention for Javascript files so cache clears are no longer required.</li>
+                          </ul></li>
+                          <li>Bug Fixes: <ul>
+                            <li>The attack that causes a weapon to reach 0 durability will no longer deal damage as if the weapon had not broken.</li>
+                            <li>Fixed the previous fix that prevents players from applying debuffs with broken weapons. No, really.</li>
+                            <li>Default names for debuffs are now properly applied when leaving the input field blank.</li>
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 0.241</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
@@ -733,6 +752,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.241</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.242</div>
 	</body>
 </html>
