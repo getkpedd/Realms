@@ -13,25 +13,25 @@ Game.equipWeapon = function(index) {
   Game.p_Weapon = newWep.slice(0);
   Game.p_WeaponInventory[index] = currentWep.slice(0);
   Game.updateInv = true;
-  Game.toastNotification("Equipped " + Game.p_Weapon[0].split("|")[0] + ".");
+  Game.toastNotification("Equipped <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span>.");
   Game.drawActivePanel();
 }
 Game.discardWeapon = function(index) {
   // Don't let them throw me away!
   var thrownWepName = Game.p_WeaponInventory[index][0].split("|")[0];
+  Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + thrownWepName + "</span> tossed away.");
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
-  Game.toastNotification(thrownWepName + " tossed away.");
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index) {
   var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_WeaponInventory[index][7]-Game.QUALITY_NORMAL))/10);
   var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
+  Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + soldWepName + "</span> sold for " + salePrice + " seeds.");
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Currency += salePrice;
-  Game.toastNotification(soldWepName + " sold for " + salePrice + " seeds.");
   Game.drawActivePanel();
 }
 Game.scrapWeapon = function(index) {
@@ -56,10 +56,10 @@ Game.scrapWeapon = function(index) {
       break;
   }
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
+  Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + scrappedWepName + "</span> converted into " + salePrice + " scrap.");
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Scrap += salePrice;
-  Game.toastNotification(scrappedWepName + " converted into " + salePrice + " scrap.");
   Game.drawActivePanel();
 }
 Game.equipArmour = function(index) {
@@ -68,24 +68,24 @@ Game.equipArmour = function(index) {
   Game.p_Armour = newArm.slice(0);
   Game.p_ArmourInventory[index] = currentArm.slice(0);
   Game.updateInv = true;
-  Game.toastNotification("Equipped " + Game.p_Armour[0].split("|")[0] + ".");
+  Game.toastNotification("Equipped <span class='q" + Game.p_Armour[2] + "'>" + Game.p_Armour[0].split("|")[0] + "</span>.");
   Game.drawActivePanel();
 }
 Game.discardArmour = function(index) {
   var thrownArmName = Game.p_ArmourInventory[index][0].split("|")[0];
+  Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + thrownArmName + "</span> tossed away.");
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInv = true;
-  Game.toastNotification(thrownArmName + " tossed away.");
   Game.drawActivePanel();
 }
 Game.sellArmour = function(index) {
   var salePrice = Math.floor(25*Math.pow(1.1,Game.p_ArmourInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_ArmourInventory[index][2]-Game.QUALITY_NORMAL))/10);
   var soldArmName = Game.p_ArmourInventory[index][0].split("|")[0];
+  Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + soldArmName + "</span> sold for " + salePrice + " seeds.");
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Currency += salePrice;
-  Game.toastNotification(soldArmName + " sold for " + salePrice + " seeds.");
   Game.drawActivePanel();
 }
 Game.scrapArmour = function(index) {
@@ -109,10 +109,10 @@ Game.scrapArmour = function(index) {
       break;
   }
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
+  Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + scrappedArmName + "</span> converted into " + salePrice + " scrap.");
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInv = true;
   Game.p_Scrap += salePrice;
-  Game.toastNotification(scrappedArmName + " converted into " + salePrice + " scrap.");
   Game.drawActivePanel();
 }
 Game.makeWeapon = function(level) {

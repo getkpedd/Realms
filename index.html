@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<title>Realm of Decay</title>
-    <script type="text/javascript" src="init.v0.242.js"></script>
-    <script type="text/javascript" src="strings.v0.242.js"></script>
-    <script type="text/javascript" src="powers.v0.242.js"></script>
-    <script type="text/javascript" src="combat.v0.242.js"></script>
-    <script type="text/javascript" src="inventory.v0.242.js"></script>
-    <script type="text/javascript" src="player.v0.242.js"></script>
-    <script type="text/javascript" src="tickers.v0.242.js"></script>
-    <script type="text/javascript" src="ui.v0.242.js"></script>
+    <script type="text/javascript" src="init.v0.243.js"></script>
+    <script type="text/javascript" src="strings.v0.243.js"></script>
+    <script type="text/javascript" src="powers.v0.243.js"></script>
+    <script type="text/javascript" src="combat.v0.243.js"></script>
+    <script type="text/javascript" src="inventory.v0.243.js"></script>
+    <script type="text/javascript" src="player.v0.243.js"></script>
+    <script type="text/javascript" src="tickers.v0.243.js"></script>
+    <script type="text/javascript" src="ui.v0.243.js"></script>
     <script type="text/javascript">
       function keyBindings(key) {
         var eventObj = window.event ? event : key;
@@ -57,7 +57,7 @@
       }
       document.onkeypress = keyBindings;
     </script>
-		<link rel="stylesheet" type="text/css" href="style.v0.242.css" />
+		<link rel="stylesheet" type="text/css" href="style.v0.243.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
@@ -289,10 +289,10 @@
                         <div id="levelUpPanel">
 													<span class="powerHeader">Stat Point Allocation (<span id="skillPoints"></span> point(s) available)</span>
 													<br />
-													<span><input type="button" onClick="Game.addStat(Game.STAT_STR);" value="Increase Strength"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_DEX);" value="Increase Dexterity"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_INT);" value="Increase Intelligence"></span>
-													<span><input type="button" onClick="Game.addStat(Game.STAT_CON);" value="Increase Constitution"></span>
+													<span class="bigButton" onClick="Game.addStat(Game.STAT_STR);">+1 Strength</span>
+													<span class="bigButton" onClick="Game.addStat(Game.STAT_DEX);">+1 Dexterity</span>
+													<span class="bigButton" onClick="Game.addStat(Game.STAT_INT);">+1 Intelligence</span>
+													<span class="bigButton" onClick="Game.addStat(Game.STAT_CON);">+1 Constitution</span>
 												</div>
 												<table id="availablePowers" class="availablePowersPanel">
 													<tr>
@@ -488,7 +488,7 @@
                         <span class="bigButton" onClick="Game.reset();">Reset Game</span>
                         <br /><br />
                         <div class="powerHeader">Autobattle Options</div>
-												<div>Toggle Autobattle Activation: <span><input id="ab_toggle" type="button" value="Enable / Disable" onclick="Game.toggleAutoBattle()"></span></div>
+												<div>Toggle Autobattle Activation: <span class="bigButton" id="ab_toggle" onclick="Game.toggleAutoBattle();">Enable / Disable</span></div>
 												<div>Health Percentage to Flee From Combat: 
                           <span>
                             <select id="ab_fleePercent" style="color:#000000;">
@@ -557,11 +557,10 @@
                       </td>
                     </tr>
                   </table>
-									<table id="helpTable">
+                  <table id="helpTable">
                     <tr>
                       <td>
                         <div class="powerHeader">Introduction</div>
-                        <br>
                         <p>Welcome to the Realm of Decay! If you hadn't already guessed from the name, this is not a nice place to find yourself waking up in. The aftermath of Inevitable Cliche Magical Control War has ravaged the land, and left some rather odd side effects on you, one of the few human survivors of the conflict.</p>
 <p>Mutations brought on through years of magical abuse have caused your hands to emit a strange aura that accelerates the decomposition of non-organic objects in the near vicinity to them. Every man-made object you touch begins to break apart and require reconstruction after a short period of time.</p>
 <p>An annoying enough problem to deal with in normal civilisation, made worse by the collapse of modern society. Now you have to fight off large numbers of hostile creatures (both natural and unnatural) while making sure your gear is kept in check. Good luck!</p>
@@ -636,6 +635,7 @@
                         <p>The Options tab contains numerous miscellaneous features which may be useful. There is a manual save button here, as well as a reset button, controls for bulk item selling, and configuration for the auto-battle system.</p>
                         <p>The auto-battle system comprises the idle element of the game. It will handle basic inventory management (selling or scrapping items if the inventory is full) as well as automatically repairing items, initiating combat, and fleeing from combat.</p>
                         <p>What it will not do is upgrade or switch out weapons and armour for better alternatives, nor will it perform bulk buy/sell operations on items whose quality is above the thresholds set on the Options tab. It will also not attempt to use the 'Burst Attack' function on the Combat tab, nor will it spend Skill Points or Power Points.</p>
+                        <p>Auto-battle will stop if there are no more inventory slots available after a selling operation has concluded - that is, when all inventory items are above the quality thresholds for automatic handling.</p>
                         <p>The autosave feature has a few conditions that need to be met before it will activate:<br />
                           - The player must be in an idle state (not repairing or fighting)<br />
                           - The player must be at their maximum health<br />
@@ -663,6 +663,33 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.243</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <!--<li>(NYI)New Powers: <ul>
+                            <li>(NYI)'Down But Not Out' grants the ability to launch one last attack when reduced to 0 health. Requires maximum level in 'Survival Instincts' to advance and has 1 level available.</li>
+                            <li>(NYI)'Overcharge' increases base weapon damage by 30%, at the cost of a second point of durability loss with every attack. Requires maximum level in 'Deadly Force' to advance, and has 1 level available.</li>
+                          </ul></li>-->
+                          <li>UI Changes: <ul>
+                            <li>Buttons are now highlighted when hovered over.</li>
+                            <li>Buttons that used the default style are now styled to match existing buttons.</li>
+                            <li>The toast notification has been increased in font size, and the background has been made black to better differentiate it from the game window.</li>
+                            <li>When equipping, selling, scrapping or discarding items, the item's quality colour is used in the toast notification.</li>
+                          </ul></li>
+                          <li>Miscellaneous Changes: <ul>
+                            <li>Some new names for weapons and armour pieces have been added, and some existing items have been changed.</li>
+                          </ul></li>
+                          <li>Bug Fixes:<ul>
+                            <li>'Five-Finger Discount' will no longer activate when the player's attack is nullified by paralysis.</li>
+                            <li>Double Attack's effect will no longer activate when the combatant's attack is nullified by paralysis.</li>
+                            <li>Debuffs will no longer be applied when the combatant's attack is nullified by paralysis.</li>
+                            <li>A previous change to lower the damage done by the strike that breaks a weapon has been reverted.</li>
+                            <li>The notification of Wild Swings ending will now appear in the proper place.</li>
+                            <li>Player damage taken as a result of Confusion is now affected by all boosts and reductions aside from those associated with armour.</li>
+                            <li>Combatants suffering from Confusion can now inflict themselves with the debuff on their own weapon.</li>
+                            <li>Damage numbers should be slightly higher due to less use of the floor function during damage calculation.</li>
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 0.242</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
@@ -680,7 +707,7 @@
                             <li>The attack that causes a weapon to reach 0 durability will no longer deal damage as if the weapon had not broken.</li>
                             <li>Fixed the previous fix that prevents players from applying debuffs with broken weapons. No, really.</li>
                             <li>Default names for debuffs are now properly applied when leaving the input field blank.</li>
-			    <li>The game will no longer be rendered unplayable if the player saves while repairing.</li>
+                            <li>The game will no longer be rendered unplayable if the player saves while repairing.</li>
                           </ul></li>
                         </ul>
                         <p><strong>Version 0.241</strong></p>
@@ -753,6 +780,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.242</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.243</div>
 	</body>
 </html>

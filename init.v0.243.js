@@ -13,8 +13,18 @@ TODO:
   - Intelligence grants the player the ability to predict where incoming strikes may land and dodge them, at the cost of delaying their next attack. (1% chance per 20 points in intelligence.)
   - Constitution grants the player additional inventory spaces (1 space per 20 points in constitution.)
 
-  Rearragement of existing powers
-   - Wild Swings to be moved 
+  UI Changes
+  - Combat screen to be made clearer
+    - Player information on the left side under player healthbar
+    - Enemy information on the right side under enemy healthbar
+    - Player and enemy names above respective healthbars
+    - (If possible) Numerical health value output overlaid on the bars
+
+  Prestige
+  - Allow players to reset their current level and save that as a cap.
+  - For future runs, players will gain the experience and seeds from combat as if they were that level instead of their actual level.
+  - Additionally, on resetting, players will receive one Stat Point for each level gained in the previous run.
+  - Weapons and armour are not preserved between runs.
 */
 Game.init = function() {
 	//Define some constants we can use later
@@ -51,8 +61,10 @@ Game.init = function() {
   this.BOOST_BURST = 1072; // Wild Swings
   this.BOOST_REGEN = 108; // Survival Instincts
   this.BOOST_FULLHEAL = 1081; // Will To Live
+  // this.BOOST_DYING = 1082; // Down But Not Out
   this.BOOST_DAMAGE = 109; // Deadly Force
   this.BOOST_EXECUTE = 1091; // Execute
+  // this.BOOST_BONUSDMG = 1092; // Overcharge
   this.BOOST_DEFENCE = 110; // Ancestral Fortitude
   this.BOOST_LASTSTAND = 1101; // Last Bastion
   this.BOOST_VENGEANCE = 1102; // Vengeance
@@ -60,7 +72,7 @@ Game.init = function() {
   this.BOOST_FIRST = 1111; // Sneak Attack
   this.BOOST_PICKPOCKET = 1112; // Five-Finger Discount
   this.BOOST_DEBUFF = 112; // Expose Weakness
-  this.BOOST_FASTBURST = 1121; // Into Your Own Hands
+  this.BOOST_FASTBURST = 1121; // Press The Advantage
   this.BOOST_DEBUFFBURST = 1122; // Turn The Tables
   this.BOOST_PRICES = 113; // Bartering
   this.BOOST_SELL = 1131; // Haggling

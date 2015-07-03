@@ -133,7 +133,12 @@ input {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border: 5px outset #666666;
-	background: #660000;
+	background: #000000;
+  font-weight:bold;
+  font-size:20px;
+}
+.savePopup span {
+  font-size:20px;
 }
 .playerHPBorder {
 	border: 2px outset #666666;
@@ -177,6 +182,10 @@ input {
   font-weight: bold;
   padding: 0px 3px;
   cursor:pointer;
+}
+
+.bigButton:hover {
+  background-color:#991010;
 }
 
 .q221 {
