@@ -9,9 +9,9 @@ game objects.
 Game.fast_melee_generic = ["Shortsword","Dagger","Quickblade","Knife","Shiv"];
 Game.mid_melee_generic = ["Gladius","Longblade","Hand-Axe","Machete","Lance"];
 Game.slow_melee_generic = ["Morningstar","Cleaver","Broadsword","Warmaul","Halberd"];
-Game.fast_range_generic = ["Shuriken","Throwing Knife","Throwing Axe","Mini-Crossbow"];
-Game.mid_range_generic = ["Repeater","Shortbow","Javelin","Slingshot"];
-Game.slow_range_generic = ["Crossbow","Longbow","Composite Bow","Sling"];
+Game.fast_range_generic = ["Shuriken","Throwing Knife","Throwing Axe","Mini-Crossbow","Darts"];
+Game.mid_range_generic = ["Repeater","Shortbow","Javelin","Slingshot","Musket"];
+Game.slow_range_generic = ["Crossbow","Longbow","Composite Bow","Sling","Hand-Cannon"];
 Game.fast_magic_generic = ["Spellblade","Tome of Thunder","Quarterstaff","Scepter"];
 Game.mid_magic_generic = ["Mageblade","Tome of Flame","Spell Focus","Battlestaff"];
 Game.slow_magic_generic = ["War Staff","Tome of Frost","Grimoire","Crozier"];
@@ -23,8 +23,9 @@ Game.debuffs_generic = [[241, "Ruthlessness", 10, -1],
                         [246, "Wound Poison", 10, 20],
                         [247, "Nerve Strike", 10, 15],
                         [248, "Mounting Dread", 5, 6],
-                        [249, "Disarmed", 10, -1]];
-Game.debuff_names = ["Armour Shred","Double Attack","Health Drain","Slower Attacks","Confusion","Damage over Time","Paralysis","Doom","Disarm"];
+                        [249, "Disarmed", 10, -1],
+                        [250, "Comatose", 10, 20]];
+Game.debuff_names = ["Armour Shred","Double Attack","Health Drain","Slower Attacks","Confusion","Damage over Time","Paralysis","Doom","Disarm","Sleep"];
 // Always need more names!
 Game.fast_melee_special = ["Blinkstrike|They'll never know what hit 'em...",
                            "Adder's Fang|Not to scale.",
@@ -68,13 +69,13 @@ Game.fast_range_debuffs = [[246, "Paper Cut", 15, 30],
                            [242, "Barrage", 15, 70]];
 Game.mid_range_special = ["Death From Above|Or below, or far away, depending on where you stand.",
                           "Tidebreaker's Harpoon|They might want it back at some point.",
-                          "Starshatter Recurve|Has been known to shoot rainbows on occasion.",
+                          "The Dreamer|Shoots rainbows and sunshine.",
                           "Sagittarius|Making the stars align for you.",
                           "Generic Ranged Weapon|Relic of a bygone era."];
 Game.mid_range_debuffs = [[248, "Impending Doom", 5, 10],
                           [243, "Bloodthirst", 15, 30],
-                          [242, "Multishot", 15, 70],
-                          [241, "Armour Break", 15, -1],
+                          [250, "Counting Sheep", 15, 10],
+                          [242, "Starfall", 15, 70],
                           [246, "Generic Bleed", 15, 30]];
 Game.slow_range_special = ["The Stakeholder|Raising the stakes, one corpse at a time.",
                            "Artemis Bow|Comes with a free built in harp, no strings attached.",

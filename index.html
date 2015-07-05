@@ -5,7 +5,7 @@
     <script type="text/javascript" src="init.v0.243.js"></script>
     <script type="text/javascript" src="strings.v0.243.js"></script>
     <script type="text/javascript" src="powers.v0.243.js"></script>
-    <script type="text/javascript" src="combat.v0.243.js"></script>
+    <script type="text/javascript" src="combat.v0.243ia.js"></script>
     <script type="text/javascript" src="inventory.v0.243.js"></script>
     <script type="text/javascript" src="player.v0.243.js"></script>
     <script type="text/javascript" src="tickers.v0.243.js"></script>
@@ -489,7 +489,7 @@
                         <br /><br />
                         <div class="powerHeader">Autobattle Options</div>
 												<div>Toggle Autobattle Activation: <span class="bigButton" id="ab_toggle" onclick="Game.toggleAutoBattle();">Enable / Disable</span></div>
-												<div>Health Percentage to Flee From Combat: 
+												<div>Health Percentage to Flee From Combat:
                           <span>
                             <select id="ab_fleePercent" style="color:#000000;">
                               <option value="5">5%</option>
@@ -501,7 +501,7 @@
                             </select>
                           </span>
                         </div>
-                        <div>Automatic Repair Threshold: 
+                        <div>Automatic Repair Threshold:
                           <span>
                             <select id="ab_lowdura" style="color:#000000;">
                               <option value="5">5</option>
@@ -513,7 +513,7 @@
                             </select>
                           </span>
                         </div>
-                        <div>Full Weapon Inventory Handling Method: 
+                        <div>Full Weapon Inventory Handling Method:
                           <span>
                             <select id="ab_wepfull" style="color:#000000;">
                               <option value="SELL" selected="selected">Sell</option>
@@ -521,7 +521,7 @@
                             </select>
                           </span>
                         </div>
-                        <div>Full Armour Inventory Handling Method: 
+                        <div>Full Armour Inventory Handling Method:
                           <span>
                             <select id="ab_armfull" style="color:#000000;">
                               <option value="SELL" selected="selected">Sell</option>
@@ -531,7 +531,7 @@
                         </div>
                         <br /><br />
                         <div class="powerHeader">Bulk Options</div>
-                        <div>Weapon Quality Bulk Sell/Scrap Threshold: 
+                        <div>Weapon Quality Bulk Sell/Scrap Threshold:
                           <span>
                             <select id="wep_minBulk" style="color:#000000;">
                               <option class="q221" value="221">Poor</option>
@@ -542,7 +542,7 @@
                             </select>
                           </span>
                         </div>
-                        <div>Armour Quality Bulk Sell/Scrap Threshold: 
+                        <div>Armour Quality Bulk Sell/Scrap Threshold:
                           <span>
                             <select id="arm_minBulk" style="color:#000000;">
                               <option class="q221" value="221">Poor</option>
@@ -663,13 +663,16 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.244</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>Battle System: <ul>
+                            <li>A new debuff has been added, Sleep. While affected by this debuff, the target does not attack. The effect has a chance to break when the target is attacked, with superior versions of the debuff having a lower chance to break on hit.</li>
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 0.243</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
-                          <!--<li>(NYI)New Powers: <ul>
-                            <li>(NYI)'Down But Not Out' grants the ability to launch one last attack when reduced to 0 health. Requires maximum level in 'Survival Instincts' to advance and has 1 level available.</li>
-                            <li>(NYI)'Overcharge' increases base weapon damage by 30%, at the cost of a second point of durability loss with every attack. Requires maximum level in 'Deadly Force' to advance, and has 1 level available.</li>
-                          </ul></li>-->
                           <li>UI Changes: <ul>
                             <li>Buttons are now highlighted when hovered over.</li>
                             <li>Buttons that used the default style are now styled to match existing buttons.</li>

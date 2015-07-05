@@ -348,7 +348,7 @@ Game.enemyCombatTick = function() {
 						Game.e_HP = Math.max(Game.e_HP-vengDMG,0);
 						Game.combatLog("player","Your <strong>Vengeance</strong> effect dealt " + vengDMG + " damage.");
 					}
-					if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MULTI) {
+					if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MULTI) {
 						var secondDmg = Math.floor(enemyDMG*Game.p_Debuff[3]/100);
 						Game.p_HP = Math.max(Game.p_HP-secondDmg,0);
 						Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> allows " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " to strike again for <strong>" + secondDmg + "</strong> damage.");

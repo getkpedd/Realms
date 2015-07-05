@@ -103,6 +103,7 @@ Game.init = function() {
   this.DEBUFF_PARAHAX = 247; // May cause the enemy to be unable to attack
   this.DEBUFF_DOOM = 248; // Kills the enemy instantly
   this.DEBUFF_DISARM = 249; // Negates opponent's weapon
+  this.DEBUFF_SLEEP = 250; // Renders victim unable to attack. Can be broken with damage.
 	// Item Quality
 	this.QUALITY_POOR = 221;
 	this.QUALITY_NORMAL = 222;
