@@ -634,6 +634,10 @@ Game.reforgeWeapon = function(debuff, isSuperior) {
         if(isSuperior) { Game.p_Weapon[9] = [249,(dbName.trim() === "" ? "Disarmed" : dbName),15,-1]; }
         else { Game.p_Weapon[9] = [249,"Disarmed",10,-1]; }
         break;
+      case 250:
+        if(isSuperior) { Game.p_Weapon[9] = [250,(dbName.trim() === "" ? "Comatose" : dbName),15,10]; }
+        else { Game.p_Weapon[9] = [250,"Comatose",10,20]; }
+        break;
     }
     Game.p_Scrap -= debuffCost;
     Game.toastNotification("Weapon has been reforged.");

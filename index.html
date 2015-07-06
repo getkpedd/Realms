@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<title>Realm of Decay</title>
-    <script type="text/javascript" src="init.v0.243.js"></script>
-    <script type="text/javascript" src="strings.v0.243.js"></script>
-    <script type="text/javascript" src="powers.v0.243.js"></script>
-    <script type="text/javascript" src="combat.v0.243b.js"></script>
-    <script type="text/javascript" src="inventory.v0.243.js"></script>
-    <script type="text/javascript" src="player.v0.243.js"></script>
-    <script type="text/javascript" src="tickers.v0.243.js"></script>
-    <script type="text/javascript" src="ui.v0.243.js"></script>
+    <script type="text/javascript" src="init.v0.244.js"></script>
+    <script type="text/javascript" src="strings.v0.244.js"></script>
+    <script type="text/javascript" src="powers.v0.244.js"></script>
+    <script type="text/javascript" src="combat.v0.244.js"></script>
+    <script type="text/javascript" src="inventory.v0.244.js"></script>
+    <script type="text/javascript" src="player.v0.244.js"></script>
+    <script type="text/javascript" src="tickers.v0.244.js"></script>
+    <script type="text/javascript" src="ui.v0.244.js"></script>
     <script type="text/javascript">
       function keyBindings(key) {
         var eventObj = window.event ? event : key;
@@ -57,7 +57,7 @@
       }
       document.onkeypress = keyBindings;
     </script>
-		<link rel="stylesheet" type="text/css" href="style.v0.243.css" />
+		<link rel="stylesheet" type="text/css" href="style.v0.244.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
@@ -475,7 +475,15 @@
                               <td><span class="bigButton" onclick="Game.reforgeWeapon(249,true);">8 scrap</span></td>
                             </tr>
                             <tr>
-                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target's attacks will not factor their weapon into damage, or apply debuffs.</td>
+                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target's attacks will deal 50% damage, and will not apply debuffs.</td>
+                            </tr>
+                            <tr>
+                              <td>Sleep (Comatose)</td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(250,false);">4 scrap</span></td>
+                              <td><span class="bigButton" onclick="Game.reforgeWeapon(250,true);">8 scrap</span></td>
+                            </tr>
+                            <tr>
+                              <td colspan="3" style="text-align:left;">Places the target into a deep sleep for 10 (15) seconds. Attacks dealt to the target have a 20% (10%) chance to wake it.</td>
                             </tr>
                         </table>
                       </td>
@@ -607,11 +615,12 @@
                           <strong>Damage Over Time</strong> - Wound Poison - deals a percentage of weapon damage to the victim every second.<br />
                           <strong>Paralysis</strong> - Nerve Strike - grants a chance for the victim's attacks to fail.<br />
                           <strong>Doom</strong> - Mounting Dread - grants a small chance to kill the victim outright at the end of the debuff duration, or dealing a significant amount of damage if it does not.<br />
-                          <strong>Disarm</strong> - Disarmed - causes the victim's weapon damage to be reduced by half, and also prevents debuffs from being applied.</p>
+                          <strong>Disarm</strong> - Disarmed - causes the victim's weapon damage to be reduced by half, and also prevents debuffs from being applied.<br />
+                          <strong>Sleep</strong> - Comatose - causes the victim to fall asleep, preventing them from attacking, fleeing or using their Burst Attack for the duration. This debuff can break early whenever the victim is attacked.</p>
                           <p>Some debuffs may have differing names from the ones listed above, specifically those on found Great or Amazing quality weapons.</p>
                         <div class="powerHeader">Combat</div>
                         <p>Combat in the Realm of Decay can be initiated by clicking the 'Look for something to kill' button on the Combat tab. This tab holds all information relevant to combat, including health bars of the combatants, information on the enemy, and a detailed combat log.</p>
-                        <p>The actual process of combat is mostly a passive affair - you and your enemy trade blows at a speed determined by your weapons and any powers or debuff that influence those speeds. The player will only need to interact with the system to either flee from combat, or to initiate a 'Burst Attack'</p>
+                        <p>The actual process of combat is mostly a passive affair - you and your enemy trade blows at a speed determined by your weapons and any powers or debuffs that influence those speeds. The player will only need to interact with the system to either flee from combat, or to initiate a 'Burst Attack'</p>
                         <p>A 'Burst Attack' is a single instant attack delivered just like any other, with the exception that it can only be used once every 10 seconds, and that it resets your attack delay timer. It applies debuffs and is affected by armour just like a normal attack would be. The best timing to use this attack depends on a few factors, although typically you'd want to use it to gain an extra boost from an on-hit debuff (Armour Shred or Double Strike for example)</p>
                         <p>If you win the fight, you gain an amount of experience and also some 'seeds' - these are the currency in the Realm, used to upgrade weaponry and armour. Additionally, you also get the items the enemy had equipped.</p>
                         <p>If you lose the fight, you are penalised by losing a quarter of your accumulated experience, but can otherwise continue. If you are in danger of losing, you may flee combat at no cost.</p>
@@ -667,7 +676,18 @@
                         <p>Changes in this version:</p>
                         <ul>
                           <li>Battle System: <ul>
-                            <li>A new debuff has been added, Sleep. While affected by this debuff, the target does not attack. The effect has a chance to break when the target is attacked, with superior versions of the debuff having a lower chance to break on hit.</li>
+                            <li>A new debuff has been added, Sleep. The default name is 'Comatose'. While affected by this debuff, the victim cannot attack, use their Burst Attack or flee from combat. The effect has a chance to break when the target is attacked, with superior versions of the debuff having a lower chance to break on hit.</li>
+                          </ul></li>
+                          <li>New Powers: <ul>
+                            <li>Overcharge increases damage dealt by 25%, at the cost of an additional durability point per strike. Has 1 rank available. Requires maximum rank in Deadly Force and cannot be used in conjunction with Execute.</li>
+                            <li>Intuition causes your Burst Attacks to treat the resistances on enemy armour as vulnerabilities during damage calculation. Has 1 rank available. Requires maximum rank in Expose Weakness and cannot be used in conjunction with either Turn the Tables or Press The Advantage.
+                          </ul></li>
+                          <li>Miscellaneous Changes: <ul>
+                            <li>A few new unique items have been added which use the Sleep debuff.</li>
+                          </ul></li>
+                          <li>Bug Fixes: <ul>
+                            <li>A number of bugs introduced with the previous combat update have been resolved.</li>
+                            <li>Execute can now be purchased when you already have points invested into Wild Swings.</li>
                           </ul></li>
                         </ul>
                         <p><strong>Version 0.243</strong></p>
@@ -783,6 +803,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.243</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.244</div>
 	</body>
 </html>

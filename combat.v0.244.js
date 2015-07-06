@@ -36,214 +36,258 @@ Game.startCombat = function() {
 Game.playerCombatTick = function(isBurst) {
 	// Are we in combat?
 	if(Game.p_State == Game.STATE_COMBAT) {
-		// Paralysis Check!
-		if(Game.getPlayerDebuff()[0] == Game.DEBUFF_PARAHAX && Game.RNG(1,100) <= Game.p_Debuff[3]) {
-			// Paralysis happened.
-			Game.combatLog("player","<strong>" + Game.p_Debuff[1] + "</strong> prevented you from attacking.");
-		}
-		else {
-			// - Stage 0: Execute
-			if(Game.e_HP / Game.e_MaxHP < 0.25) {
-				if(Game.RNG(1,20) <= Game.powerLevel(Game.BOOST_EXECUTE)) {
-					Game.e_HP = 0;
-					Game.combatLog("player","<strong>Execute</strong> activated, instantly dealing a killing blow.");
-					Game.endCombat();
-					return;
-				}
-			}
-			// Stage 1: Base Damage.
-			var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
-			// Add in primary stat boost to weapon damage.
-			switch(Game.p_Weapon[2]) {
-				case Game.WEAPON_MAGIC:
-					playerDMG += Game.p_Int*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
-					break;
-				case Game.WEAPON_RANGE:
-					playerDMG += Game.p_Dex*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
-					break;
-				case Game.WEAPON_MELEE:
-					playerDMG += Game.p_Str*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
-					break;
-			}
-			// Stage 2: Percentile Boosts.
-			// Deadly Force
-			playerDMG *= (1 + 0.02*Game.powerLevel(Game.BOOST_DAMAGE));
-			// Keen Eye
-			var critChance = 3*Game.powerLevel(Game.BOOST_CRIT);
-			var didCrit = false;
-			if(Game.RNG(1,100) <= critChance) {
-				// Keener Eye
-				playerDMG *= (1.5 + 0.1*Game.powerLevel(Game.BOOST_CRITDMG));
-				didCrit = true;
-				Game.combatLog("player", " - <span class='q222'>Critical hit!</span>");
-			}
-			if(Game.p_Adrenaline > 0) {
-				// Adrenaline Rush
-				playerDMG *= (1 + 0.05*Game.powerLevel(Game.BOOST_ENRAGE));
-				Game.p_Adrenaline--;
-				if(Game.p_Adrenaline == 0) {
-					Game.combatLog("player", "The <strong>Adrenaline Rush</strong> subsides.");
-				}
-			}
-			else {
-				if(Game.powerLevel(Game.BOOST_ENRAGE) > 0 && didCrit) {
-					// Activate Adrenaline Rush on crit.
-					Game.p_Adrenaline = 3;
-					Game.combatLog("player", " - You feel an <strong>Adrenaline Rush</strong>!");
-				}
-			}
-			var canDebuff = true;
-			if(Game.p_Weapon[8] == 0) {
-				// Broken weapon.
-				canDebuff = false;
-				playerDMG *= (0.25 + 0.1*Game.powerLevel(Game.BOOST_BROKEN));
-			}
-			if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) {
-				// Disarmed.
-				canDebuff = false;
-				playerDMG *= 0.5;
-			}
-			if(Game.wildSwing) {
-				// Wind Swings only do half the intended damage.
-				playerDMG *= 0.5;
-			}
-			if(Game.flurryActive) {
-				// This is a flurry attack.
-				playerDMG *= (0.5 + 0.04*Game.powerLevel(Game.BOOST_DBLPOWER));
-			}
-			// -- Stage 4: Mind Control Resolution
-			if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC) {
-        playerDMG = Math.floor(playerDMG);
-				Game.p_HP = Math.max(Game.p_HP - playerDMG, 0);
-				Game.combatLog("enemy","<strong>" + Game.p_Debuff[1] + "</strong> causes you to attack yourself for <strong>" + playerDMG + "</strong> damage.");
-			}
-			else {
-				// -- Stage 5: Armour Effects
-				switch(Game.p_Weapon[2]) {
-					case Game.WEAPON_MAGIC:
-						if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
-							for(var a = 0; a < Game.e_Armour[4].length; a++) {
-								if(Game.e_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][a][1],0); }
-							}
-						}
-						for(var b = 0; b < Game.e_Armour[5].length; b++) {
-							if(Game.e_Armour[5][b][0] == Game.ARMOUR_VULN_MAGIC) { playerDMG += Game.e_Armour[5][b][1]; }
-						}
-						break;
-					case Game.WEAPON_RANGE:
-						if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
-							for(var c = 0; c < Game.e_Armour[4].length; c++) {
-								if(Game.e_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][c][1],0); }
-							}
-						}
-						for(var d = 0; d < Game.e_Armour[5].length; d++) {
-							if(Game.e_Armour[5][d][0] == Game.ARMOUR_VULN_RANGE) { playerDMG += Game.e_Armour[5][d][1]; }
-						}
-						break;
-					case Game.WEAPON_MELEE:
-						if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
-							for(var e = 0; e < Game.e_Armour[4].length; e++) {
-								if(Game.e_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) { playerDMG = Math.max(playerDMG-Game.e_Armour[4][e][1],0); }
-							}
-						}
-						for(var f = 0; f < Game.e_Armour[5].length; f++) {
-							if(Game.e_Armour[5][f][0] == Game.ARMOUR_VULN_MELEE) { playerDMG += Game.e_Armour[5][f][1]; }
-						}
-						break;
-				}
-				// -- Stage 6: Damage Application
-				// Floor it, I don't like decimals.
-				playerDMG = Math.floor(playerDMG);
-				Game.e_HP = Math.max(Game.e_HP - playerDMG, 0);
-				Game.drawActivePanel();
-				if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM || Game.p_Weapon[8] == 0) {
-					// Use the force, applied via the knuckles.
-					Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your fists for <strong>" + playerDMG + "</strong> damage.");
-				}
-				else {
-					// Stick 'em with the pointy end.
-					Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
-					if(Game.RNG(1,50) < Game.powerLevel(Game.BOOST_CARE)) {
-						// Proper Care
-						Game.combatLog("player"," - <strong>Proper Care</strong> prevented weapon decay.");
-					}
-					else {
-						Game.p_Weapon[8]--;
-						if(Game.p_Weapon[8] === 0) {
-							Game.combatLog("player", " - Your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> has broken!");
-						}
-					}
-				}
-				if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MULTI) {
-					// DOUBLE STRIKEU
-					var secondStrike = Math.floor(playerDMG * (Game.e_Debuff[3]/100));
-					Game.e_HP = Math.max(Game.e_HP - secondStrike, 0);
-					Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> allows you to strike again for <strong>" + secondStrike + "</strong> damage.");
-				}
-			}
-			// -- Stage 7: Debuff Application
-			var debuffChance = 10 + Game.powerLevel(Game.BOOST_DEBUFF);
-			if(isBurst) {
-				debuffChance += 20 * Game.powerLevel(Game.BOOST_DEBUFFBURST);
-			}
-			if(Game.e_Debuff.length > 0) {
-         if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_MC) {
-           canDebuff = false;
-         }
+		// Sleep check!
+    if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+      // Do nothing - not even set an attack timer.
+    } else {
+      // Paralysis Check!
+      if(Game.getPlayerDebuff()[0] == Game.DEBUFF_PARAHAX && Game.RNG(1,100) <= Game.p_Debuff[3]) {
+        // Paralysis happened.
+        Game.combatLog("player","<strong>" + Game.p_Debuff[1] + "</strong> prevented you from attacking.");
       }
-      if( Game.p_Weapon[9].length == 0) { canDebuff = false; }
-			var debuffApplied = false;
-      if(canDebuff) {
-				if(Game.RNG(1,100) <= debuffChance) {
-          debuffApplied = true;
-					if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC) {
-						Game.p_Debuff = Game.p_Weapon[9].slice();
-						Game.combatLog("enemy"," - You suffer from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
-						Game.player_debuffTimer = Game.p_Weapon[9][2];
-						Game.player_debuffInterval = window.setInterval(Game.playerDebuffTicker,1000);
-					}
-					else {
-						Game.e_Debuff = Game.p_Weapon[9].slice();
-						Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
-						Game.enemy_debuffTimer = Game.p_Weapon[9][2];
-						Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
-					}
-				}
-      }
-      // Clear the debuff timer so confusion doesn't persist between turns.
-			if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC && !debuffApplied) {
-				Game.player_debuffTimer = 0;
-			}
-				// -- Stage 8: Miscellaneous Effects
-      if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_PICKPOCKET)) {
-        Game.p_Currency += Game.e_Level;
-        Game.combatLog("player","<strong>Five-Finger Discount</strong> allowed you to steal " + Game.e_Level + " seeds.");
-      }
-		}
-		if(Game.e_HP > 0 && Game.p_HP > 0) {
-			if(!Game.flurryActive) {
-				if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_DOUBLE)) {
-					Game.flurryActive = true;
-					Game.combatLog("player"," - <strong>Flurry</strong> activated for an additional strike!");
-					Game.playerCombatTick(isBurst);
+      else {
+        // Stage 0: Execute
+        if(Game.e_HP / Game.e_MaxHP < 0.25) {
+          if(Game.RNG(1,20) <= Game.powerLevel(Game.BOOST_EXECUTE)) {
+            Game.e_HP = 0;
+            Game.combatLog("player","<strong>Execute</strong> activated, instantly dealing a killing blow.");
+            Game.endCombat();
+            return;
+          }
+        }
+        // Stage 1: Base Damage.
+        var playerDMG = Game.RNG(Game.p_Weapon[4],Game.p_Weapon[5]);
+        // Add in primary stat boost to weapon damage.
+        switch(Game.p_Weapon[2]) {
+          case Game.WEAPON_MAGIC:
+            playerDMG += Game.p_Int*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
+            break;
+          case Game.WEAPON_RANGE:
+            playerDMG += Game.p_Dex*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
+            break;
+          case Game.WEAPON_MELEE:
+            playerDMG += Game.p_Str*Game.WEAPON_BASE_MULT*Game.p_Weapon[3]/3.0;
+            break;
+        }
+        // Stage 2: Percentile Boosts.
+        // Deadly Force
+        playerDMG *= (1 + 0.02*Game.powerLevel(Game.BOOST_DAMAGE));
+        // Keen Eye
+        var critChance = 3*Game.powerLevel(Game.BOOST_CRIT);
+        var didCrit = false;
+        if(Game.RNG(1,100) <= critChance) {
+          // Keener Eye
+          playerDMG *= (1.5 + 0.1*Game.powerLevel(Game.BOOST_CRITDMG));
+          didCrit = true;
+          Game.combatLog("player", " - <span class='q222'>Critical hit!</span>");
+        }
+        if(Game.powerLevel(Game.BOOST_BONUSDMG) > 0) {
+          // Overcharge
+          playerDMG *= 1.25;
+        }
+        if(Game.p_Adrenaline > 0) {
+          // Adrenaline Rush
+          playerDMG *= (1 + 0.05*Game.powerLevel(Game.BOOST_ENRAGE));
+          Game.p_Adrenaline--;
+          if(Game.p_Adrenaline == 0) {
+            Game.combatLog("player", "The <strong>Adrenaline Rush</strong> subsides.");
+          }
+        }
+        else {
+          if(Game.powerLevel(Game.BOOST_ENRAGE) > 0 && didCrit) {
+            // Activate Adrenaline Rush on crit.
+            Game.p_Adrenaline = 3;
+            Game.combatLog("player", " - You feel an <strong>Adrenaline Rush</strong>!");
+          }
+        }
+        // Stage 3: Percentile Reductions
+        var canDebuff = true;
+        if(Game.p_Weapon[8] == 0) {
+          // Broken weapon.
+          canDebuff = false;
+          playerDMG *= (0.25 + 0.1*Game.powerLevel(Game.BOOST_BROKEN));
+        }
+        if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM) {
+          // Disarmed.
+          canDebuff = false;
+          playerDMG *= 0.5;
+        }
+        if(Game.wildSwing) {
+          // Wind Swings only do half the intended damage.
+          playerDMG *= 0.5;
+        }
+        if(Game.flurryActive) {
+          // This is a flurry attack.
+          playerDMG *= (0.5 + 0.04*Game.powerLevel(Game.BOOST_DBLPOWER));
+        }
+        // Stage 4: Mind Control Resolution
+        if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC) {
+          playerDMG = Math.floor(playerDMG);
+          Game.p_HP = Math.max(Game.p_HP - playerDMG, 0);
+          Game.combatLog("enemy","<strong>" + Game.p_Debuff[1] + "</strong> causes you to attack yourself for <strong>" + playerDMG + "</strong> damage.");
+        }
+        else {
+          // Stage 5: Armour Effects
+          switch(Game.p_Weapon[2]) {
+            case Game.WEAPON_MAGIC:
+              if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
+                for(var a = 0; a < Game.e_Armour[4].length; a++) {
+                  if(Game.e_Armour[4][a][0] == Game.ARMOUR_STR_MAGIC) {
+                    if(isBurst && Game.powerLevel(Game.BOOST_NOWEAKNESS) > 0) {
+                      playerDMG += Game.e_Armour[4][a][1];
+                    } else {
+                      playerDMG = Math.max(playerDMG-Game.e_Armour[4][a][1],0);
+                    }
+                  }
+                }
+              }
+              for(var b = 0; b < Game.e_Armour[5].length; b++) {
+                if(Game.e_Armour[5][b][0] == Game.ARMOUR_VULN_MAGIC) { playerDMG += Game.e_Armour[5][b][1]; }
+              }
+              break;
+            case Game.WEAPON_RANGE:
+              if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
+                for(var c = 0; c < Game.e_Armour[4].length; c++) {
+                  if(Game.e_Armour[4][c][0] == Game.ARMOUR_STR_RANGE) {
+                    if(isBurst && Game.powerLevel(Game.BOOST_NOWEAKNESS) > 0) {
+                      playerDMG += Game.e_Armour[4][c][1];
+                    } else {
+                      playerDMG = Math.max(playerDMG-Game.e_Armour[4][c][1],0);
+                    }
+                  }
+                }
+              }
+              for(var d = 0; d < Game.e_Armour[5].length; d++) {
+                if(Game.e_Armour[5][d][0] == Game.ARMOUR_VULN_RANGE) { playerDMG += Game.e_Armour[5][d][1]; }
+              }
+              break;
+            case Game.WEAPON_MELEE:
+              if(Game.getEnemyDebuff()[0] != Game.DEBUFF_SHRED) {
+                for(var e = 0; e < Game.e_Armour[4].length; e++) {
+                  if(isBurst && Game.e_Armour[4][e][0] == Game.ARMOUR_STR_MELEE) {
+                    if(Game.powerLevel(Game.BOOST_NOWEAKNESS) > 0) {
+                      playerDMG += Game.e_Armour[4][e][1];
+                    } else {
+                      playerDMG = Math.max(playerDMG-Game.e_Armour[4][e][1],0);
+                    }
+                  }
+                }
+              }
+              for(var f = 0; f < Game.e_Armour[5].length; f++) {
+                if(Game.e_Armour[5][f][0] == Game.ARMOUR_VULN_MELEE) { playerDMG += Game.e_Armour[5][f][1]; }
+              }
+              break;
+          }
+          // Stage 6: Damage Application
+          // Floor it, I don't like decimals.
+          playerDMG = Math.floor(playerDMG);
+          Game.e_HP = Math.max(Game.e_HP - playerDMG, 0);
+          Game.drawActivePanel();
+          if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DISARM || Game.p_Weapon[8] == 0) {
+            // Use the force, applied via the knuckles.
+            Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your fists for <strong>" + playerDMG + "</strong> damage.");
+          }
+          else {
+            // Stick 'em with the pointy end.
+            Game.combatLog("player","You hit " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " with your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> for <strong>" + playerDMG + "</strong> damage.");
+            if(Game.RNG(1,50) < Game.powerLevel(Game.BOOST_CARE)) {
+              // Proper Care
+              Game.combatLog("player"," - <strong>Proper Care</strong> prevented weapon decay.");
+            }
+            else {
+              Game.p_Weapon[8]--;
+              if(Game.powerLevel(Game.BOOST_BONUSDMG) > 0) { Game.p_Weapon[8]--; }
+              if(Game.p_Weapon[8] <= 0) {
+                Game.p_Weapon[8] = 0;
+                Game.combatLog("player", " - Your <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span> has broken!");
+              }
+            }
+          }
+          if(Game.getEnemyDebuff()[0] == Game.DEBUFF_MULTI) {
+            // DOUBLE STRIKEU
+            var secondStrike = Math.floor(playerDMG * (Game.e_Debuff[3]/100));
+            Game.e_HP = Math.max(Game.e_HP - secondStrike, 0);
+            Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> allows you to strike again for <strong>" + secondStrike + "</strong> damage.");
+          }
+          if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
+            // Waking the beast. Maybe.
+            if(Game.RNG(1,100) <= Game.e_Debuff[3]) {
+              Game.enemy_debuffTimer = 0;
+            }
+          }
+        }
+        // Stage 7: Debuff Application
+        var debuffChance = 10 + Game.powerLevel(Game.BOOST_DEBUFF);
+        if(isBurst) {
+          debuffChance += 20 * Game.powerLevel(Game.BOOST_DEBUFFBURST);
+        }
+        if(Game.e_Debuff.length > 0) {
+           if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_MC) {
+             canDebuff = false;
+           }
+        }
+        if( Game.p_Weapon[9].length == 0) { canDebuff = false; }
+        var debuffApplied = false;
+        if(canDebuff) {
+          if(Game.RNG(1,100) <= debuffChance) {
+            debuffApplied = true;
+            if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC) {
+              Game.p_Debuff = Game.p_Weapon[9].slice();
+              Game.combatLog("enemy"," - You suffer from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
+              Game.player_debuffTimer = Game.p_Weapon[9][2];
+              Game.player_debuffInterval = window.setInterval(Game.playerDebuffTicker,1000);
+              if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+                window.clearInterval(Game.combat_playerInterval);
+                Game.combatLog("player","You fall asleep...");
+              }
+            }
+            else {
+              Game.e_Debuff = Game.p_Weapon[9].slice();
+              Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
+              Game.enemy_debuffTimer = Game.p_Weapon[9][2];
+              Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
+              if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
+                window.clearInterval(Game.combat_enemyInterval);
+                Game.combatLog("enemy", (Game.e_ProperName ? "" : "The ") + Game.e_Name + " falls asleep...");
+              }
+            }
+          }
+        }
+        // Clear the debuff timer so confusion doesn't persist between turns.
+        if(Game.getPlayerDebuff()[0] == Game.DEBUFF_MC && !debuffApplied) {
+          Game.player_debuffTimer = 0;
+        }
+          // Stage 8: Miscellaneous Effects
+        if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_PICKPOCKET)) {
+          Game.p_Currency += Game.e_Level;
+          Game.combatLog("player","<strong>Five-Finger Discount</strong> allowed you to steal " + Game.e_Level + " seeds.");
         }
       }
-			else { Game.flurryActive = false;}
-			window.clearTimeout(Game.combat_playerInterval);
-			var timerLength = 1000 * Game.p_Weapon[3] * (1 - (0.02*Game.powerLevel(Game.BOOST_SPEED)));
-			if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLOW) {
-				timerLength *= (1 + (Game.p_Debuff[3]/100));
-			}
-			Game.combat_playerInterval = window.setTimeout(function() { Game.playerCombatTick(false); },timerLength);
-		}
-		else {
-      if(Game.wildSwing) {
-			  Game.wildSwing = false;
-        Game.combatLog("player","<strong>Wild Swings</strong> ended.");
+      if(Game.e_HP > 0 && Game.p_HP > 0) {
+        if(!Game.flurryActive) {
+          if(Game.RNG(1,100) <= Game.powerLevel(Game.BOOST_DOUBLE)) {
+            Game.flurryActive = true;
+            Game.combatLog("player"," - <strong>Flurry</strong> activated for an additional strike!");
+            Game.playerCombatTick(isBurst);
+          }
+        }
+        else { Game.flurryActive = false; }
+        window.clearTimeout(Game.combat_playerInterval);
+        var timerLength = 1000 * Game.p_Weapon[3] * (1 - (0.02*Game.powerLevel(Game.BOOST_SPEED)));
+        if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLOW) {
+          timerLength *= (1 + (Game.p_Debuff[3]/100));
+        }
+        Game.combat_playerInterval = window.setTimeout(function() { Game.playerCombatTick(false); },timerLength);
       }
-			Game.endCombat();
-		}
-	}
+      else {
+        if(Game.wildSwing) {
+          Game.wildSwing = false;
+          Game.combatLog("player","<strong>Wild Swings</strong> ended.");
+        }
+        Game.endCombat();
+      }
+    }
+  }
 	else {
 		// We're not fighting, stop calling intervals...
 		window.clearInterval(Game.combat_playerInterval);
@@ -353,6 +397,12 @@ Game.enemyCombatTick = function() {
 						Game.p_HP = Math.max(Game.p_HP-secondDmg,0);
 						Game.combatLog("enemy"," - <strong>" + Game.p_Debuff[1] + "</strong> allows " + (Game.e_ProperName ? "" : "the ") + Game.e_Name + " to strike again for <strong>" + secondDmg + "</strong> damage.");
 					}
+          if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+            // Waking the beast. Maybe.
+            if(Game.RNG(1,100) <= Game.p_Debuff[3]) {
+              Game.player_debuffTimer = 0;
+            }
+          }
 					if(Game.p_Armour[3] > 0) {
 						if(Game.RNG(1,50) <= Game.powerLevel(Game.BOOST_CARE)) {
 							// My gear is INVINCIBLE!
@@ -415,30 +465,36 @@ Game.enemyCombatTick = function() {
 }
 Game.burstAttack = function() {
   if(Game.e_HP > 0) {
-    if(Game.powerLevel(Game.BOOST_BURST) > 0) {
-      if(Game.e_Debuff !== []) {
-        window.setTimeout(function() { Game.p_specUsed = false; },10000-(1000*Game.powerLevel(Game.BOOST_FASTBURST)));
-      } else {
-        window.setTimeout(function() { Game.p_specUsed = false; },10000);
-      }
-      Game.combatLog("player","<strong>Wild Swings</strong> activated.");
-      Game.wildSwing = true;
-      for(var x = Game.powerLevel(Game.BOOST_BURST); x >= 0; x--) {
-        Game.playerCombatTick(true);
-      }
-      if(Game.wildSwing) {
-      Game.combatLog("player","<strong>Wild Swings</strong> ended.");
-      Game.wildSwing = false;
-      }
+    if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+      Game.toastNotification("You cannot use Burst Attack while sleeping.")
     }
     else {
-      Game.combatLog("player","<strong>Burst Attack</strong> activated.");
-      Game.playerCombatTick(true);
+      if(Game.powerLevel(Game.BOOST_BURST) > 0) {
+        if(Game.e_Debuff !== []) {
+          window.setTimeout(function() { Game.p_specUsed = false; },10000-(1000*Game.powerLevel(Game.BOOST_FASTBURST)));
+        } else {
+          window.setTimeout(function() { Game.p_specUsed = false; },10000);
+        }
+        Game.combatLog("player","<strong>Wild Swings</strong> activated.");
+        Game.wildSwing = true;
+        for(var x = Game.powerLevel(Game.BOOST_BURST); x >= 0; x--) {
+          Game.playerCombatTick(true);
+        }
+        if(Game.wildSwing) {
+        Game.combatLog("player","<strong>Wild Swings</strong> ended.");
+        Game.wildSwing = false;
+        }
+      }
+      else {
+        Game.combatLog("player","<strong>Burst Attack</strong> activated.");
+        Game.playerCombatTick(true);
+      }
+      Game.drawActivePanel();
     }
-    Game.drawActivePanel();
   }
 }
 Game.fleeCombat = function() {
+  if(Game.getPlayerDebuff()[0] !== Game.DEBUFF_SLEEP) {
   // Lots of cleanup of timers and temporary values.
 	window.clearTimeout(Game.combat_playerInterval);
 	window.clearTimeout(Game.combat_enemyInterval);
@@ -458,6 +514,10 @@ Game.fleeCombat = function() {
   Game.p_specUsed = false;
 	Game.combatLog("info","You fled from the battle.");
 	Game.drawActivePanel();
+  }
+  else {
+    Game.toastNotification("You cannot flee from combat while sleeping.")
+  }
 }
 Game.endCombat = function() {
   // Still lots of cleanup, but some other, more important things too!
@@ -555,6 +615,12 @@ Game.getEnemyDebuff = function() {
 Game.playerDebuffTicker = function() {
   if(Game.player_debuffTimer <= 0) {
     Game.combatLog("enemy"," - The effect of <strong>" + Game.p_Debuff[1] + "</strong> faded.");
+    if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+      // Rise and shine buttercup!
+      Game.combatLog("player","You wake up!");
+      var timerLength = 1000 * Game.p_Weapon[3] * (1 - (0.02*Game.powerLevel(Game.BOOST_SPEED)));
+      Game.combat_playerInterval = window.setTimeout(function() { Game.playerCombatTick(false); },timerLength);
+    }
     Game.p_Debuff = [];
     window.clearInterval(Game.player_debuffInterval);
   } else {
@@ -594,6 +660,11 @@ Game.playerDebuffTicker = function() {
 Game.enemyDebuffTicker = function() {
   if(Game.enemy_debuffTimer <= 0) {
     Game.combatLog("player"," - The effect of <strong>" + Game.e_Debuff[1] + "</strong> faded.");
+    if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
+      // Oh crap it's coming for us!
+      Game.combatLog("enemy", (Game.e_ProperName ? "" : "The ") + Game.e_Name + " wakes up!")
+      Game.combat_enemyInterval = window.setTimeout(Game.enemyCombatTick,1000*Game.e_Weapon[3]);
+    }
     Game.e_Debuff = [];
     window.clearInterval(Game.enemy_debuffInterval);
   } else {

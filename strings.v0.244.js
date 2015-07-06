@@ -31,22 +31,26 @@ Game.fast_melee_special = ["Blinkstrike|They'll never know what hit 'em...",
                            "Adder's Fang|Not to scale.",
                            "Torturer's Poker|Tell me all your dirty little secrets...",
                            "Excalibur|Yes, I pulled it out of a rock.",
-                           "Sword Breaker|Serrated for your pleasure."];
+                           "Sword Breaker|Serrated for your pleasure.",
+                           "Ether-Soaked Rag|\"Hey, does this cloth smell like chloroform to you?\""];
 Game.fast_melee_debuffs = [[242, "Frenzy", 15, 70],
                            [246, "Wound Poison", 15, 30],
                            [245, "Domination", 5, -1],
                            [243, "Holy Light", 15, 30],
-                           [249, "Break Weapon", 15, -1]];
+                           [249, "Break Weapon", 15, -1],
+                           [250, "Anesthesia", 15, 10]];
 Game.mid_melee_special = ["Edge of Depravity|I think it's just misunderstood...",
                           "Storm's Herald|Whatever you do, don't hold it above your head.",
                           "Flametongue|Good for those long cold nights in camp.",
                           "Zenith Blade|Glows brighter than the sun.",
-                          "Gunblade|Bringing a sword to a gunfight."];
+                          "Gunblade|Bringing a sword to a gunfight.",
+                          "Concrete Pillowcase|GO TO SLEEP DAMN YOU!"];
 Game.mid_melee_debuffs = [[241, "Ruthlessness", 15, -1],
                           [247, "Static Shock", 15, 25],
                           [243, "Cauterize", 15, 30],
                           [249, "Dazzle", 15, -1],
-                          [247, "Staggered", 15, 25]];
+                          [247, "Staggered", 15, 25],
+                          [250, "Concussion", 15, 10]];
 Game.slow_melee_special = ["Planetary Edge|Rare, because planets aren't edgy.",
                            "Death Sentence|The Grim Reaper has arrived.",
                            "The Ambassador|Diplomatic immunity!",
@@ -62,21 +66,25 @@ Game.slow_melee_debuffs = [[244, "Hamstring", 15, 25],
 Game.fast_range_special = ["Ace of Spades|Who throws a card? I mean, come on, really?",
                            "Tomahawk|Serving native tribes for centuries.",
                            "Throat Piercers|Also perfect for piercing other parts.",
-                           "Miniature Shurikens|Why throw one when you can throw ten?"];
+                           "Miniature Shurikens|Why throw one when you can throw ten?",
+                           "Tranquilizer Blowpipe|Be very very quiet..."];
 Game.fast_range_debuffs = [[246, "Paper Cut", 15, 30],
                            [244, "Cripple", 15, 25],
                            [241, "Piercing Throw", 15, -1],
-                           [242, "Barrage", 15, 70]];
+                           [242, "Barrage", 15, 70],
+                           [250, "Tranquilized", 15, 10]];
 Game.mid_range_special = ["Death From Above|Or below, or far away, depending on where you stand.",
                           "Tidebreaker's Harpoon|They might want it back at some point.",
                           "The Dreamer|Shoots rainbows and sunshine.",
                           "Sagittarius|Making the stars align for you.",
-                          "Generic Ranged Weapon|Relic of a bygone era."];
+                          "Generic Ranged Weapon|Relic of a bygone era.",
+                          "Gas Grenade|Hold your breath."];
 Game.mid_range_debuffs = [[248, "Impending Doom", 5, 10],
                           [243, "Bloodthirst", 15, 30],
                           [250, "Counting Sheep", 15, 10],
                           [242, "Starfall", 15, 70],
-                          [246, "Generic Bleed", 15, 30]];
+                          [246, "Generic Bleed", 15, 30],
+                          [250, "Sleeping Gas", 15, 10]];
 Game.slow_range_special = ["The Stakeholder|Raising the stakes, one corpse at a time.",
                            "Artemis Bow|Comes with a free built in harp, no strings attached.",
                            "Parting Shot|Something to remember them by.",
@@ -101,22 +109,26 @@ Game.mid_magic_special = ["Flamecore Battlestaff|Still warm to the touch.",
                           "Gift of the Cosmos|Just keeps on giving.",
                           "Emberleaf War Tome|Not actually made of embers, which are terrible for books.",
                           "Encyclopedia of the Realm|Knowledge is power.",
-                          "\"How to Maim Your Dragon\"|Now featuring step by step guides!"];
+                          "\"How to Maim Your Dragon\"|Now featuring step by step guides!",
+                          "Hypnotist's Watch|Your eyelids are getting heavy..."];
 Game.mid_magic_debuffs = [[246, "Slow Burn", 15, 30],
                           [244, "Cripple", 15, 25],
                           [243, "Drain Life", 15, 30],
                           [241, "Find Weakness", 15, -1],
-                          [249, "Wing Clip", 15, -1]];
+                          [249, "Wing Clip", 15, -1],
+                          [250, "Hypnosis", 15, 10]];
 Game.slow_magic_special = ["The Tetranomicon|Written and bound by Tetradigm. Mostly incomprehensible.",
                            "Comet Chaser|Note: Comets are dangerous, DO NOT TRY THIS AT HOME.",
                            "Absolute Zero|Not quite. But it's close!",
                            "Judgement Staff|Bear the weight of your crimes!",
-                           "Cock of the Infinite|I put on my robe and wizard hat."];
+                           "Cock of the Infinite|I put on my robe and wizard hat.",
+                           "\"A Brief History of Magic\"|1,600 pages of sheer drivel."];
 Game.slow_magic_debuffs = [[248, "Flames of Tetradigm", 5, 10],
                            [246, "Slow Burn", 15, 30],
                            [247, "Bitter Cold", 15, 25],
                            [248, "Judgement Bolt", 5, 10],
-                           [241, "Penetration", 15, -1]];
+                           [241, "Penetration", 15, -1],
+                           [250, "Intense Boredom", 15, 10]];
 // Prefixes for non-great items
 // Yes there's a blank one, it's so the item has no prefix :)
 Game.weaponQualityDescriptors = [["Worthless","Damaged","Inept","Decayed","Flawed","Decrepit","Useless"],
@@ -142,7 +154,7 @@ Game.armour_special = ["The Blue Collar|If this won't stop attackers, the guy we
 Game.enemy_generic = ["Rat","Cat","Man","Woman","Angry Redditor","Goat","Boar","Tiger","Skeleton","Unicyclist","Hipster","Desperate Brigand","Wolf","Irradiated Worker","Blacksmith","Gnomish Inventor","Dwarven Miner","Disgruntled Shopkeeper","Treant","Disembodied Tentacle","Incremental Developer","Angry Mob","Gelatinous Blob","Crocodile","Young Dragon","Beholder","Small Child","Unicorn","Lesser Demon","Donut Throwing Policeman","Android","Deer","Irish Plumber","Cartoon Mascot","Irate Cosplayer","French Maid"];
 // Mostly friendly redditors...
 Game.enemy_special = ["Sky Monkey","John the Leprechaun","Ragekai","Flirty Lover","Mike Handers","Feld O' Propane","42nd Saren","Reelix","Ralph","Kung Fu Hamster","Detratigm","Kryzodoze","Chromega","Literal Hitler","Seiyria", "Generic Enemy Name","Paranoid Android","Scary Bee","Mitschu"];
-Game.enemy_boss = ["Tetradigm","The Solver","Giant Enemy Dragon","Generic Boss Name","Warlord","Dr. Tyson","Greater Demon","Brave Powerful Ruler","The Emperor"];
+Game.enemy_boss = ["Tetradigm","The Solver","Giant Enemy Dragon","Generic Boss Name","Warlord","Dr. Tyson","Greater Demon","Brave Powerful Ruler","The Emperor", "The Lich Queen"];
 Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/weapon decay in combat.",101],
                   ["High Maintenance","Grants a 2% chance per level to fully repair weapon and armour after combat.",1011],
                   ["Hanging By A Thread","Preserves an additional 10% per level of your weapon's effect when broken.",1012],
@@ -166,6 +178,7 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Will To Live","Grants a 2% chance per level to be fully healed after combat.",1081],
                   ["Deadly Force","Grants a 2% per level increase to all damage dealt.",109],
                   ["Execute","Grants a 5% chance per level to instantly kill a target below 25% health.",1091],
+                  ["Overcharge","Increases damage dealt by 25% at the cost of an additional durability point per attack.",1092],
                   ["Ancestral Fortitude","Grants a 2% per level reduction to all damage taken",110],
                   ["Last Bastion","Reduces damage taken by 10% per level when your health is below 30%.",1101],
                   ["Vengeance","Grants a 2% chance per level to return 50% of damage taken to the target.",1102],
@@ -175,9 +188,8 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Expose Weakness", "Grants a 1% increase per level in the debuff application rate.",112],
 		              ["Press The Advantage", "Decreases the cooldown on Burst Attack by 1 second per level when used on debuffed foes.",1121],
                   ["Turn The Tables", "Increases the debuff application rate when using Burst Attack by 20% per level.",1122],
+                  ["Intuition","When using Burst Attack, the enemy's resistance to your attack type is treated as a vulnerability.",1123],
                   ["Bartering", "Lowers the cost of item level upgrades by 2% per level.",113],
                   ["Haggling", "Increases the amount of seeds received from selling items by 5% per level",1131],
                   ["Disassembly", "Guarantees an additional piece of scrap from destroying items.",1132]];
 // ["Down But Not Out","When your health reaches zero, grants an additional attack before death.",1082]
-// ["Overcharge","Increases weapon damage by 30% at the cost of an extra point of durability loss per attack.",1092]
-// ["Intuition","When using Burst Attack, the enemy's resistance to your attack type is treated as a vulnerability.",1123]

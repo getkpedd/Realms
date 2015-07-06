@@ -6,6 +6,8 @@ Game.buyPower = function(power) {
       case Game.BOOST_ABSORB:
       case Game.BOOST_REFLECT:
       case Game.BOOST_MORESCRAP:
+      case Game.BOOST_BONUSDMG:
+      case Game.BOOST_NOWEAKNESS:
         if(selectionLevel === 1) {
           Game.toastNotification("This power is at maximum level.");
           canUpgrade = false;
@@ -43,6 +45,7 @@ Game.buyPower = function(power) {
     if(canUpgrade) {
       switch(power) {
         case Game.BOOST_BROKEN:
+          // Hanging by a Thread
           if(Game.powerLevel(Game.BOOST_CARE) < 10) {
             Game.toastNotification("You need maximum level in Proper Care to upgrade this power.");
             canUpgrade = false;
@@ -52,6 +55,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_REPAIR:
+          // High Maintenance
           if(Game.powerLevel(Game.BOOST_CARE) < 10) {
             Game.toastNotification("You need maximum level in Proper Care to upgrade this power.");
             canUpgrade = false;
@@ -61,6 +65,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_EXTRA:
+          // Cavity Search
           if(Game.powerLevel(Game.BOOST_CURRENCY) < 10) {
             Game.toastNotification("You need maximum level in Pickpocket to upgrade this power.");
             canUpgrade = false;
@@ -70,6 +75,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_SCRAP:
+          // Thorough Looting
           if(Game.powerLevel(Game.BOOST_CURRENCY) < 10) {
             Game.toastNotification("You need maximum level in Pickpocket to upgrade this power.");
             canUpgrade = false;
@@ -79,6 +85,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_CRITDMG:
+          // Keener Eye
           if(Game.powerLevel(Game.BOOST_CRIT) < 5) {
             Game.toastNotification("You need maximum level in Keen Eye to upgrade this power.");
             canUpgrade = false;
@@ -88,6 +95,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_ENRAGE:
+          // Adrenaline Rush
           if(Game.powerLevel(Game.BOOST_CRIT) < 5) {
             Game.toastNotification("You need maximum level in Keen Eye to upgrade this power.");
             canUpgrade = false;
@@ -97,6 +105,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_ABSORB:
+          // Absorption Shield
           if(Game.powerLevel(Game.BOOST_SHIELD) < 5) {
             Game.toastNotification("You need maximum level in Divine Shield to upgrade this power.");
             canUpgrade = false;
@@ -106,6 +115,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_REFLECT:
+          // Reflective Shield
           if(Game.powerLevel(Game.BOOST_SHIELD) < 5) {
             Game.toastNotification("You need maximum level in Divine Shield to upgrade this power.");
             canUpgrade = false;
@@ -115,33 +125,38 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_MORESP:
+          // Lucky Star
           if(Game.powerLevel(Game.BOOST_MOREPP) < 10) {
             Game.toastNotification("You need maximum level in Luck of the Draw to upgrade this power.");
             canUpgrade = false;
           }
           break;
         case Game.BOOST_STATUP:
+          // Patience and Discipline
           if(Game.powerLevel(Game.BOOST_XP) < 10) {
             Game.toastNotification("You need maximum level in Fast Learner to upgrade this power.");
             canUpgrade = false;
           }
           break;
         case Game.BOOST_DBLPOWER:
+          // Empowered Flurry
           if(Game.powerLevel(Game.BOOST_DOUBLE) < 10) {
             Game.toastNotification("You need maximum level in Flurry to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_BURST) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Wind Swings.");
+            Game.toastNotification("This power cannot be used in conjunction with Wild Swings.");
             canUpgrade = false;
           }
           break;
         case Game.BOOST_FULLHEAL:
+          // Will To Live
           if(Game.powerLevel(Game.BOOST_REGEN) < 10) {
             Game.toastNotification("You need maximum level in Survival Instincts to upgrade this power.");
             canUpgrade = false;
           }
           break;
         case Game.BOOST_BURST:
+          // Wild Swings
           if(Game.powerLevel(Game.BOOST_DOUBLE) < 10) {
             Game.toastNotification("You need maximum level in Flurry to upgrade this power.");
             canUpgrade = false;
@@ -151,15 +166,27 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_EXECUTE:
+          // Execute
           if(Game.powerLevel(Game.BOOST_DAMAGE) < 10) {
             Game.toastNotification("You need maximum level in Deadly Force to upgrade this power.");
             canUpgrade = false;
-          } else if(Game.powerLevel(Game.BOOST_BURST) > 0) {
-            Game.toastNotification("This power cannot be used in conjunction with Wild Swings.");
+          } else if(Game.powerLevel(Game.BOOST_BONUSDMG) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Overcharge.");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_BONUSDMG:
+          // Overcharge
+          if(Game.powerLevel(Game.BOOST_DAMAGE) < 10) {
+            Game.toastNotification("You need maximum level in Deadly Force to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_EXECUTE) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Execute.");
             canUpgrade = false;
           }
           break;
         case Game.BOOST_LASTSTAND:
+          // Last Bastion
           if(Game.powerLevel(Game.BOOST_DEFENCE) < 10) {
             Game.toastNotification("You need maximum level in Ancestral Fortitude to upgrade this power.");
             canUpgrade = false;
@@ -169,6 +196,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_VENGEANCE:
+          // Vengeance
           if(Game.powerLevel(Game.BOOST_DEFENCE) < 10) {
             Game.toastNotification("You need maximum level in Ancestral Fortitude to upgrade this power.");
             canUpgrade = false;
@@ -178,6 +206,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_FIRST:
+          // Sneak Attack
           if(Game.powerLevel(Game.BOOST_SPEED) < 10) {
             Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
             canUpgrade = false;
@@ -187,6 +216,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_PICKPOCKET:
+          // Five-Finger Discount
           if(Game.powerLevel(Game.BOOST_SPEED) < 10) {
             Game.toastNotification("You need maximum level in Nimble Fingers to upgrade this power.");
             canUpgrade = false;
@@ -196,17 +226,38 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_FASTBURST:
+          // Press The Advantage
           if(Game.powerLevel(Game.BOOST_DEBUFF) < 10) {
             Game.toastNotification("You need maximum level in Expose Weakness to upgrade this power.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_DEBUFFBURST) > 0) {
             Game.toastNotification("This power cannot be used in conjunction with Turn The Tables.");
             canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_NOWEAKNESS) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Intuition");
+            canUpgrade = false;
           }
           break;
         case Game.BOOST_DEBUFFBURST:
+          // Turn The Tables
           if(Game.powerLevel(Game.BOOST_DEBUFF) < 10) {
             Game.toastNotification("You need maximum level in Expose Weakness to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_FASTBURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Press The Advantage.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_NOWEAKNESS) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Intuition");
+            canUpgrade = false;
+          }
+          break;
+        case Game.BOOST_NOWEAKNESS:
+          // Intuition
+          if(Game.powerLevel(Game.BOOST_DEBUFF) < 10) {
+            Game.toastNotification("You need maximum level in Expose Weakness to upgrade this power.");
+            canUpgrade = false;
+          } else if(Game.powerLevel(Game.BOOST_DEBUFFBURST) > 0) {
+            Game.toastNotification("This power cannot be used in conjunction with Turn The Tables.");
             canUpgrade = false;
           } else if(Game.powerLevel(Game.BOOST_FASTBURST) > 0) {
             Game.toastNotification("This power cannot be used in conjunction with Press The Advantage.");
@@ -214,6 +265,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_SELL:
+          // Haggling
           if(Game.powerLevel(Game.BOOST_PRICES) < 10) {
             Game.toastNotification("You need maximum level in Bartering to upgrade this power.");
             canUpgrade = false;
@@ -223,6 +275,7 @@ Game.buyPower = function(power) {
           }
           break;
         case Game.BOOST_MORESCRAP:
+          // Disassembly
           if(Game.powerLevel(Game.BOOST_PRICES) < 10) {
             Game.toastNotification("You need maximum level in Bartering to upgrade this power.");
             canUpgrade = false;
@@ -288,6 +341,8 @@ Game.getPowerLevelCap = function(power) {
     case Game.BOOST_ABSORB:
     case Game.BOOST_REFLECT:
     case Game.BOOST_MORESCRAP:
+    case Game.BOOST_BONUSDMG:
+    case Game.BOOST_NOWEAKNESS:
       return 1;
     default:
       return 0;
@@ -330,6 +385,8 @@ Game.getPowerName = function(power) {
     case Game.BOOST_PRICES: return "Bartering";
     case Game.BOOST_SELL: return "Haggling";
     case Game.BOOST_MORESCRAP: return "Disassembly";
+    case Game.BOOST_BONUSDMG: return "Overcharge";
+    case Game.BOOST_NOWEAKNESS: return "Intuition";
   }
 }
 Game.getPowerDesc = function(power) {
@@ -369,6 +426,8 @@ Game.getPowerDesc = function(power) {
     case Game.BOOST_PRICES: return "Lowers the cost of item level upgrades by 2% per level.";
     case Game.BOOST_SELL: return "Increases the amount of seeds received from selling items by 5% per level.";
     case Game.BOOST_MORESCRAP: return "Guarantees an additional piece of scrap from destroying items.";
+    case Game.BOOST_BONUSDMG: return "Increases damage dealt by 25% at the cost of an additional durability point per attack.";
+    case Game.BOOST_NOWEAKNESS: return "When using Burst Attack, the enemy's armour resistances are treated as vulnerabilities.";
   }
 }
 Game.resetPowers = function() {
