@@ -178,7 +178,7 @@ Game.playerCombatTick = function(isBurst) {
 					// DOUBLE STRIKEU
 					var secondStrike = Math.floor(playerDMG * (Game.e_Debuff[3]/100));
 					Game.e_HP = Math.max(Game.e_HP - secondStrike, 0);
-					Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> allows you to strike again for <strong>" + secondDmg + "</strong> damage.");
+					Game.combatLog("player"," - <strong>" + Game.e_Debuff[1] + "</strong> allows you to strike again for <strong>" + secondStrike + "</strong> damage.");
 				}
 			}
 			// -- Stage 7: Debuff Application
