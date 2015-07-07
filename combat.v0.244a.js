@@ -235,6 +235,7 @@ Game.playerCombatTick = function(isBurst) {
               Game.p_Debuff = Game.p_Weapon[9].slice();
               Game.combatLog("enemy"," - You suffer from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
               Game.player_debuffTimer = Game.p_Weapon[9][2];
+              window.clearInterval(Game.player_debuffInterval);
               Game.player_debuffInterval = window.setInterval(Game.playerDebuffTicker,1000);
               if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
                 window.clearInterval(Game.combat_playerInterval);
@@ -245,6 +246,7 @@ Game.playerCombatTick = function(isBurst) {
               Game.e_Debuff = Game.p_Weapon[9].slice();
               Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.p_Weapon[9][1] + "</strong>.");
               Game.enemy_debuffTimer = Game.p_Weapon[9][2];
+              window.clearInterval(Game.enemy_debuffInterval);
               Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
               if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
                 window.clearInterval(Game.combat_enemyInterval);
@@ -433,13 +435,23 @@ Game.enemyCombatTick = function() {
 						Game.e_Debuff = Game.e_Weapon[9].slice();
 						Game.combatLog("player"," - " + (Game.e_ProperName ? "" : "The ") + Game.e_Name + " suffers from <strong>" + Game.e_Weapon[9][1] + "</strong>.");
 						Game.enemy_debuffTimer = Game.e_Weapon[9][2];
+            window.clearInterval(Game.enemy_debuffInterval);
 						Game.enemy_debuffInterval = window.setInterval(Game.enemyDebuffTicker,1000);
+            if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
+                window.clearInterval(Game.combat_enemyInterval);
+                Game.combatLog("player",(Game.e_ProperName ? "" : "The ") + Game.e_Name + " falls asleep...");
+              }
 					}
 					else {
 						Game.p_Debuff = Game.e_Weapon[9].slice();
 						Game.combatLog("enemy"," - You suffer from <strong>" + Game.e_Weapon[9][1] + "</strong>.");
 						Game.player_debuffTimer = Game.e_Weapon[9][2];
+            window.clearInterval(Game.player_debuffInterval);
 						Game.player_debuffInterval = window.setInterval(Game.playerDebuffTicker,1000);
+            if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
+                window.clearInterval(Game.combat_playerInterval);
+                Game.combatLog("player","You fall asleep...");
+              }
 					}
 				}
 			}

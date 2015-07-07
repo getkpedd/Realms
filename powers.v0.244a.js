@@ -431,15 +431,21 @@ Game.getPowerDesc = function(power) {
   }
 }
 Game.resetPowers = function() {
-  if(confirm("Are you sure you wish to reset your power point allocation? This cannot be undone.")) {
     var totalSpent = 0;
     for(var a = 0; a < Game.p_Powers.length; a++) {
       totalSpent += Game.p_Powers[a][1];
     }
-    Game.p_Powers = [];
-    Game.p_PP += totalSpent;
-    Game.toastNotification("Power points have been reset.");
-    Game.updatePowerPanel = true;
-    Game.drawActivePanel();
+    var scrapCost = Math.ceil((totalSpent + Game.p_PP)/3);
+    if(Game.p_Scrap < scrapCost) {
+      Game.toastNotification("You need " + scrapCost + " scrap to reset your powers.");
+      return;
+    }
+    if(confirm("Are you sure you wish to reset your power point allocation? \n\nThis will cost a total of " + scrapCost + " scrap and cannot be undone.")) {
+      Game.p_Powers = [];
+      Game.p_PP += totalSpent;
+      Game.p_Scrap -= scrapCost;
+      Game.toastNotification("Power points have been reset.");
+      Game.updatePowerPanel = true;
+      Game.drawActivePanel();
   }
 }

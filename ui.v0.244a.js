@@ -286,10 +286,12 @@ Game.updatePowersPanel = function() {
     for(var x = 0; x < Game.powerList.length; x++) {
       var available = true;
       var viewable = true;
+      var subsidiary = false;
       // Step 1: Determine if this is a subsidiary power.
       if(Game.powerList[x][2].toString().length > 3) {
         //powerList[x][2] is the constant for the power. If it's more than 3 chars long, it's a subsidiary!
         // Now... we check the level of the base power!
+        subsidiary = true;
         var basePower = Math.floor(Game.powerList[x][2] / 10);
         if(Game.powerLevel(basePower) != Game.getPowerLevelCap(basePower)) {
           // The base power isn't capped, we can't buy this
@@ -312,16 +314,29 @@ Game.updatePowersPanel = function() {
         }
       }
       // Step 2: Build the HTML element that represents a power purchasing panel.
-      var pe = document.createElement("div");
+      var pe = document.createElement("table");
+      var topRow = document.createElement("tr");
+      var bottomRow = document.createElement("tr");
+      var nameColumn = document.createElement("td");
+      var descriptionColumn = document.createElement("td");
+      var upgradeColumn = document.createElement("td");
+      upgradeColumn.setAttribute("rowspan","2");
       // Fade out unavailable items
-      if(!available || (Game.p_PP === 0 && Game.powerLevel(Game.powerList[x][2]) === 0)) { pe.setAttribute("style","text-align:left;padding-bottom:5px;opacity:0.4;"); }
-      else { pe.setAttribute("style","text-align:left;padding-bottom:5px;"); }
-      pe.innerHTML += "<strong style='font-size:14px;'>" + Game.powerList[x][0] + " (" + Game.powerLevel(Game.powerList[x][2]) + "/" +  Game.getPowerLevelCap(Game.powerList[x][2]) + ")</strong>";
+      if(!available || (Game.p_PP === 0 && Game.powerLevel(Game.powerList[x][2]) === 0)) { pe.setAttribute("style","text-align:left;vertical-align:middle;border:1px solid #440000;margin-bottom:2px;border-collapse:separate;opacity:0.4;"); }
+      else { pe.setAttribute("style","text-align:left;vertical-align:middle;border:1px solid #440000;border-collapse:separate;margin-bottom:2px;"); }
+      nameColumn.innerHTML = (subsidiary ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "") + "<strong style='font-size:14px;'>" + Game.powerList[x][0] + " (" + Game.powerLevel(Game.powerList[x][2]) + "/" +  Game.getPowerLevelCap(Game.powerList[x][2]) + ")</strong>";
+      descriptionColumn.innerHTML = (subsidiary ? "&nbsp;&nbsp;&nbsp;&nbsp;" : "") + Game.powerList[x][1];
       if(available && Game.p_PP > 0 && Game.powerLevel(Game.powerList[x][2]) < Game.getPowerLevelCap(Game.powerList[x][2])) {
-        pe.innerHTML += "<span style='float:right;' class='bigButton' onclick='Game.buyPower(" + Game.powerList[x][2] + ");'>Upgrade</span>";
+        upgradeColumn.innerHTML = "<span style='float:right;' class='bigButton' onclick='Game.buyPower(" + Game.powerList[x][2] + ");'>Upgrade</span>";
       }
-      pe.innerHTML += "<br />" + Game.powerList[x][1];
-      if(viewable) { powerPane.appendChild(pe); }
+      if(viewable) {
+        topRow.appendChild(nameColumn);
+        topRow.appendChild(upgradeColumn);
+        bottomRow.appendChild(descriptionColumn);
+        pe.appendChild(topRow);
+        pe.appendChild(bottomRow);
+        powerPane.appendChild(pe);
+      }
     }
     Game.updatePowerPanel = false;
   }

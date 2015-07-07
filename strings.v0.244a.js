@@ -22,7 +22,7 @@ Game.debuffs_generic = [[241, "Ruthlessness", 10, -1],
                         [245, "Mind Control", 5, -1],
                         [246, "Wound Poison", 10, 20],
                         [247, "Nerve Strike", 10, 15],
-                        [248, "Mounting Dread", 5, 6],
+                        [248, "Mounting Dread", 5, 5],
                         [249, "Disarmed", 10, -1],
                         [250, "Comatose", 10, 20]];
 Game.debuff_names = ["Armour Shred","Double Attack","Health Drain","Slower Attacks","Confusion","Damage over Time","Paralysis","Doom","Disarm","Sleep"];
@@ -58,7 +58,7 @@ Game.slow_melee_special = ["Planetary Edge|Rare, because planets aren't edgy.",
                            "Mjolnir|They're not worthy!",
                            "Generic Melee Weapon|Relic of a bygone era."];
 Game.slow_melee_debuffs = [[244, "Hamstring", 15, 25],
-                           [248, "Dark Omen", 5, 10],
+                           [248, "Dark Omen", 5, 7],
                            [241, "Diplomacy", 15, -1],
                            [243, "Holy Radiance", 15, 30],
                            [244, "Concussion", 15, 25],
@@ -79,7 +79,7 @@ Game.mid_range_special = ["Death From Above|Or below, or far away, depending on 
                           "Sagittarius|Making the stars align for you.",
                           "Generic Ranged Weapon|Relic of a bygone era.",
                           "Gas Grenade|Hold your breath."];
-Game.mid_range_debuffs = [[248, "Impending Doom", 5, 10],
+Game.mid_range_debuffs = [[248, "Impending Doom", 5, 7],
                           [243, "Bloodthirst", 15, 30],
                           [250, "Counting Sheep", 15, 10],
                           [242, "Starfall", 15, 70],
@@ -98,7 +98,7 @@ Game.slow_range_debuffs = [[247, "Unbalanced", 15, 20],
 Game.fast_magic_special = ["Thundercaller|When used in battle, it chants the name 'Thor' repeatedly.",
                            "Cosmic Fury|Dr. Tyson would like a word with you...",
                            "Spark-Touched Fetish|Rubber gloves are strongly recommended.",
-                           "Theory of Everything|It works! At least in theory...",
+                           "\"The Theory of Everything\"|It works! At least in theory...",
                            "Generic Magic Weapon|Relic of a bygone era."];
 Game.fast_magic_debuffs = [[247, "Static Shock", 15, 20],
                            [242, "Frenzy", 15, 65],
@@ -123,7 +123,7 @@ Game.slow_magic_special = ["The Tetranomicon|Written and bound by Tetradigm. Mos
                            "Judgement Staff|Bear the weight of your crimes!",
                            "Cock of the Infinite|I put on my robe and wizard hat.",
                            "\"A Brief History of Magic\"|1,600 pages of sheer drivel."];
-Game.slow_magic_debuffs = [[248, "Flames of Tetradigm", 5, 10],
+Game.slow_magic_debuffs = [[248, "Flames of Tetradigm", 5, 7],
                            [246, "Slow Burn", 15, 30],
                            [247, "Bitter Cold", 15, 25],
                            [248, "Judgement Bolt", 5, 10],
@@ -193,3 +193,5 @@ Game.powerList = [["Proper Care","Grants a 2% chance per level to ignore armour/
                   ["Haggling", "Increases the amount of seeds received from selling items by 5% per level",1131],
                   ["Disassembly", "Guarantees an additional piece of scrap from destroying items.",1132]];
 // ["Down But Not Out","When your health reaches zero, grants an additional attack before death.",1082]
+// ["Bountiful Bags", "Increases your maximum inventory space by 1 slot per level.",114]
+// ["Something From Nothing","Grants a 2% chance to generate a random item in your inventory after each battle.",1141]

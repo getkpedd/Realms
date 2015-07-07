@@ -238,6 +238,10 @@ Game.load = function() {
 		Game.p_SkillPoints = g.p_SkillPoints;
     Game.p_WeaponInventory = g.p_WeaponInventory
 		Game.p_Weapon = g.p_Weapon;
+    if(Game.p_Weapon[9][0] == Game.DEBUFF_DOOM) {
+      if(Game.p_Weapon[9][3] == 6) { Game.p_Weapon[9][3] = 5; }
+      if(Game.p_Weapon[9][3] == 10) { Game.p_Weapon[9][3] = 7; }
+    }
     Game.p_ArmourInventory = g.p_ArmourInventory;
     Game.p_Armour = g.p_Armour;
 		Game.last_Weapon = g.last_Weapon;

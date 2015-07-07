@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<title>Realm of Decay</title>
-    <script type="text/javascript" src="init.v0.244.js"></script>
-    <script type="text/javascript" src="strings.v0.244.js"></script>
-    <script type="text/javascript" src="powers.v0.244.js"></script>
-    <script type="text/javascript" src="combat.v0.244.js"></script>
-    <script type="text/javascript" src="inventory.v0.244.js"></script>
-    <script type="text/javascript" src="player.v0.244.js"></script>
-    <script type="text/javascript" src="tickers.v0.244.js"></script>
-    <script type="text/javascript" src="ui.v0.244.js"></script>
+    <script type="text/javascript" src="init.v0.244a.js"></script>
+    <script type="text/javascript" src="strings.v0.244a.js"></script>
+    <script type="text/javascript" src="powers.v0.244a.js"></script>
+    <script type="text/javascript" src="combat.v0.244a.js"></script>
+    <script type="text/javascript" src="inventory.v0.244a.js"></script>
+    <script type="text/javascript" src="player.v0.244a.js"></script>
+    <script type="text/javascript" src="tickers.v0.244a.js"></script>
+    <script type="text/javascript" src="ui.v0.244a.js"></script>
     <script type="text/javascript">
       function keyBindings(key) {
         var eventObj = window.event ? event : key;
@@ -57,7 +57,7 @@
       }
       document.onkeypress = keyBindings;
     </script>
-		<link rel="stylesheet" type="text/css" href="style.v0.244.css" />
+		<link rel="stylesheet" type="text/css" href="style.v0.244a.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
@@ -672,6 +672,23 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 0.244a</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>Bug Fixes: <ul>
+                            <li>An issue where an undefined debuff would tick endlessly if the player had their Confusion debuff erased by the application of their own weapon's debuff has been resolved.</li>
+                            <li>The messages that indicate the onset of the Sleep effect will now appear properly when the effect is applied by enemies.</li>
+                          </ul></li>
+                          <li>UI Changes: <ul>
+                            <li>Powers that are a subsidiary are now indented to better differentiate them from base powers.</li>
+                            <li>The powers interface now has a faint border around the edges of each power to make it clear which upgrade buttons apply to which powers.</li>
+                          </ul></li>
+                          <li>Balance Changes: <ul>
+                            <li>The damage dealt by an unsuccessful application of the Doom debuff has been reduced to 250% (350% for superior versions.)</li>
+                            <li>Resetting powers now costs 1 scrap per 3 power points (spent and unspent).</li>
+                            <!--<li>The cost of applying specific debuffs to weapons has been doubled to 8 and 16 scrap respectively. Randomly assigned debuff costs remain at 1/2 scrap.</li>-->
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 0.244</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
@@ -679,8 +696,8 @@
                             <li>A new debuff has been added, Sleep. The default name is 'Comatose'. While affected by this debuff, the victim cannot attack, use their Burst Attack or flee from combat. The effect has a chance to break when the target is attacked, with superior versions of the debuff having a lower chance to break on hit.</li>
                           </ul></li>
                           <li>New Powers: <ul>
-                            <li>Overcharge increases damage dealt by 25%, at the cost of an additional durability point per strike. Has 1 rank available. Requires maximum rank in Deadly Force and cannot be used in conjunction with Execute.</li>
-                            <li>Intuition causes your Burst Attacks to treat the resistances on enemy armour as vulnerabilities during damage calculation. Has 1 rank available. Requires maximum rank in Expose Weakness and cannot be used in conjunction with either Turn the Tables or Press The Advantage.
+                            <li>'Overcharge' increases damage dealt by 25%, at the cost of an additional durability point per strike. Has 1 rank available. Requires maximum rank in 'Deadly Force' and cannot be used in conjunction with 'Execute.'</li>
+                            <li>'Intuition' causes your Burst Attacks to treat the resistances on enemy armour as vulnerabilities during damage calculation. Has 1 rank available. Requires maximum rank in 'Expose Weakness' and cannot be used in conjunction with either 'Turn the Tables' or 'Press The Advantage'.'</li>
                           </ul></li>
                           <li>Miscellaneous Changes: <ul>
                             <li>A few new unique items have been added which use the Sleep debuff.</li>
@@ -803,6 +820,6 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.244</div>
+		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.244a (7th July 2015)</div>
 	</body>
 </html>
