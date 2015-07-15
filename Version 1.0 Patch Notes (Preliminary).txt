@@ -1,0 +1,111 @@
+#Realm of Decay - Planned Patch Notes - v1.0 (The Big Kahuna)
+
+**Warning: This patch will come with a progress wipe. It'll all be worth it, trust me...**
+   
+ - **Repair Mechanics**
+   - The 'Repair' option will be activated as a toggle from the 'Inventory' tab.
+   - While the 'Repair' option is active, the player's equipped weapon and armour will gain 5 durability per tick (plus 1 per 5 player levels), capping at the usual amount based on item level.
+   - Players will be able to change their equipment while the 'Repair' operation is active, and the newly equipped item will be repaired instead.
+   - Players will be able to enter combat while the 'Repair' operation is active, which will disable said option.
+   
+ - **New Powers**
+   - 'Master Tinkerer' will increase the durability restored per repair tick by 20% per rank, have 5 ranks, require maximum investment in 'Proper Care', and will not be usable alongside 'Hanging By a Thread' or 'High Maintenance'.
+   - 'Reclaimed Knowledge' will increase experience gains by up to 50% by draining the excess from the experience overflow pool, have 1 rank, and not require any other powers to unlock.
+   - 'Alchemical Attunement' will lower the cooldown on potions by 1 second per rank, have 10 ranks, and not require any other powers to unlock.
+   - 'Master Alchemist' will grant a 2% chance per level to increase the potency of a potion's effect when used, have 5 ranks, and require maximum investment in 'Alchemical Attunement' to use.
+ 
+ - **Changed Powers**
+   - 'Luck of the Draw' and 'Lucky Star' will have their effects swapped - 'Lucky Star' will grant power points, whereas 'Luck of the Draw' will grant skill points. Their positions in the powers tree will remain the same.
+   - 'Thorough Looting' now has a chance to grant a random potion to the player instead of a piece of scrap.
+ 
+ - **The Store**
+   - The 'Store' tab will make a return, as a repository to buy items to aid in the player's adventures. 
+   - The 'Store' tab will contain 6 weapons and 6 pieces of armour that are randomly generated - with at least one item guaranteed to be of 'Good' quality or better.
+   - Shop stocks will be refreshed once every 10 minutes. There will be a timer on the 'Shop' tab to show this.
+   - Additionally, the 'Store' tab will play host to a new set of items: potions.
+     - Healing potions will be available that restore a percentage of the drinker's health.
+     - There will be a set of potions that apply the usual gamut of debuffs to an enemy independently of the player's equipped weapon.
+     - These debuffs will not stack with any existing applied debuffs from the player's weapon.
+	 - All potions will have a 30 second cooldown.
+	 - The price of potions in the store will scale with player level.
+	 - Debuff potions to be named as follows (subject to change)
+     - Acidic Solution (Armour Shred for 10 sec)
+     - Twinstrike Tonic (Double Attack for 10 sec)
+     - Vampiric Infusion (Health Drain for 10 sec)
+     - Frostblood Draught (Slowed Attacks for 10 sec)
+     - Cupid's Charm Chalice (Charm for 10 sec)
+     - Nightshade Potion (Damage over Time for 10 sec)
+     - Mind-Numbing Mix (Paralysis for 10 sec)
+     - Bottled Heart Attack (Doom)
+     - Butterfinger Brew (Disarm for 10 sec)
+     - Chloroform Concoction (Sleep for 10 sec)
+ 
+ - **UI Changes**
+   - The left sidebar will be removed from the game and the game width set at 1000 pixels (up from 900)
+   - The tab bar will be placed at the top of the page, replacing the 'Realm of Decay' title bar.
+   - All items will have new, consistent information boxes displayed around the UI. The bottom section of these boxes is context-sensitive based on where they are shown in the interface (so for example they have sell/scrap controls on the Inventory tab and upgrade controls on the Forge tab)
+   - The health bars have been de-coupled from the 'Combat' tab and are now visible at the top of every interface tab.
+   - A new 'Player' tab will be added to hold information that was previously stored on the left sidebar, including the 'Repair' button for equipped items.
+   - In accordance with the ability to reset stat point allocations, the existing stat point allocation UI will be updated.
+ 
+ - **Miscellaneous Changes**
+   - The player will now be able to set their own name.
+   - The player's autobattle configuration will now persist between page loads.
+   - The player will be able to reset their stat point allocation at any time, at a cost of 1 scrap for every 5 points available and spent.
+   - The experience and levelling curve will be significantly lowered.
+   
+ - **Prestige**
+   - The player will be able to reset all of their current progress to start over from level 1 with a new set of random items.
+   - The level that the player reached will be stored, and used for any calculations of experience and seed gains.
+   - On top of this, the player will receive one Stat Point for every level gained during their last playthrough.
+   - Achievements and the related boost in experience gain will still apply after a prestige reset.
+ 
+ - **Statistics Tracking**
+   - The following information will now be tracked and shown on the 'Player' page:
+     - Total / Melee / Ranged / Magic damage dealt
+     - Total / Melee / Ranged / Magic damage taken
+     - Number of attacks dealt / taken
+     - Fights won / lost / fled
+     - Bosses defeated
+     - Highest boss chance percentage
+     - Largest hit dealt / taken
+     - Smallest hit dealt / taken
+     - Experience gained / lost
+     - Experience overflow (ie. lost due to overshooting a level requirement)
+     - Number of Poor / Average / Good / Great / Amazing items received
+     - Number of item level / quality upgrades bought
+     - Number of debuff reforges
+     - Items sold / scrapped / discarded
+     - Items allowed to break
+     - Seeds earned from combat / sales
+     - Scrap earned from combat / conversion
+     - Debuffs applied / received
+     - Successful Doom hits dealt / taken
+     - Times Sleep broken by damage
+     - Total healed from Health Drain
+     - Total damage dealt from Damage over Time
+     - Total self damage from Charm
+     - Attacks nullified by Paralysis
+     - Attacks with fists
+	 
+ - **Badges**
+   - Alongside the new tracking outlined above, players will be able to earn badges (achievements). Each badge comes with a 1% increase to experience and seed gains from combat (this may not be visible in early levels due to rounding)
+   - Possible badge names and criteria include (but are not limited to) the following:
+     - The Personal Touch (name your character) "See that? That's you, right there."
+     - The God Complex (name your character after Psychemaster, the game's developer) "Shhhh... this one's a nod to Orteil."
+     - Trust Issues (perform a manual save) "Do you think I can't write a working autosave system, huh? HUH?"
+     - Like A Boss (equip both weapon and armour of Great or higher quality) "PROMOTE SYNERGY"
+     - Living on a Prayer (win a fight with less than 5% of your total health) "Woah, we're halfway there!"
+     - The Survivalist (survive a fight having entered it with less than 25% health) "Just don't start drinking your own urine."
+     - Unlimited Power! (spend 100 Power Points) "OK, so 100 isn't unlimited. So what?"
+     - Indecisive (reset stats or powers 100 times) "I used to be indecisive, but now I'm not so sure."
+     - Hoist by my Own Petard (inflict your weapon's debuff on yourself under the influence of Confusion) "..."
+     - Punching Mirrors (die from an attack delivered to yourself under the influence of Confusion) "Stop hitting yourself!"
+     - Vampirism (end a fight with more health than you started it with) "Tonight I'm going to suck... your blood!"
+     - Wherefore Art Thou, Romeo? (die from a Damage over Time effect while the enemy is asleep) "This, do I drink to thee..."
+     - The Trade Brigade (spend 10,000 seeds on items in the store) "Here's to the next 10,000!"
+     - The Trade Parade (spend 1,000,000,000 seeds on items in the store) "With all the money you gave us, we hired dancers to work outside the store."
+     - The Trade Blockade (reach level 50 without spending any seeds in the store) "You'll come crawling back one day!"
+     - Where We're Going, We Don't Need Weapons (deal the killing blow to an enemy while your weapon is broken) "You know there were guys who used to fight with their fists?"
+     - Where We're Going, We Don't Need Armour (deal the killing blow to an enemy while your armour is broken) "Ever heard of 'distraction value'?"
+     - Where We're Going, We Don't Need Gear (deal the killing blow to an enemy while your weapon and armour are broken) "Any Scotsman will tell you nakedness is an incredible deterrent."
