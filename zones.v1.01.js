@@ -87,7 +87,7 @@ Game.ZONE_BOSSES = [
   ["Chief Engineer DeSolver",60,6300,425,
    ["Torrentus, The Storm of Steel|Not even Neo could stop all these bullets.",60,202,1.6,162,192,110.63,226,345,[244,"Suppressive Fire",20,40]],
    ["XT-250 Augmentation Platform|Built to last, unlike the contents.",60,226,345,[[232,80]],[[236,70],[234,20]]]],
-  ["Archbishop Raferty",70,8200,550
+  ["Archbishop Raferty",70,8200,550,
    ["Exalt, Wrath of Heaven|Freshly delivered from on high.",70,202,2.1,236,280,122.86,226,395,[247,"Dazzle",20,40]],
    ["Archbishop's Shawl|You must be at least this holy to wear.",70,226,395,[[233,90]],[[234,80],[235,30]]]],
   ["Bandit Mastermind Seiyria",80,10250,690,
