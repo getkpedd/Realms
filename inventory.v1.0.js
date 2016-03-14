@@ -12,8 +12,15 @@ Game.equipWeapon = function(index) {
   var newWep = Game.p_WeaponInventory[index].slice(0);
   Game.p_Weapon = newWep.slice(0);
   Game.p_WeaponInventory[index] = currentWep.slice(0);
-  Game.updateInv = true;
+  Game.updateInventory = true;
+  Game.updateForge = true;
   Game.toastNotification("Equipped <span class='q" + Game.p_Weapon[7] + "'>" + Game.p_Weapon[0].split("|")[0] + "</span>.");
+  Game.badgeCheck(Game.BADGE_BOSSGEAR); // Like a Boss
+  Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+  Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+  Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
   Game.drawActivePanel();
 }
 Game.discardWeapon = function(index) {
@@ -21,7 +28,9 @@ Game.discardWeapon = function(index) {
   var thrownWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + thrownWepName + "</span> tossed away.");
   Game.p_WeaponInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
+  Game.TRACK_ITEM_DISCARDS++;
+  Game.badgeCheck(Game.BADGE_DISCARDS);
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index) {
@@ -30,8 +39,10 @@ Game.sellWeapon = function(index) {
   var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + soldWepName + "</span> sold for " + salePrice + " seeds.");
   Game.p_WeaponInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
   Game.p_Currency += salePrice;
+  Game.TRACK_ITEM_SALES++;
+  Game.TRACK_SALE_SEEDS += salePrice;
   Game.drawActivePanel();
 }
 Game.scrapWeapon = function(index) {
@@ -58,8 +69,11 @@ Game.scrapWeapon = function(index) {
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
   Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + scrappedWepName + "</span> converted into " + salePrice + " scrap.");
   Game.p_WeaponInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
   Game.p_Scrap += salePrice;
+  Game.TRACK_ITEM_SCRAPS++;
+  Game.TRACK_CONVERT_SCRAP += salePrice;
+  Game.badgeCheck(Game.BADGE_SCRAPPING);
   Game.drawActivePanel();
 }
 Game.equipArmour = function(index) {
@@ -67,15 +81,24 @@ Game.equipArmour = function(index) {
   var newArm = Game.p_ArmourInventory[index].slice(0);
   Game.p_Armour = newArm.slice(0);
   Game.p_ArmourInventory[index] = currentArm.slice(0);
-  Game.updateInv = true;
+  Game.updateInventory = true;
+  Game.updateForge = true;
   Game.toastNotification("Equipped <span class='q" + Game.p_Armour[2] + "'>" + Game.p_Armour[0].split("|")[0] + "</span>.");
+  Game.badgeCheck(Game.BADGE_BOSSGEAR); // Like a Boss
+  Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+  Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+  Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
   Game.drawActivePanel();
 }
 Game.discardArmour = function(index) {
   var thrownArmName = Game.p_ArmourInventory[index][0].split("|")[0];
   Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + thrownArmName + "</span> tossed away.");
   Game.p_ArmourInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
+  Game.TRACK_ITEM_DISCARDS++;
+  Game.badgeCheck(Game.BADGE_DISCARDS);
   Game.drawActivePanel();
 }
 Game.sellArmour = function(index) {
@@ -84,8 +107,10 @@ Game.sellArmour = function(index) {
   var soldArmName = Game.p_ArmourInventory[index][0].split("|")[0];
   Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + soldArmName + "</span> sold for " + salePrice + " seeds.");
   Game.p_ArmourInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
   Game.p_Currency += salePrice;
+  Game.TRACK_ITEM_SALES++;
+  Game.TRACK_SALE_SEEDS += salePrice;
   Game.drawActivePanel();
 }
 Game.scrapArmour = function(index) {
@@ -111,8 +136,11 @@ Game.scrapArmour = function(index) {
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
   Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + scrappedArmName + "</span> converted into " + salePrice + " scrap.");
   Game.p_ArmourInventory.splice(index,1);
-  Game.updateInv = true;
+  Game.updateInventory = true;
   Game.p_Scrap += salePrice;
+  Game.TRACK_ITEM_SCRAPS++;
+  Game.TRACK_CONVERT_SCRAP += salePrice;
+  Game.badgeCheck(Game.BADGE_SCRAPPING);
   Game.drawActivePanel();
 }
 Game.makeWeapon = function(level) {
@@ -395,27 +423,89 @@ Game.upgradeArmourLevel = function(armour) {
   }
   return armour;
 }
+Game.calculateItemLevelPrice = function(level, quality) {
+  var upgradeCost = Math.floor(150 * Math.pow(1.06,level) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
+  upgradeCost = Math.floor(upgradeCost*(10+(quality-Game.QUALITY_NORMAL))/10);
+  return upgradeCost;
+}
+Game.calculateItemQualityPrice = function(quality) {
+   return Math.pow(4,(quality-Game.QUALITY_POOR));
+}
+Game.buyWeapon = function(index) {
+  var purchase = Game.p_WeaponShopStock[index];
+  var cost = 2 * Game.calculateItemLevelPrice(purchase[1],purchase[7]);
+  if(Game.p_WeaponInventory.length == Game.MAX_INVENTORY) {
+    Game.toastNotification("Weapon inventory is full...");
+    return 0;
+  }
+  if(Game.p_Currency >= cost) {
+    Game.p_WeaponInventory.push(purchase);
+    Game.p_WeaponShopStock.splice(index,1);
+    Game.p_Currency -= cost;
+    Game.toastNotification("Purchased <span class='q" + purchase[7] + "'>" + purchase[0].split("|")[0] + "</span>.");
+    Game.giveBadge(Game.BADGE_FIRST_BUY);
+    Game.PROGRESS_SPEND += cost;
+    Game.badgeCheck(Game.BADGE_SPEND3);
+    Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+    Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+    Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+    Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+    Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
+  }
+  else {
+    Game.toastNotification("Not enough seeds...");
+  }
+  Game.drawActivePanel();
+}
+Game.buyArmour = function(index) {
+  var purchase = Game.p_ArmourShopStock[index];
+  var cost = 2 * Game.calculateItemLevelPrice(purchase[1],purchase[2]);
+  if(Game.p_ArmourInventory.length == Game.MAX_INVENTORY) {
+    Game.toastNotification("Armour inventory is full...");
+    return 0;
+  }
+  if(Game.p_Currency >= cost) {
+    Game.p_ArmourInventory.push(purchase);
+    Game.p_ArmourShopStock.splice(index,1);
+    Game.p_Currency -= cost;
+    Game.toastNotification("Purchased <span class='q" + purchase[2] + "'>" + purchase[0].split("|")[0] + "</span>.");
+    Game.giveBadge(Game.BADGE_FIRST_BUY);
+    Game.PROGRESS_SPEND += cost;
+    Game.badgeCheck(Game.BADGE_SPEND3);
+    Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+    Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+    Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+    Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+    Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
+  }
+  else {
+    Game.toastNotification("Not enough seeds...");
+  }
+  Game.drawActivePanel();
+}
 Game.buyWeaponLevelUpgrade = function() {
-  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Weapon[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
-  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Weapon[7]-Game.QUALITY_NORMAL))/10);
+  var upgradeCost = Game.calculateItemLevelPrice(Game.p_Weapon[1], Game.p_Weapon[7]);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
     Game.upgradeWeaponLevel(Game.p_Weapon);
     Game.toastNotification("Weapon level upgraded.");
+    Game.TRACK_UPGRADES++;
     Game.drawActivePanel();
   }
   else { Game.toastNotification("Not enough seeds..."); }
+  Game.updateForge = true;
 }
 Game.buyArmourLevelUpgrade = function() {
-  var upgradeCost = Math.floor(175 * Math.pow(1.12,Game.p_Armour[1]) * (1-0.02*Game.powerLevel(Game.BOOST_PRICES)));
-  upgradeCost = Math.floor(upgradeCost*(10+(Game.p_Armour[2]-Game.QUALITY_NORMAL))/10);
+  var upgradeCost = Game.calculateItemLevelPrice(Game.p_Armour[1], Game.p_Armour[2]);
   if(Game.p_Currency >= upgradeCost) {
     Game.p_Currency -= upgradeCost;
     Game.upgradeArmourLevel(Game.p_Armour);
     Game.toastNotification("Armour level upgraded.");
+    Game.TRACK_UPGRADES++;
     Game.drawActivePanel();
   }
   else { Game.toastNotification("Not enough seeds..."); }
+  Game.updateForge = true;
 }
 Game.upgradeWeaponQuality = function(weapon) {
   var baseMin = Math.floor(weapon[4]/(10+(weapon[7]-Game.QUALITY_NORMAL))*10);
@@ -442,6 +532,8 @@ Game.upgradeWeaponQuality = function(weapon) {
       else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
       else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
     }
+    if(userWeaponName.trim() === "") { Game.giveBadge(Game.BADGE_NO_NAME); } // Unimaginative
+    if(userFlavourText.trim() === "") { Game.giveBadge(Game.BADGE_NO_FLAVOUR); } // Lacking in Flavour
     weapon[0] = (userWeaponName.trim() !== "" ? userWeaponName : weapon[0]) + "|" + (userFlavourText.trim() !== "" ? userFlavourText : "I have no flavour.");
   }
   weapon[7]++;
@@ -451,17 +543,19 @@ Game.upgradeWeaponQuality = function(weapon) {
   return weapon;
 }
 Game.buyWeaponQualityUpgrade = function() {
-  var scrapCost = Math.pow(4,(Game.p_Weapon[7]-Game.QUALITY_POOR));
+  var scrapCost = Game.calculateItemQualityPrice(Game.p_Weapon[7]);
   if(Game.p_Weapon[7] < Game.QUALITY_AMAZING && Game.p_Scrap >= scrapCost) {
     Game.p_Scrap -= scrapCost;
     Game.upgradeWeaponQuality(Game.p_Weapon);
     Game.toastNotification("Weapon quality upgraded");
+    Game.TRACK_UPGRADES++;
     Game.drawActivePanel();
   }
   else {
     if(Game.p_Weapon[7] == Game.QUALITY_AMAZING) { Game.toastNotification("Weapon already at highest quality."); }
     else { Game.toastNotification("Not enough scrap..."); }
   }
+  Game.updateForge = true;
 }
 Game.upgradeArmourQuality = function(armour) {
   switch(armour[2]) {
@@ -494,6 +588,8 @@ Game.upgradeArmourQuality = function(armour) {
         else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
       }
       armour[0] = userArmourName + "|" + userFlavourText;
+      if(userArmourName.trim() === "") { Game.giveBadge(Game.BADGE_NO_NAME); } // Unimaginative
+      if(userFlavourText.trim() === "") { Game.giveBadge(Game.BADGE_NO_FLAVOUR); } // Lacking in Flavour
       armour[0] = (userArmourName.trim() !== "" ? userArmourName : armour[0]) + "|" + (userFlavourText.trim() !== "" ? userFlavourText : "I have no flavour.");
       break;
     case Game.QUALITY_GREAT:
@@ -511,44 +607,38 @@ Game.upgradeArmourQuality = function(armour) {
   return armour;
 }
 Game.buyArmourQualityUpgrade = function() {
-  var scrapCost = Math.pow(4,(Game.p_Armour[2]-Game.QUALITY_POOR));
+  var scrapCost = Game.calculateItemQualityPrice(Game.p_Armour[2]);
   if(Game.p_Armour[2] < Game.QUALITY_AMAZING && Game.p_Scrap >= scrapCost) {
     Game.p_Scrap -= scrapCost;
     Game.upgradeArmourQuality(Game.p_Armour);
     Game.toastNotification("Armour quality upgraded");
+    Game.TRACK_UPGRADES++;
     Game.drawActivePanel();
   }
   else {
     if(Game.p_Armour[2] == Game.QUALITY_AMAZING) { Game.toastNotification("Armour already at highest quality."); }
     else { Game.toastNotification("Not enough scrap..."); }
   }
+  Game.updateForge = true;
 }
-// These all just call the individual functions on each item in the stack. It's easier this way.
-Game.sellAllWeapons = function() {
+// Let's mop up by combining four functions into one.
+Game.automaticInventoryClear = function() {
+  // Weapons first
   for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
-    if(Game.p_WeaponInventory[i][7] <= document.getElementById("wep_minBulk").options[wep_minBulk.selectedIndex].value) {
-      Game.sellWeapon(i);
+    switch(Game.autoSell_options[Game.p_WeaponInventory[i][7]-Game.QUALITY_POOR]) {
+      case "SELL":
+        Game.sellWeapon(i); break;
+      case "SCRAP":
+        Game.scrapWeapon(i); break;
     }
   }
-}
-Game.sellAllArmour = function() {
+  // Now armour
   for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
-    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[arm_minBulk.selectedIndex].value) {
-      Game.sellArmour(i);
-    }
-  }
-}
-Game.scrapAllWeapons = function() {
-  for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
-    if(Game.p_WeaponInventory[i][7] <= document.getElementById("wep_minBulk").options[wep_minBulk.selectedIndex].value) {
-      Game.scrapWeapon(i);
-    }
-  }
-}
-Game.scrapAllArmour = function() {
-  for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
-    if(Game.p_ArmourInventory[i][2] <= document.getElementById("arm_minBulk").options[arm_minBulk.selectedIndex].value) {
-      Game.scrapArmour(i);
+    switch(Game.autoSell_options[Game.p_ArmourInventory[i][2]-Game.QUALITY_POOR]) {
+      case "SELL":
+        Game.sellArmour(i); break;
+      case "SCRAP":
+        Game.scrapArmour(i); break;
     }
   }
 }
@@ -559,7 +649,12 @@ Game.takeWeapon = function() {
     Game.last_Weapon = [];
   }
   else { Game.toastNotification("Weapon inventory is full."); }
-  Game.updateInv = true;
+  Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+  Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+  Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
+  Game.updateInventory = true;
 	Game.drawActivePanel();
 }
 Game.takeArmour = function() {
@@ -568,10 +663,14 @@ Game.takeArmour = function() {
     Game.last_Armour = [];
   }
   else { Game.toastNotification("Armour inventory is full."); }
-  Game.updateInv = true;
+  Game.badgeCheck(Game.BADGE_BLUE); // Blue in the Face
+  Game.badgeCheck(Game.BADGE_PURPLE); // Tastes Like Purple
+  Game.badgeCheck(Game.BADGE_FULL_WEP); // Weapon Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_ARM); // Armour Hoarder
+  Game.badgeCheck(Game.BADGE_FULL_AMAZING); // Expensive Tastes
+  Game.updateInventory = true;
 	Game.drawActivePanel();
 }
-
 Game.reforgeWeapon = function(debuff, isSuperior) {
   var debuffCost = isSuperior ? 2 : 1;
   if(debuff >= Game.DEBUFF_SHRED) {
@@ -588,7 +687,12 @@ Game.reforgeWeapon = function(debuff, isSuperior) {
   }
   else {
     var isRandom = false;
-    if(debuff < Game.DEBUFF_SHRED) { debuff = Game.RNG(Game.DEBUFF_SHRED, Game.DEBUFF_DISARM); isRandom = true; }
+    if(debuff < Game.DEBUFF_SHRED) {
+      debuff = Game.RNG(Game.DEBUFF_SHRED, Game.DEBUFF_DISARM);
+      isRandom = true;
+      Game.PROGRESS_RANDOM_DEBUFFS++;
+      Game.badgeCheck(Game.BADGE_RANDOM_DEBUFFS); // Rolling the Bones
+    }
     var dbName = ""; var validDebuffName = false;
     if((isSuperior || debuff == Game.DEBUFF_MC) && !isRandom) {
        while(!validDebuffName) {
@@ -641,5 +745,48 @@ Game.reforgeWeapon = function(debuff, isSuperior) {
     }
     Game.p_Scrap -= debuffCost;
     Game.toastNotification("Weapon has been reforged.");
+    Game.TRACK_REFORGES++;
+    Game.PROGRESS_DEBUFF_SPEND += debuffCost; // Happy Customer
+  }
+  Game.updateForge = true;
+}
+Game.repopulateShop = function() {
+  Game.repopulateWeaponShop();
+  Game.repopulateArmourShop();
+}
+Game.repopulateWeaponShop = function() {
+  Game.p_WeaponShopStock = [];
+  var isGreat = false;
+  var firstItem = [];
+  while(!isGreat) {
+    firstItem = Game.makeWeapon(Game.p_Level);
+    if(firstItem[7] >= Game.QUALITY_GREAT) { isGreat = true; }
+  }
+  Game.p_WeaponShopStock.push(firstItem)
+  for(var x = 1; x <= Game.p_ShopStockLimit; x++) {
+    var nextItem = Game.makeWeapon(Game.p_Level);
+    while(nextItem[7] < Game.QUALITY_GOOD) {
+      nextItem = Game.makeWeapon(Game.p_Level);
+    }
+    Game.p_WeaponShopStock.push(nextItem);
   }
 }
+Game.repopulateArmourShop = function() {
+  Game.p_ArmourShopStock = [];
+  var isGreat = false;
+  var firstItem = [];
+  while(!isGreat) {
+    firstItem = Game.makeArmour(Game.p_Level);
+    if(firstItem[2] >= Game.QUALITY_GREAT) { isGreat = true; }
+  }
+  Game.p_ArmourShopStock.push(firstItem)
+  for(var x = 1; x <= Game.p_ShopStockLimit; x++) {
+    var nextItem = Game.makeArmour(Game.p_Level);
+    while(nextItem[2] < Game.QUALITY_GOOD) {
+      nextItem = Game.makeArmour(Game.p_Level);
+    }
+    Game.p_ArmourShopStock.push(nextItem);
+  }
+}
+
+document.getElementById("loadedInventory").style.display = "";

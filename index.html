@@ -2,228 +2,56 @@
 <html>
 	<head>
 		<title>Realm of Decay</title>
-    <script type="text/javascript" src="init.v0.244a.js"></script>
-    <script type="text/javascript" src="strings.v0.244a.js"></script>
-    <script type="text/javascript" src="powers.v0.244a.js"></script>
-    <script type="text/javascript" src="combat.v0.244a.js"></script>
-    <script type="text/javascript" src="inventory.v0.244a.js"></script>
-    <script type="text/javascript" src="player.v0.244a.js"></script>
-    <script type="text/javascript" src="tickers.v0.244a.js"></script>
-    <script type="text/javascript" src="ui.v0.244a.js"></script>
-    <script type="text/javascript">
-      function keyBindings(key) {
-        var eventObj = window.event ? event : key;
-        var pkCode = eventObj.charCode ? eventObj.charCode : eventObj.keyCode;
-        var pressedKey = String.fromCharCode(pkCode);
-        switch(pressedKey) {
-          case "1":
-            Game.showPanel('combatTable');
-            break;
-          case "2":
-            Game.showPanel('powersTable');
-            break;
-          case "3":
-            Game.showPanel('inventoryTable');
-            break;
-          case "4":
-            Game.showPanel('forgeTable');
-            break;
-          case "5":
-            Game.showPanel('miscTable');
-            break;
-          case "6":
-            Game.showPanel('helpTable');
-            break;
-          case "7":
-            Game.showPanel('updateTable');
-            break;
-          case " ":
-            Game.startCombat();
-            Game.showPanel('combatTable');
-            break;
-          case "b":
-            if(Game.p_State == Game.STATE_COMBAT && !Game.p_specUsed) { Game.p_specUsed = true; Game.burstAttack(); }
-            break;
-          case "f":
-            if(Game.p_State == Game.STATE_COMBAT) { Game.fleeCombat(); }
-            break;
-          case "w":
-            if(Game.p_State == Game.STATE_IDLE) { Game.startWeaponRepair(); }
-            break;
-          case "a":
-            if(Game.p_State == Game.STATE_IDLE) { Game.startArmourRepair(); }
-            break;
-        }
-      }
-      document.onkeypress = keyBindings;
-    </script>
-		<link rel="stylesheet" type="text/css" href="style.v0.244a.css" />
+		<link rel="stylesheet" type="text/css" href="style.v1.0.css" />
 	</head>
 	<body onload="Game.init()">
 		<div id="main">
-			<table class="titleBar">
+      <table id="topBar">
+        <tr>
+          <td style="text-align:center;width:125px;"><span><strong>Realm of Decay</strong> <br /><span style="font-size:10px;">Version 1.0 RC1</span></span></td>
+          <td class="topBarButton" id="playerTab">Player</td>
+          <td class="topBarButton" id="combatTab">Combat</td>
+          <td class="topBarButton" id="zoneTab">Zones</td>
+          <td class="topBarButton" id="powersTab">Powers</td>
+          <td class="topBarButton" id="inventoryTab">Items</td>
+          <td class="topBarButton" id="storeTab">Store</td>
+          <td class="topBarButton" id="optionsTab">Options</td>
+          <td class="topBarButton" id="helpTab">Help</td>
+          <td class="topBarButton" id="updateTab">Updates</td>
+          <td class="topBarButton" id="badgeTab">Badges</td>
+          <td style="text-align:right;">
+            <span style="font-size:12px;display:inline-block;">
+              Seeds: <span id="seedsOut"></span><br />
+              Scrap: <span id="scrapOut"></span>
+            </span></td>
+        </tr>
+      </table>
+			<table style="width:100%">
 				<tr>
-					<td class="powerHeader">Realm of Decay</td>
-				</tr>
-			</table>
-				<span class="tabBar" style="padding-left:205px;">&nbsp;</span>
-				<span class="tabButton" id="combatTab" onclick="Game.showPanel('combatTable');">Combat</span>
-				<span class="tabButton" id="powersTab" onclick="Game.showPanel('powersTable');">Powers</span>
-				<span class="tabButton" id="inventoryTab" onclick="Game.showPanel('inventoryTable');">Inventory</span>
-				<span class="tabButton" id="forgeTab" onclick="Game.showPanel('forgeTable');">Forge</span>
-				<span class="tabButton" id="miscTab" onclick="Game.showPanel('miscTable');">Options</span>
-				<span class="tabButton" id="helpTab" onclick="Game.showPanel('helpTable');">Help</span>
-        <span class="tabButton" id="updateTab" onclick="Game.showPanel('updateTable');">Updates</span>
-        <span style="font-size:14px;float:right;text-align:right;padding-right:15px;">Autobattle:&nbsp;
-          <span style="font-size:14px;float:right;text-align:right;" id="autoBattleState"></span></span>
-			<table width="900px">
-				<tr>
-					<td id="leftPanel" width="200px" valign="top">
-						<table class="playerInfo">
-							<tr align="center">
-								<td class="blockHeader" colspan="2">Player Statistics</td>
-							</tr>
-							<tr>
-								<td>Level: </td>
-								<td><div id="p_Level"></div></td>
-							</tr>
-							<tr>
-								<td>Experience: </td>
-								<td><div id="p_EXP"></div></td>
-							</tr>
-							<tr>
-								<td>Next Level: </td>
-								<td><div id="p_NextEXP"></div></td>
-							</tr>
-							<tr>
-								<td>Health: </td>
-								<td><div id="HPOut"><span id="p_HP"></span>/<span id="p_MaxHP"></span></div></td>
-							</tr>
-              <tr id="p_debuffHeader">
-                <td colspan="2"><span class="blockHeader">Debuff:</span><br /><span id="p_debuffOut"></span></td>
-              </tr>
-              <tr>
-                <td>&nbsp;</td>
-              </tr>
-							<tr>
-								<td>Strength: </td>
-								<td><div id="p_Str"></div></td>
-							</tr>
-							<tr>
-								<td>Dexterity: </td>
-								<td><div id="p_Dex"></div></td>
-							</tr>
-							<tr>
-								<td>Intelligence: </td>
-								<td><div id="p_Int"></div></td>
-							</tr>
-							<tr>
-								<td>Constitution: </td>
-								<td><div id="p_Con"></div></td>
-							</tr>
-              <tr>
-                <td>&nbsp;</td>
-              </tr>
-              <tr>
-                <td>Seeds: </td>
-                <td><div id="CurrencyOut"></div></td>
-              </tr>
-              <tr>
-                <td>Scrap: </td>
-                <td><div id="ScrapOut"></div></td>
-              </tr>
-              <tr><td>&nbsp;</td></tr>
-              <tr>
-                <td>Boss Chance: </td>
-                <td><div id="bossChanceOut"></div></td>
-              </tr>
-						</table>
-						<table class="weaponInfo">
-							<tr align="center">
-								<td class="blockHeader" colspan="2">Weapon Statistics</td>
-							</tr>
-							<tr align="center">
-								<td colspan="2"><div id="w_Name"></div></td>
-							</tr>
-              <tr id="w_flavourTextHandle">
-                <td colspan="2"><div id="w_flavourText"></div></td>
-              </tr>
-              <tr>
-								<td>Level: </td>
-								<td><div id="w_Level"></div></td>
-							</tr>
-							<tr>
-								<td>Type: </td>
-								<td><div id="w_Type"></div></td>
-							</tr>
-							<tr>
-								<td>Speed: </td>
-								<td><div id="w_Speed"></div></td>
-							</tr>
-							<tr>
-								<td>Damage: </td>
-                <td><span id="w_minDamage"></span> - <span id="w_maxDamage"></span></td>
-							</tr>
-							<tr>
-								<td>DPS: </td>
-								<td><div id="w_DPS"></div></td>
-							</tr>
-							<tr>
-								<td>Durability: </td>
-								<td><div id="w_Decay"></div></td>
-							</tr>
-              <tr id="weaponDebuff">
-                <td colspan="2"><span class="blockHeader">Applied Debuff:</span><br /><span id="weaponDebuffOut"></span></td>
-              </tr>
-              <tr id="weaponRepairPanel">
-                <td colspan="2">
-                  <span class="bigButton" id="repairButton" onClick="Game.startWeaponRepair();">Repair Weapon</span>
-                </td>
-              </tr>
-						</table>
-            <table class="armourInfo">
-              <tr align="center">
-								<td class="blockHeader" colspan="2">Armour Statistics</td>
-							</tr>
-							<tr align="center">
-								<td colspan="2"><div id="a_Name"></div></td>
-							</tr>
-              <tr id="a_flavourTextHandle">
-                <td colspan="2"><div id="a_flavourText"></div></td>
-              </tr>
-              <tr>
-								<td>Level: </td>
-								<td><div id="a_Level"></div></td>
-							</tr>
-							<tr>
-								<td>Durability: </td>
-								<td><div id="a_Decay"></div></td>
-							</tr>
-              <tr>
-                <td colspan="2" id="armourStats"></td>
-              </tr>
-              <tr id="armourRepairPanel">
-                <td colspan="2">
-                  <span class="bigButton" id="repairButton" onClick="Game.startArmourRepair();">Repair Armour</span>
-                </td>
-              </tr>
-            </table>
-					</td>
 					<td id="rightPanel" valign="top">
 						<table>
 							<tr>
 								<td>
-									<table id="combatTable" style="display:none;">
+                  <table id="playerTable" style="display:none;">
                     <tr>
                       <td>
-													<span id="playerHPHeader" style="float:left;">Player Health</span>
-											</td>
-                      <td>
-													<span id="enemyHPHeader" style="float:right;">Enemy Health</span>
-											</td>
+                        <div id="playerInfoPanel"></div>
+                        <div id="playerEquipmentPanel"></div>
+                      </td>
                     </tr>
                     <tr>
-											<td colspan="2">
+                      <td>
+                        <div class="powerHeader">Statistics</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td id="statsOut">
+                      </td>
+                    </tr>
+                  </table>
+									<table id="combatTable" style="display:none;">
+                    <tr>
+											<td>
 												<div class="playerHPBorder">
 													<img id="playerHPBar" class="playerHPBar" src="Clear.gif" />
 												</div>
@@ -233,87 +61,69 @@
 											</td>
 										</tr>
 										<tr>
-											<td id="enemyInfo" colspan="2">
-                        <table>
-                          <tr>
-                            <td align="left" width="50%">
-                              <span id="enemyName"></span>
-                            </td>
-                            <td align="left" width="10%">
-                              <span id="enemyLevel"></span>
-                            </td>
-                            <td align="left" width="10%">
-                              <span id="enemyMainStat"></span>
-                            </td>
-                            <td align="right" width="20%">
-                              <span id="enemyHealth"></span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td align="left" colspan="2">
-                              <span id="enemyWeapon"></span>
-                            </td>
-                            <td align="right" colspan="2">
-                              <span id="enemyDebuffOutput"></span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td align="left" colspan="4">
-                              <span id="enemyArmour"></span>
-                            </td>
-                          </tr>
-                        </table>
+											<td>
+                        <span id="playerCombatPanel"></span>
+                        <span id="enemyCombatPanel" style="float:right;"></span>
 											</td>
 										</tr>
-                    <tr id="combatActionBar">
-                      <td colspan="2">
-                        <span class="bigButton" id="specialButton" onClick="if(!Game.p_specUsed) { Game.p_specUsed = true; Game.burstAttack(); }"></span>
-                        <span class="bigButton" id="fleeButton" onClick="Game.fleeCombat();">Flee from battle</span>
+                    <tr>
+                      <td>
+                        <span id="playerCombatWeaponPanel"></span>
+                        <span id="enemyCombatWeaponPanel" style="float:right;"></span>
                       </td>
                     </tr>
-                    <tr id="oocActionBar">
-                      <td colspan="2">
-                        <span class="bigButton" id="combatButton" onClick="Game.startCombat();">Look for something to kill</span>
+                    <tr>
+                      <td>
+                        <span id="playerCombatArmourPanel"></span>
+                        <span id="enemyCombatArmourPanel" style="float:right;"></span>
                       </td>
                     </tr>
 										<tr>
-											<td colspan="2">
+											<td>
                         <div class="powerHeader">Combat Log</div>
                         <div id="logBody"></div>
 											</td>
 										</tr>
 									</table>
+                  <table id="zoneTable" style="display:none;">
+                    <tr>
+                      <td>
+                        <div class="powerHeader">Current Zone</div>
+                        <div id="currentZone"></div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="powerHeader">Zone List</div>
+                        <div id="zoneList"></div>
+                    </tr>
+                  </table>
 									<table id="powersTable" style="display:none;">
 										<tr>
 											<td>
-                        <div id="levelUpPanel">
-													<span class="powerHeader">Stat Point Allocation (<span id="skillPoints"></span> point(s) available)</span>
-													<br />
-													<span class="bigButton" onClick="Game.addStat(Game.STAT_STR);">+1 Strength</span>
-													<span class="bigButton" onClick="Game.addStat(Game.STAT_DEX);">+1 Dexterity</span>
-													<span class="bigButton" onClick="Game.addStat(Game.STAT_INT);">+1 Intelligence</span>
-													<span class="bigButton" onClick="Game.addStat(Game.STAT_CON);">+1 Constitution</span>
-												</div>
 												<table id="availablePowers" class="availablePowersPanel">
-													<tr>
-														<td colspan="2" class="powerHeader">
-															Powers List (<span id="p_PP"></span> point(s) available)
-														</td>
-													</tr>
+                          <tr>
+                            <td id="availablePowersHeader"><div class="powerHeader">Available Powers (<span id="powerPointsOut"></span> points available):</div></td>
+                          </tr>
 													<tr id="available_row">
                             <td id="available_area">
                             </td>
                           </tr>
-                          <tr>
-                            <td>
-                              <span class="bigButton" id="powerReset" onclick="Game.resetPowers();">Reset Powers</span>
-                            </td>
-                          </tr>
 												</table>
+                        <div class="powerHeader">Selected Powers</div>
+                        <table id="purchasedPowers" class="availablePowersPanel">
+                          <tr>
+                            <td id="purchased_area"></td>
+                          </tr>
+                        </table>
+                        <span class="nonPanelButton" id="powerReset" onclick="Game.resetPowers();">Reset your Powers</span>
 											</td>
 										</tr>
 									</table>
 									<table id="inventoryTable" style="display:none;">
+                    <tr id="cleanup">
+                      <td><span class="nonPanelButton" onclick="Game.automaticInventoryClear();">Clean Inventory</span></td>
+                    </tr>
                     <tr id="enemyItems" style="display:none;">
                       <td>
                         <div class="powerHeader">Enemy Inventory</div>
@@ -327,343 +137,200 @@
                     <tr id="weaponCache" style="display:none;">
                       <td>
                         <div class="powerHeader">Weapon Cache</div>
-                          <span onclick="Game.sellAllWeapons()" class="bigButton">Sell All</span>
-                          <span onclick="Game.scrapAllWeapons()" class="bigButton">Scrap All</span>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <table id="weaponOut"></table>
+                        <div id="weaponOut"></div>
                       </td>
                     </tr>
                     <tr id="armourCache" style="display:none;">
                       <td>
-                        <div class="powerHeader">Armour Cache&nbsp;</div>
-                          <span onclick="Game.sellAllArmour()" class="bigButton">Sell All</span>
-                          <span onclick="Game.scrapAllArmour()" class="bigButton">Scrap All</span>
+                        <div class="powerHeader">Armour Cache</div>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        <table id="armourOut"></table>
+                        <div id="armourOut"></div>
+                      </td>
+                    </tr>
+                    <tr id="potionCache" style="display:none;">
+                      <td>
+                        <div class="powerHeader">Potion Cache</div>
+                      </td>
+                      <td>
+                        <div id="potionsOut"></div>
                       </td>
                     </tr>
                   </table>
-									<table id="forgeTable" style="display:none;">
+									<table id="storeTable" style="display:none;">
                     <tr>
                       <td colspan="2">
-                        <div class="powerHeader">The Forge</div>
+                        <div class="powerHeader">Upgrading Items</div>
                       </td>
                     </tr>
                     <tr>
                       <td>
-                        Raise the level of <span id="weaponLevelUpgradeName"></span> by one.<br />
-                        Cost: <span id="weaponLevelUpgradeCost"></span> seeds
+                        <div id="weaponPanelOut"></div>
                       </td>
-                      <td><span class="bigButton" onClick="Game.buyWeaponLevelUpgrade();">Raise Weapon Level</span></td>
-                    </tr>
-                    <tr>
                       <td>
-                        Raise the level of <span id="armourLevelUpgradeName"></span> by one.<br />
-                        Cost: <span id="armourLevelUpgradeCost"></span> seeds
-                      </td>
-                      <td><span class="bigButton" onClick="Game.buyArmourLevelUpgrade();">Raise Armour Level</span></td>
-                    </tr>
-                    <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                    <tr id="weaponQualityUpRow">
-                      <td>
-                        Raise the quality of <span id="weaponQualityUpgradeName"></span><br />
-                        Cost: <span id="weaponQualityUpgradeCost"></span> scrap
-                      </td>
-                      <td><span class="bigButton" onClick="Game.buyWeaponQualityUpgrade();">Raise Weapon Quality</span>
-                    </tr>
-                    <tr id="armourQualityUpRow">
-                      <td>
-                        Raise the quality of <span id=armourQualityUpgradeName></span><br />
-                        Cost: <span id="armourQualityUpgradeCost"></span> scrap
-                      </td>
-                      <td><span class="bigButton" onClick="Game.buyArmourQualityUpgrade();">Raise Armour Quality</span>
+                        <div id="armourPanelOut"></div>
                     </tr>
                     <tr><td>&nbsp;</td></tr>
                     <tr>
                       <td colspan="2">
-                        <div class="powerHeader">Debuff Reforging</div>
-                        <table>
-                          <thead style="font-weight:bold">
-                            <tr>
-                              <td style="width:50%;">Debuff Type</td>
-                              <td style="width:25%;">Normal</td>
-                              <td style="width:25%;">Superior</td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>Random</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(240,false);">1 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(240,true);">2 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">Picks one debuff at random from any of those listed below.</td>
-                            </tr>
-                            <tr>
-                              <td>Armour Shred (Ruthlessness)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(241,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(241,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">Causes all of your attacks to ignore positive armour effects for 10 (15) seconds.</td>
-                            </tr>
-                            <tr>
-                              <td>Double Attack (Frenzy)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(242,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(242,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">All attacks cause a second strike against the target for 50% (70%) more damage for 10 (15) seconds.</td>
-                            </tr>
-                            <tr>
-                              <td>Health Drain (Bloodthirst)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(243,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(243,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">You are healed for 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
-                            </tr>
-                            <tr>
-                              <td>Slower Attacks (Cripple)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(244,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(244,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">The target's attack speed is lowered by 15% (25%) for 10 (15) seconds.</td>
-                            </tr>
-                            <tr>
-                              <td>Confusion (Charm)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(245,false);">4 scrap</span></td>
-                              <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">Causes the target's next attack to be aimed at themselves, ignoring their armour.</td>
-                            </tr>
-                            <tr>
-                              <td>Damage Over Time (Wound Poison)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(246,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(246,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">The target takes an additional 20% (30%) of your weapon damage per second for 10 (15) seconds.</td>
-                            </tr>
-                            <tr>
-                              <td>Paralysis (Nerve Strike)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(247,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(247,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target has a 15% (25%) chance for their attack to be nullified.</td>
-                            </tr>
-                            <tr>
-                              <td>Doom (Mounting Dread)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(248,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(248,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">Grants a 6% (10%) chance to instantly kill the target. Deals 250% (350%) weapon damage if it fails.</td>
-                            </tr>
-                            <tr>
-                              <td>Disarm (Disarmed)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(249,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(249,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">For the next 10 (15) seconds, the target's attacks will deal 50% damage, and will not apply debuffs.</td>
-                            </tr>
-                            <tr>
-                              <td>Sleep (Comatose)</td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(250,false);">4 scrap</span></td>
-                              <td><span class="bigButton" onclick="Game.reforgeWeapon(250,true);">8 scrap</span></td>
-                            </tr>
-                            <tr>
-                              <td colspan="3" style="text-align:left;">Places the target into a deep sleep for 10 (15) seconds. Attacks dealt to the target have a 20% (10%) chance to wake it.</td>
-                            </tr>
-                        </table>
+                        <div class="powerHeader">Reforging Debuffs</div>
+                        <div id="debuffList"></div>
                       </td>
                     </tr>
-                  </table>
-									<table id="miscTable" style="display:none;">
                     <tr>
                       <td>
-                        <span class="bigButton" onClick="Game.save();">Save Game</span>
-                        <span class="bigButton" onClick="Game.reset();">Reset Game</span>
-                        <br /><br />
-                        <div class="powerHeader">Autobattle Options</div>
-												<div>Toggle Autobattle Activation: <span class="bigButton" id="ab_toggle" onclick="Game.toggleAutoBattle();">Enable / Disable</span></div>
-												<div>Health Percentage to Flee From Combat:
-                          <span>
-                            <select id="ab_fleePercent" style="color:#000000;">
-                              <option value="5">5%</option>
-                              <option value="10" selected="selected">10%</option>
-                              <option value="15">15%</option>
-                              <option value="20">20%</option>
-                              <option value="25">25%</option>
-                              <option value="30">30%</option>
-                            </select>
-                          </span>
-                        </div>
-                        <div>Automatic Repair Threshold:
-                          <span>
-                            <select id="ab_lowdura" style="color:#000000;">
-                              <option value="5">5</option>
-                              <option value="10" selected="selected">10</option>
-                              <option value="15">15</option>
-                              <option value="20">20</option>
-                              <option value="25">25</option>
-                              <option value="30">30</option>
-                            </select>
-                          </span>
-                        </div>
-                        <div>Full Weapon Inventory Handling Method:
-                          <span>
-                            <select id="ab_wepfull" style="color:#000000;">
-                              <option value="SELL" selected="selected">Sell</option>
-                              <option value="SCRAP">Scrap</option>
-                            </select>
-                          </span>
-                        </div>
-                        <div>Full Armour Inventory Handling Method:
-                          <span>
-                            <select id="ab_armfull" style="color:#000000;">
-                              <option value="SELL" selected="selected">Sell</option>
-                              <option value="SCRAP">Scrap</option>
-                            </select>
-                          </span>
-                        </div>
-                        <br /><br />
-                        <div class="powerHeader">Bulk Options</div>
-                        <div>Weapon Quality Bulk Sell/Scrap Threshold:
-                          <span>
-                            <select id="wep_minBulk" style="color:#000000;">
-                              <option class="q221" value="221">Poor</option>
-                              <option class="q222" style="color:#000000;" value="222" selected="selected">Normal</option>
-                              <option class="q223" value="223">Good</option>
-                              <option class="q224" value="224">Great</option>
-                              <option class="q225" value="225">Amazing</option>
-                            </select>
-                          </span>
-                        </div>
-                        <div>Armour Quality Bulk Sell/Scrap Threshold:
-                          <span>
-                            <select id="arm_minBulk" style="color:#000000;">
-                              <option class="q221" value="221">Poor</option>
-                              <option class="q222" style="color:#000000;" value="222" selected="selected">Normal</option>
-                              <option class="q223" value="223">Good</option>
-                              <option class="q224" value="224">Great</option>
-                              <option class="q225" value="225">Amazing</option>
-                            </select>
-                          </span>
-                        </div>
-                        <div>(Items of this quality or less will be eligible for bulk sell/scrap)</div>
+                        <div class="powerHeader">Weapons For Sale</div>
+                        <div id="storeWeapons"></div>
+                        <div class="powerHeader">Armour For Sale</div>
+                        <div id="storeArmour"></div>
                       </td>
                     </tr>
                   </table>
-                  <table id="helpTable">
+									<table id="optionsTable" style="display:none;">
+                    <tr>
+                      <td>
+                        <div id="autoBattleHook"></div>
+                        <div id="autoSellHook"></div>
+                        <div id="saveHook"></div>
+                      </td>
+                    </tr>
+                  </table>
+                  <table id="helpTable" style="display:none;">
                     <tr>
                       <td>
                         <div class="powerHeader">Introduction</div>
-                        <p>Welcome to the Realm of Decay! If you hadn't already guessed from the name, this is not a nice place to find yourself waking up in. The aftermath of Inevitable Cliche Magical Control War has ravaged the land, and left some rather odd side effects on you, one of the few human survivors of the conflict.</p>
-<p>Mutations brought on through years of magical abuse have caused your hands to emit a strange aura that accelerates the decomposition of non-organic objects in the near vicinity to them. Every man-made object you touch begins to break apart and require reconstruction after a short period of time.</p>
-<p>An annoying enough problem to deal with in normal civilisation, made worse by the collapse of modern society. Now you have to fight off large numbers of hostile creatures (both natural and unnatural) while making sure your gear is kept in check. Good luck!</p>
-                        <div class="powerHeader">Core Stats</div>
-                        <p>While in the Realm of Decay, you'll spend a lot of your time fighting. As such, you'll need a good grasp of the mechanics and statistics needed to ensure you come out on top. You have several main statistics, four of which can be upgraded with Skill Points on the Powers tab:</p>
-                        <p><strong>Strength</strong> influences the damage dealt with melee weapons.<br />
-                          <strong>Dexterity</strong> influences the damage dealt with ranged weapons.<br />
-                          <strong>Intelligence</strong> influences the damage dealt with magical weapons.<br />
-                          <strong>Constitution</strong> influences your health regeneration rate, as well as health gain per level.</p>
-                        <p>In addition to these, you also have a number of hitpoints, a measure of how close to incapacitation you are; experience points, which are a measure of how close you are to the next level of power, and Power Points, which can be spent on various beneficial effects detailed on the Powers tab.</p>
-                        <p>Each of the four main statistics gains a point on level up. You'll gain an additional point in the dominant statistic for your equipped weapon, and you have a chance to gain an extra constitution point on level up. You will also gain a Skill Point and a Power Point every level to be freely allocated.</p>
-                        <div class="powerHeader">Equipment</div>
-                        <p>Speaking of weapons, your equipment is perhaps the most important aspect of survival in the realm. There are two types of equipment - weapons and armour.</p>
-                        <p><strong>Weapons</strong> influence the damage you deal, both in type and value. There are three damage types (melee, ranged and magic) although there is no mechanical difference between them. There are also 'speed tiers' of weapons, where the speed of the weapon determines the delay between hits, as well as the degree to which the dominant stat affects their damage.</p>
-                        <p><strong>Fast Weapons</strong> have an attack speed between 1.6 and 2.0 seconds, and low damage per hit.<br />
-                          <strong>Normal Weapons</strong> have an attack speed between 2.1 and 2.5 seconds, and average damage per hit.<br />
-                          <strong>Slow Weapons</strong> have an attack speed between 2.6 and 3.0 seconds, and high damage per hit.<br /></p>
-                        <p><strong>Armour</strong> influences the damage taken from incoming attacks. Armour provides a flat modifier to damage taken from specific weapon types. Faster weapons will be more affected by armour than slower weapons due to the flat nature of the damage reduction.<br />
-                          It is worth noting that armour can also carry a weakness to one or more damage types, which increases the damage taken from attacks.</p>
-                        <div class="powerHeader">Item Quality</div>
-                        <p>There are 5 quality tiers available for items that are obtained in the Realm of Decay. These are as follows:</p>
-                        <p><span class="q221">Poor (grey)</span> items are the lowest quality of item.<br />
-                           - Weapons of poor quality have 90% of their intended damage values.<br />
-                           - Armours of poor quality carry 1 strength, and 2 vulnerabilities.<br />
-                          <span class="q222">Normal (white)</span> items are the most common quality of item in the Realm of Decay.<br />
-                           - Weapons of normal quality have no distinguishing features.<br />
-                           - Armours of normal quality carry 1 strength and 1 vulnerability.<br />
-                          <span class="q223">Good (green)</span> items are a step above normal items.<br />
-                           - Weapons of good quality have 110% of their intended damage values, as well as a normal debuff.<br />
-                           - Armours of good quality carry 2 strengths and 1 vulnerability.<br />
-                          <span class="q224">Great (blue)</span> items represent superior craftsmanship.<br />
-                           - Weapons of great quality have 120% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
-                           - Armours of great quality carry 2 strengths and no vulnerabilities.<br />
-                          <span class="q225">Amazing (purple)</span> items represent the pinnacle of items obtainable in the Realm.<br />
-                           - Weapons of amazing quality have 130% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
-                           - Armours of amazing quality carry 3 strengths and no vulnerabilities.</p>
+
+                        <p>Remember that old saying, 'war never changes'? Yea, the guys who came up with that never banked on the ground breaking re-discovery of magic, long considered unfeasible by society at large and persecuted out of existence centuries ago.</p>
+
+                        <p>With society being what it was at the time, precious few people outside of government agencies knew of these developments, or of the raw power that could be harnessed with them, until that power was brought to bear against them. When concrete information finally came to light about the discoveries, millions had already fallen in titanic struggles worldwide, the result of militaries across the globe testing the limits and applications of their new-found strength.</p>
+
+                        <p>However, their meddling with the powers laying dormant within the planet has come at a great cost. Some once verdant areas of the land are fading away without warning or visible cause, to be reduced to deserted and arid areas. On top of this, those who most consistently exercised their magical prowess have found themselves suffering from a myriad of strange and incomprehensible effects: seemingly random loss of limbs, sudden blindness, occasionally bursting into flame, that sort of thing.</p>
+
+                        <p>And then there's you. Once a prominent researcher at the Ley Line Research Facility, your life was turned upside down when you fell victim to an interesting, if maddening ailment - your hands, usually good for just about anything, now cause a noticeable increase in the rate at which non-natural objects degrade when held. This problem was discovered when an incredibly valuable ancient artifact crumbled to dust in your hands, costing the facility millions.</p>
+
+                        <p>Now with nothing left to return to, you find yourself living off scraps and foraging in a cave system some distance away from the facility. Seeking to right some of the many wrongs committed by your colleagues and the people they now serve, you cobble together a crude weapon and head out into the ravaged world to mete out justice, one way or another.</p>
+
+                        <div class="powerHeader">Combat Mechanics</div>
+
+                        <p>Everything in the Realm is out to kill you, whether it's for survival or just because they don't like your face, so it's in your best interest to learn how fighting works. Each combatant will have two pieces of equipment to consider: their weapon, which dictates the amount and type of damage they will deal, and their armour, which dictates how much damage they will take. When looking at the 'Combat' tab, these items are laid out side by side, along with the combatant names and health pools.</p>
+
+                        <p>When combat begins - initiated by the 'Look for something to kill' button - a target will be located for you, and then the two of you will begin trading blows until either you fall, the target falls, or you run away.</p>
+
+                        <p>When attacking a target, the damage you deal is based on a few things:</p>
+                        <ul>
+                          <li>The attack damage on your weapon;</li>
+                          <li>The value of the stat relating to your current weapon (Strength for melee, Dexterity for ranged, Intelligence for magic);</li>
+                          <li>Any resistances or vulnerabilities on the target's armour;</li>
+                          <li>Any powers that inflence damage dealt.</li>
+                        </ul>
+
+                        <p>And when your target decides to fight back, the damage they deal to you is based on a similar set of values:</p>
+                        <ul>
+                          <li>The attack damage on their weapon;</li>
+                          <li>Their 'main stat' value (this plays the same role yours does in your damage calculation);</li>
+                          <li>Any resistances or vulnerabilities on your armour;</li>
+                          <li>Any powers that influence damage taken.</li>
+                        </ul>
+
+                        <p>Your offensive options during combat are limited to fleeing, using a potion, and using a Burst Attack. The Burst Attack button is simply a single strike delivered instantly to the target, respecting all the usual rules regarding how much damage is dealt, as well as resetting the time delay between attacks.</p>
+
+                        <p>When you are not in combat, your health regenerates based on your Constitution value. That value also increases the size of your maximum health pool, which is good for the whole 'not dying' thing.</p>
+
                         <div class="powerHeader">Debuffs</div>
-                        <p>Weapons of Good quality or higher carry a debuff, which has a 10% chance of activating in combat and producing one of a number of beneficial effects. These are as follows:</p>
-                        <p><strong>Armour Shred</strong> - Ruthlessness - negates any beneficial effects of the target's armour.<br />
-                          <strong>Double Strike</strong> - Frenzy - causes every attack to deliver a second strike for reduced damage.<br />
-                          <strong>Health Drain</strong> - Bloodthirst - restores a percentage of weapon damage as health every second.<br />
-                          <strong>Slowed Attacks</strong> - Cripple - increases the delay between the victim's attacks.<br />
-                          <strong>Confusion</strong> - Mind Control - causes the victim's next attack to be targeted at themselves, ignoring any armour they are wearing.<br />
-                          <strong>Damage Over Time</strong> - Wound Poison - deals a percentage of weapon damage to the victim every second.<br />
-                          <strong>Paralysis</strong> - Nerve Strike - grants a chance for the victim's attacks to fail.<br />
-                          <strong>Doom</strong> - Mounting Dread - grants a small chance to kill the victim outright at the end of the debuff duration, or dealing a significant amount of damage if it does not.<br />
-                          <strong>Disarm</strong> - Disarmed - causes the victim's weapon damage to be reduced by half, and also prevents debuffs from being applied.<br />
-                          <strong>Sleep</strong> - Comatose - causes the victim to fall asleep, preventing them from attacking, fleeing or using their Burst Attack for the duration. This debuff can break early whenever the victim is attacked.</p>
-                          <p>Some debuffs may have differing names from the ones listed above, specifically those on found Great or Amazing quality weapons.</p>
-                        <div class="powerHeader">Combat</div>
-                        <p>Combat in the Realm of Decay can be initiated by clicking the 'Look for something to kill' button on the Combat tab. This tab holds all information relevant to combat, including health bars of the combatants, information on the enemy, and a detailed combat log.</p>
-                        <p>The actual process of combat is mostly a passive affair - you and your enemy trade blows at a speed determined by your weapons and any powers or debuffs that influence those speeds. The player will only need to interact with the system to either flee from combat, or to initiate a 'Burst Attack'</p>
-                        <p>A 'Burst Attack' is a single instant attack delivered just like any other, with the exception that it can only be used once every 10 seconds, and that it resets your attack delay timer. It applies debuffs and is affected by armour just like a normal attack would be. The best timing to use this attack depends on a few factors, although typically you'd want to use it to gain an extra boost from an on-hit debuff (Armour Shred or Double Strike for example)</p>
-                        <p>If you win the fight, you gain an amount of experience and also some 'seeds' - these are the currency in the Realm, used to upgrade weaponry and armour. Additionally, you also get the items the enemy had equipped.</p>
-                        <p>If you lose the fight, you are penalised by losing a quarter of your accumulated experience, but can otherwise continue. If you are in danger of losing, you may flee combat at no cost.</p>
-                        <div class="powerHeader">Decay</div>
-                        <p>During combat, your weapons and armour will suffer durability damage. While an item has any durability, it will perform at full capacity. Weapons with 0 durability operate at 25% strength, while armour with 0 durability loses all of its positive effects (negative ones are still applied).</p>
-                        <p>Whenever you are not in combat, you have the ability to repair weapons and armour that you currently have equipped. This process takes 1 second, plus an additional 1 second for every 5 levels of the item. It does not cost anything to repair equipment. Quality does not influence the time repairs take.</p>
-                        <div class="powerHeader">Inventory</div>
-                        <p>Your inventories store all of your accumulated items, and present options as to how they can be used. Equipment can be changed freely in combat, so bear this in mind if you have any additional items lying around that may help you break through armour or protect yourself better.</p>
-                        <p>Items in the inventory can be sold for seeds, or converted into scrap. Scrap is a resource used to increase the quality of your equipped items, and a substantial amount is required to perform higher quality upgrades. The amount of seeds you gain from selling an item depends on the quality and level of the item, whereas the amount of scrap you gain from an item is dependant solely on the item's quality.</p>
-                        <div class="powerHeader">Forge</div>
-                        <p>The Forge tab contains a few options for upgrading the items you currently have equipped. It does not affect anything in your inventory. Raising an item's level costs an amount of seeds, which scales with the item's current level and quality.</p>
-                        <p>Raising an item's quality is a little different, first in that it costs scrap, and second in that certain effects apply when reaching certain quality thresholds. When an item is upgraded to <span class='q224'>Great</span> quality, you gain the ability to assign a custom name and flavour text to it.</p>
-                        <p>For weapons, the weapon will also gain a random debuff when it is upgraded to <span class='q223'>Good</span> quality. This debuff will remain on the weapon after further upgrades. For armour, the available strengths and weaknesses will change as listed above when you upgrade through the various quality tiers.</p>
-			<p>You can also replace any existing debuffs tied to your weapon here, at the cost of scrap. Both normal and Superior versions of the various debuffs are available (Superior versions costing twice as much) and any Superior debuff can be given a custom name when it is purchased.</p>
-			<div class="powerHeader">Powers</div>
-			<p>The Powers tab contains a large number of additional powerful effects that can be applied to your character. Their effects range from the mundane (raw damage modifiers or increases to experience or seed gains) through to the exotic (shields that nullify damage and absorb or reflect it) amongst others.</p>
-			<p>These Powers have multiple tiers of investment whose power scales linearly. In nearly all cases, raising a power to its' maximum level unlocks one or more additional subpowers, from which only one can be chosen.</p>
-			<p>Power Points are acquired whenever you gain a level, and can be assigned freely at any time (even in combat). Your Powers can also be reset at any time without cost using the button provided on the bottom of the Powers tab.</p>
-			<p>The Powers tab also plays host to the Stat Point allocation area. Stat points are also granted with every level up, but their allocation cannot be changed or reset.</p>
+
+                        <p>Weapons of particularly high quality will have a debuff attached to them. Each strike that is delivered with the weapon in combat has a 10% chance to apply the debuff to the target. If the debuff does damage to the target, that damage ignores any armour they are wearing. Note the ambiguity - your enemies can also take advantage of debuffs if they have a weapon that carries one, in the same way that you can.</p>
+
+                        <p>A full listing of the debuffs in the game and their effects is available in the Store tab.</p>
+
+                        <div class="powerHeader">Powers</div>
+
+                        <p>The ability to break things by holding them isn't the only interesting ability you have access to - the Powers tab lists a number of additional effects that can apply to you and be honed and strengthened through the leveling process. You'll gain a point every level to spend on this tab, and most of the listed powers unlock additional subsidiaries once they reach maximum strength - although you can only level one subsidiary power at once. Located on this tab is also the 'Reset Powers' button - for a small fee of scrap based on total Power Points earned, you can clear your mind, and thus your power selection, and then re-assign points to your taste.</p>
+
+                        <div class="powerHeader">Item Quality</div>
+
+                        <p>The quality of items dictates several things: the number and strength of individual armour resistances and vulnerabilities, the damage ranges available on weapons, and the availability and potency of debuffs on weapons. There are six 'tiers' of quality, although only five of those are available to you. These tiers and their effects on equipment are as follows:<br /><br />
+
+                          <span class="q221">Poor (grey)</span> items are the lowest quality of item.<br />
+                          - Weapons of poor quality have 90% of their intended damage values.<br />
+                          - Armours of poor quality carry 1 strength, and 2 vulnerabilities.<br />
+                          <span class="q222">Normal (white)</span> items are the most common quality of item in the Realm<br />
+                          - Weapons of normal quality have no distinguishing features.<br />
+                          - Armours of normal quality carry 1 strength and 1 vulnerability.<br />
+                          <span class="q223">Good (green)</span> items are a step above normal items.<br />
+                          - Weapons of good quality have 110% of their intended damage values, as well as a normal debuff.<br />
+                          - Armours of good quality carry 2 strengths and 1 vulnerability.<br />
+                          <span class="q224">Great (blue)</span> items represent superior craftsmanship.<br />
+                          - Weapons of great quality have 120% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
+                          - Armours of great quality carry 2 strengths and no vulnerabilities.<br />
+                          <span class="q225">Amazing (purple)</span> items represent the pinnacle of items obtainable in the Realm.<br />
+                          - Weapons of amazing quality have 130% of their intended damage values, and also have unique names and flavour text, as well as a superior debuff.<br />
+                          - Armours of amazing quality carry 3 strengths and no vulnerabilities.<br />
+                          <span class="q226">Legendary (orange)</span> items are unique pieces made for specific bosses, and are not obtainable by players.<br />
+                          - Weapons of legendary quality deal more damage and have more potent debuffs than even amazing weapons.<br />
+                          - Armours of legendary quality are not strictly better than amazing armours - they instead serve to enforce a weakness on bosses for the player to take advantage of.</p>
+
+                        <div class="powerHeader">Durability and Decay</div>
+
+                        <p>All equipment has a set amount of durability - a measure of how close an item is to becoming unusable. When an item reaches 0 durability, its effect is diminished significantly: weapons have their damage output cut in half and can no longer apply their debuffs, and armour resistances no longer apply (although vulnerabilities still apply even when armour is broken).</p>
+
+                        <p>To combat this, you have the ability to repair items. This is done at no cost, but takes time to complete based on your level and the level of the items being repaired. During the repair process, you are free to switch out items of equipment for other damaged items without interrupting the repairing procedure. Entering combat will halt the repair process if it is running.</p>
+
+                        <div class="powerHeader">Items</div>
+
+                        <p>The 'Items' tab plays host to a listing of all items you are currently carrying, and presents options as to how they can be used. Items can be freely equipped, sold, scrapped or discarded from this tab at any time, even during combat - worth remembering if you come up against an opponent whose weakness you can't exploit with your currently equipped weapon, or one who keeps taking advantage of a gap in your defences.</p>
+
+                        <p>Selling an item rewards you with an amount of seeds (the currency of the Realm) based on that item's level and quality. Scrapping an item rewards you with a small amount of scrap based on the quality of the destroyed item. Both seeds and scrap are used in the Store to enhance or replace your equipment.</p>
+
+                        <div class="powerHeader">The Store</div>
+
+                        <p>The Store is your centralised hub for equipment enhancement or replacement. Here, you can perform the following actions:</p>
+                        <ul>
+                          <li>Spend seeds to increase the level of your equipped weapon and/or armour;</li>
+                          <li>Spend seeds to purchase quality weapons and armour which may be otherwise difficult to find.</li>
+                          <li>Spend scrap to increase the quality of your equipped weapon and/or armour;</li>
+                          <li>Spend scrap to apply a debuff to your equipped weapon or replace it with a better one;</li>
+                        </ul>
+
+                        <p>When purchasing item quality upgrades, raising the quality past certain thresholds causes additional things to happen. When an item is upgraded to 'Great' quality, you have the option of applying a custom name and piece of flavour text to that weapon. When upgrading a weapon specifically, it is granted a random debuff once it reaches 'Good' quality, which it retains through further quality upgrades unless it is replaced using the option in the Store. When upgrading armour, the distribution of strengths and vulnerabilities shifts, in accordance with the guides set in the 'Item Quality' section above.</p>
+
+                        <p>Items upgraded using the Store cannot reach Legendary quality.</p>
+
                         <div class="powerHeader">Options</div>
-                        <p>The Options tab contains numerous miscellaneous features which may be useful. There is a manual save button here, as well as a reset button, controls for bulk item selling, and configuration for the auto-battle system.</p>
-                        <p>The auto-battle system comprises the idle element of the game. It will handle basic inventory management (selling or scrapping items if the inventory is full) as well as automatically repairing items, initiating combat, and fleeing from combat.</p>
-                        <p>What it will not do is upgrade or switch out weapons and armour for better alternatives, nor will it perform bulk buy/sell operations on items whose quality is above the thresholds set on the Options tab. It will also not attempt to use the 'Burst Attack' function on the Combat tab, nor will it spend Skill Points or Power Points.</p>
-                        <p>Auto-battle will stop if there are no more inventory slots available after a selling operation has concluded - that is, when all inventory items are above the quality thresholds for automatic handling.</p>
-                        <p>The autosave feature has a few conditions that need to be met before it will activate:<br />
-                          - The player must be in an idle state (not repairing or fighting)<br />
-                          - The player must be at their maximum health<br />
-                          - Once autosave has activated, it will not be able to activate again until after a battle is won or lost. Fleeing does not count.</p>
+
+                        <p>The 'Options' tab is home to a number of configuration options that didn't necessarily belong in other tabs, including controls for the auto-battle system, configuration options for the bulk sell and scrap buttons on the Items tab, and manual saving and resetting.</p>
+
+                        <p>The auto-battle system is what makes this game semi-idle: it will attempt to initiate combat whenever your health is full, will flee from combat if you are close to death, repair items if they have broken or are close to doing so, and bulk sell or scrap items if your inventories get full.</p>
+
+                        <p>The auto-battle system will not do certain things, though: It will not change your equipment for you, it will not attempt to upgrade or purchase new equipment in the Store, nor will it attempt to spend any of your Stat Points or Power Points for you. The auto-battle system will stop running automatically if either section of your inventory is full after the usual selling or scrapping has occured.</p>
+
+                        <div class="powerHeader">Badges</div>
+
+                        <p>To be added</p>
+
                         <div class="powerHeader">Key Bindings</div>
+
                         <p>A number of game functions are mapped to keys on the keyboard for easy access, as follows:</p>
                         <ul>
-                          <li>1 - Activates the Combat tab.</li>
-                          <li>2 - Activates the Powers tab.</li>
-                          <li>3 - Activates the Inventory tab.</li>
-                          <li>4 - Activates the Forge tab.</li>
-                          <li>5 - Activates the Options tab.</li>
-                          <li>6 - Activates the Help tab.</li>
-                          <li>7 - Activates the Updates tab.</li>
+                          <li>1 - Activates the Player tab.</li>
+                          <li>2 - Activates the Combat tab.</li>
+                          <li>3 - Activates the Powers tab.</li>
+                          <li>4 - Activates the Inventory tab.</li>
+                          <li>5 - Activates the Forge tab.</li>
+                          <li>6 - Activates the Shop tab.</li>
+                          <li>7 - Activates the Options tab.</li>
+                          <li>8 - Activates the Help tab.</li>
+                          <li>9 - Activates the Updates tab.</li>
+                          <li>0 - Activates the Badges tab.</li>
                           <li>Spacebar - Initiates combat.</li>
                           <li>B - Activates your Burst Attack in combat.</li>
                           <li>F - Flees from combat.</li>
-                          <li>W - Begins repairing your weapon.</li>
-                          <li>A - Begins repairing your armour.</li>
+                          <li>R - Initiates repair of your active equipment.</li>
                         </ul>
                       </td>
                     </tr>
@@ -672,144 +339,138 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
-                        <p><strong>Version 0.244a</strong></p>
+                        <p><strong>Version 1.0 RC1</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
-                          <li>Bug Fixes: <ul>
-                            <li>An issue where an undefined debuff would tick endlessly if the player had their Confusion debuff erased by the application of their own weapon's debuff has been resolved.</li>
-                            <li>The messages that indicate the onset of the Sleep effect will now appear properly when the effect is applied by enemies.</li>
+                          <li>Repair Mechanics: <ul>
+                            <li>The Repair function now restores a set amount of durability per second (5 plus 1 per 3 item levels).</li>
+                            <li>Weapons and armour can now be freely exchanged while the repair function is running - the newly equipped items will be repaired instead.</li>
+                            <li>The repair function will stop once both equipped items are fully repaired.</li>
+                            <li>Entering combat is now possible while the repair operation is running - upon initiating combat, the repair function stops. The auto-battle function will still wait for repairs to conclude before entering combat.</li>
+                          </ul></li>
+                          <li>Zones and Enemy Changes<ul>
+                            <li>Monsters that were previously considered 'bosses' are now considered 'elites'. The calculation of their stats and equipment remains the same as before.</li>
+                            <li>The game world is now split into 12 distinct zones, whose inhabitants fit a certain level range (1-10, 11-20 etc.)</li>
+                            <li>Each zone has a small piece of backstory, a specific set of enemies and a boss to encounter there.</li>
+                            <li>A zone's boss is accessible once you reach the level cap for that zone.</li>
+                            <li>Bosses have fixed stats higher than enemies in the zone, and specialised equipment that they do not drop on death.</li>
+                            <li>Defeating a zone's boss is required to progress to the next zone.</li>
+                          </ul></li>
+                          <li>Tracking and Badges: <ul>
+                            <li>A large number of stats and values are now tracked on the Player tab. Some of these include damage dealt (split by type), debuffs applied, sleeping foes awoken, win streak length, and many more.</li>
+                            <li>Some of the tracked statistics are checked for earning badges - effectively achievements by another name.</li>
+                            <li>Badges are one-time rewards for performing some in-game feats, of varying degrees of difficulty.</li>
+                            <li>Each badge confers a 1% increase to experience and seed gains from combat.</li>
+                          </ul></li>
+                          <li>New Powers: <ul>
+                            <li>'Reclaimed Knowledge' increases experience gained by up to 50% by draining the experience overflow pool. The experience overflow pool contains any surplus experience remaining when the player levels up with more experience than the level requires. This power has one rank and no pre-requisites.</li>
+                            <li>'Master Tinkerer' increases the amount of durability restored per repair tick by 20% per rank. This power has 5 ranks available, requires maximum rank in 'Proper Care', and cannot be used alongside 'High Maintenance' or 'Hanging by a Thread'.</li>
+                          </ul></li>
+                          <li>The Store:<ul>
+                            <li>The Store tab has been re-implemented and combined with the Forge, becoming a one-stop shop for equipment management and upgrades.</li>
+                            <li>The store's stock consists of 6 weapons and 6 armour pieces of at least Good quality, with at least one guaranteed to be Great or better.</li>
+                            <li>The store's stock of items is replenished when the player levels up.</li>
+                            <li>Items in the store are priced at twice the amount required to upgrade an equivalent item of the same level and quality.</li>
+                            <li>The 'Bartering' power affects the price of all store items.</li>
                           </ul></li>
                           <li>UI Changes: <ul>
-                            <li>Powers that are a subsidiary are now indented to better differentiate them from base powers.</li>
-                            <li>The powers interface now has a faint border around the edges of each power to make it clear which upgrade buttons apply to which powers.</li>
+                            <li>The game no longer runs in a fixed width configuration. There is a minimum width requirement of 825px and the game will fill the full width of the window where possible.</li>
+                            <li>The tab bar is now placed permanently at the top of the game window, and features seed and scrap counters.</li>
+                            <li>The sidebar on the left side has been removed.</li>
+                            <li>Nearly all UI elements are now rendered as modular panels. When a tab contains a large number of panels, they will tile sideways to fit the browser window width.</li>
+                            <li>Many tabs have had contents changed, as follows:<ul>
+                              <li>Player (NEW) - Player information, stat point allocation, equipped items, game stats.</li>
+                              <li>Combat - Fighter health bars, player information, enemy information, combat log.</li>
+                              <li>Zones (NEW) - Listing of available zones and the means to switch between them.</li>
+                              <li>Powers - List of available and selected powers, reset function.</li>
+                              <li>Items - List of items held, inventory clean button.</li>
+                              <li>Store - Item upgrade functions, debuff purchasing, buying items</li>
+                              <li>Save, reset, prestige, autobattle configuration, bulk item actions.</li>
+                              <li>Help - Information on game elements and mechanics.</li>
+                              <li>Updates - Patch notes for game changes.</li>
+                              <li>Badges (NEW) - Listing of badges, unearned badges are greyed out.</li>
+                            </ul></li>
+                            <li>A loading message now appears before all the scripts have initialised, showing which files have been loaded.</li>
+                            <li>Toast notifications are now added to a queue instead of overriding each other. Each notification lasts 2 seconds.</li>
+                            <li>Damage numbers and debuff/power names in the Combat Log are now shown in white instead of grey.</li>
+                          </ul></li>
+                          <li>Prestige:<ul>
+                            <li>Player can, at any point after defeating the first zone boss, perform a prestige reset.</li>
+                            <li>Upon prestiging, players will gain prestige level equal to their character's level before the reset.</li>
+                            <li>The prestige level is added to all experience and seed gains from combat, after all other modifiers.</li>
+                            <li>After a reset, the player gets 50% of their prestige level as stat points and 25% of their prestige level as power points (rounded down).</li>
+                            <li>Badges and statistics are preserved across prestige resets. All currency and items are lost.</li>
+                          </ul></li>
+                          <li>Quality Of Life<ul>
+                            <li>Buttons have been added to the stat point interface to assign up to 10 points per click.</li>
+                            <li>The options in the autobattle interface now use percentile values.</li>
+                            <li>A new set of options have been added for fine-grained control of the new 'Clean Inventory' button, which replaces the previous four management buttons on the Items tab.</li>
+                            <li>The maximum size of the player's inventory is now 12 slots (up from 10)</li>
+                            <li>Players can now reset their stat point allocations, at the cost of 1 scrap per 5 points assigned (rounded up).</li>
                           </ul></li>
                           <li>Balance Changes: <ul>
-                            <li>The damage dealt by an unsuccessful application of the Doom debuff has been reduced to 250% (350% for superior versions.)</li>
-                            <li>Resetting powers now costs 1 scrap per 3 power points (spent and unspent).</li>
-                            <!--<li>The cost of applying specific debuffs to weapons has been doubled to 8 and 16 scrap respectively. Randomly assigned debuff costs remain at 1/2 scrap.</li>-->
-                          </ul></li>
-                        </ul>
-                        <p><strong>Version 0.244</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>Battle System: <ul>
-                            <li>A new debuff has been added, Sleep. The default name is 'Comatose'. While affected by this debuff, the victim cannot attack, use their Burst Attack or flee from combat. The effect has a chance to break when the target is attacked, with superior versions of the debuff having a lower chance to break on hit.</li>
-                          </ul></li>
-                          <li>New Powers: <ul>
-                            <li>'Overcharge' increases damage dealt by 25%, at the cost of an additional durability point per strike. Has 1 rank available. Requires maximum rank in 'Deadly Force' and cannot be used in conjunction with 'Execute.'</li>
-                            <li>'Intuition' causes your Burst Attacks to treat the resistances on enemy armour as vulnerabilities during damage calculation. Has 1 rank available. Requires maximum rank in 'Expose Weakness' and cannot be used in conjunction with either 'Turn the Tables' or 'Press The Advantage'.'</li>
-                          </ul></li>
-                          <li>Miscellaneous Changes: <ul>
-                            <li>A few new unique items have been added which use the Sleep debuff.</li>
+                            <li>The effects of the powers 'Luck of the Draw' and 'Lucky Star' have been swapped - 'Luck of the Draw' now provides the chance of a stat point, and 'Lucky Star' provides the chance of a power point.</li>
+                            <li>Elites have had their experience and seed rewards reduced to 150% of the normal values (down from 200%).</li>
+                            <li>The Constitution stat has had its effect boosted - it now provides an additional 15 health per assigned point on top of increasing per-level health gains.</li>
+                            <li>Normal enemies now have less variation in the values for their main stats.</li>
+                            <li>The experience curve has been considerably lowered.</li>
+                            <li>The pricing curve for item level upgrades (and by extension item prices) has been considerably lowered.</li>
                           </ul></li>
                           <li>Bug Fixes: <ul>
-                            <li>A number of bugs introduced with the previous combat update have been resolved.</li>
-                            <li>Execute can now be purchased when you already have points invested into Wild Swings.</li>
+                            <li>The activation of Reflective Shield or Absorption Shield will no longer trigge Divine Shield messages.</li>
+                            <li>Fixed some edge cases where the Wild Swings ending message would appear in the wrong place.</li>
+                            <li>Fixed an issue where the auto-battle routine would attempt to run away from combat while sleeping and spam notifications.</li>
                           </ul></li>
-                        </ul>
-                        <p><strong>Version 0.243</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>UI Changes: <ul>
-                            <li>Buttons are now highlighted when hovered over.</li>
-                            <li>Buttons that used the default style are now styled to match existing buttons.</li>
-                            <li>The toast notification has been increased in font size, and the background has been made black to better differentiate it from the game window.</li>
-                            <li>When equipping, selling, scrapping or discarding items, the item's quality colour is used in the toast notification.</li>
+                          <li>Miscellaneous Changes<ul>
+                            <li>The player's name can now be changed.</li>
+                            <li>A number of new items have been added.</li>
                           </ul></li>
-                          <li>Miscellaneous Changes: <ul>
-                            <li>Some new names for weapons and armour pieces have been added, and some existing items have been changed.</li>
-                          </ul></li>
-                          <li>Bug Fixes:<ul>
-                            <li>'Five-Finger Discount' will no longer activate when the player's attack is nullified by paralysis.</li>
-                            <li>Double Attack's effect will no longer activate when the combatant's attack is nullified by paralysis.</li>
-                            <li>Debuffs will no longer be applied when the combatant's attack is nullified by paralysis.</li>
-                            <li>A previous change to lower the damage done by the strike that breaks a weapon has been reverted.</li>
-                            <li>The notification of Wild Swings ending will now appear in the proper place.</li>
-                            <li>Player damage taken as a result of Confusion is now affected by all boosts and reductions aside from those associated with armour.</li>
-                            <li>Combatants suffering from Confusion can now inflict themselves with the debuff on their own weapon.</li>
-                            <li>Damage numbers should be slightly higher due to less use of the floor function during damage calculation.</li>
-                          </ul></li>
-                        </ul>
-                        <p><strong>Version 0.242</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>New Powers: <ul>
-                            <li>'Press The Advantage' reduces the cooldown of Burst Attack by 1 second per level when used on a debuffed foe, and has 5 levels available.</li>
-                            <li>'Turn The Tables' increases the chance to apply debuffs with Burst Attack by 20% per level, and has 4 levels available.</li>
-                            <li>'Press The Advantage' and 'Turn The Tables' cannot be used together, and both require maximum level in 'Expose Weakness' to advance.</li>
-                            <li>'Wild Swings' now requires maximum level in 'Flurry' to advance instead of 'Deadly Force'. Points that were previously placed in 'Wild Swings' currently appear in 'Execute', the sole subsidiary power of 'Deadly Force'.</li>
-                          </ul></li>
-                          <li>Miscellaneous Changes:<ul>
-                            <li>The maximum length of a debuff name is now 30 characters.</li>
-                            <li>Switched to a numbered naming convention for Javascript files so cache clears are no longer required.</li>
-                          </ul></li>
-                          <li>Bug Fixes: <ul>
-                            <li>The attack that causes a weapon to reach 0 durability will no longer deal damage as if the weapon had not broken.</li>
-                            <li>Fixed the previous fix that prevents players from applying debuffs with broken weapons. No, really.</li>
-                            <li>Default names for debuffs are now properly applied when leaving the input field blank.</li>
-                            <li>The game will no longer be rendered unplayable if the player saves while repairing.</li>
-                          </ul></li>
-                        </ul>
-                        <p><strong>Version 0.241</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>New Powers: <ul>
-                            <li>'Expose Weakness' grants a 1% increase per level in the debuff application rate, and has 10 levels available.</li>
-                            <li>'Bartering' lowers the cost of item level upgrades by 2% per level, and has 10 levels available.</li>
-                            <li>'Haggling' increases the seed gain from selling items by 5% per level, and has 5 levels available.</li>
-                            <li>'Disassembly' guarantees an additional piece of scrap when destroying items, and has 1 level available.</li>
-                            <li>'Haggling' and 'Disassembly' cannot be used together, and both require maximum level in 'Bartering' to advance.</li>
-                          </ul></li>
-                          <li>Miscellaneous Changes:<ul>
-                            <li>Weapon and armour repair times now increase by one tick every 5 levels (down from 1 tick per level)</li>
-                            <li>The default names for debuffs have been added to the Forge tab.</li>
-                            <li>The base damage values for weapons have been tweaked slightly.</li>
-                            <li>A few new weapon and enemy names have been added.</li>
-                            <li>The debuff type of a player's weapon is now shown in the sidebar.</li>
-                            <li>Information on key bindings has been added to the bottom of the Help tab.</li>
-                          </ul></li>
-                          <li>Bug Fixes:<ul>
-                            <li>Changes have been made to prevent activating Burst Attack multiple times.</li>
-                            <li>Players can now critically strike themselves under the influence of the Confusion debuff.</li>
-                            <li>Players can no longer apply debuffs with broken weapons.</li>
-                            <li>Enemies now have a 10% chance to apply debuffs to match the player (down from 20%).</li>
-                            <li>Upgrading Poor or Amazing weapons now gives the proper stat increases.</li>
-                            <li>A message now appears in the combat log when your armour breaks.</li>
-                            <li>Setting an item's name to be blank now keeps the original name.</li>
-                            <li>Setting an item's flavour text to be blank now replaces it with the words 'I have no flavour.'</li>
-                          </ul></li>
-                        </ul>
-                        <p><strong>Version 0.24</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>The Forge:<ul>
-                            <li>The Shop has been renamed to The Forge, and the ability to change weapon debuffs has been added into the game.</li>
-                            <li>Any Good or better weapon can be assigned a debuff or have its' debuff changed via The Forge.</li>
-                            <li>There are two levels of debuff quality to be applied to weapons, the superior ones requiring a Great or Amazing weapon to use.</li>
-                            <li>A description of each debuff's effect is included below their buttons. Bracketed numbers indicate values for the superior version of the debuff.</li>
-                            <li>Superior versions of debuffs can also be given a custom name.</li>
-                            <li>Because Confusion's buff effect does not have a superior version, the normal version is able to be named as if it was a superior debuff.</li>
-                          </ul></li>
-                          <li>Combat Changes:<ul>
-                            <li>Weapons and armour wielded by boss monsters now match the monster's level instead of being 3 levels higher.</li>
-                            <li>Monsters have had their power scaling slightly lowered.</li>
-                            <li>The 'Doom' debuff now deals 300% weapon damage (500% weapon damage for superior versions) if it fails to kill the target outright.</li>
-                            <li>The 'Damage Over Time' debuff has had its potency increased to 20% of weapon damage (30% for superior versions).</li>
-                            <li>The 'Paralysis' debuff now has a 15% chance to prevent the target from attacking (down from 20%). Superior versions of the debuff are unchanged at 25% chance.</li>
-                          </ul></li>
-                          <li>UI Changes:<ul>
-                            <li>The currently active UI tab is now highlighted.</li>
-                            <li>A new tab containing game update information has been added.</li>
-                            <li>Minor corrections have been made to the text on the help screen.</li>
-                            <li>An indicator has been added to the player info panel to show the chance of a boss encounter occurring.</li>
-                          </ul></li>
-                          <li>Miscellaneous Changes:<ul>
-                            <li>The autobattle function will now halt if the player's weapon or armour inventories are full after the auto sell operation concludes.</li>
-                            <li>Power Points can now be reset at no cost, at the bottom of the Powers tab.</li>
-                            <li>The proc chance for the 'Doom' debuff now shows correctly on the left sidebar.</li>
-                          </ul></li>
+                          <li>Known Issues<ul>
+                            <li>The badges 'Trust Me, I'm a Doctor', 'Dirty Tactics', 'Potion Hoarder' and 'Full House' are not currently attainable due to the postponement of the Potions mechanic.</li>
+                            </ul></li>
                         </ul>
                       </td>
+                    </tr>
+                  </table>
+                  <table id="badgeTable" style="display:none;">
+                    <tr>
+                      <td id="selectedBadge">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div id="badgeList">
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                  <table id="initTable">
+                    <tr>
+                      <td>Loading...</td>
+                    </tr><tr>
+                      <td id="loadedInit" style="display:none;">init.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedStrings" style="display:none;">strings.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedZones" style="display:none;">zones.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedPowers" style="display:none;">powers.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedCombat" style="display:none;">combat.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedInventory" style="display:none;">inventory.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedPlayer" style="display:none;">player.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedTickers" style="display:none;">tickers.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedUI" style="display:none;">ui.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedUIPanels" style="display:none;">uipanels.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedBadges" style="display:none;">badges.v1.0.js loaded.</td>
+                    </tr><tr>
+                      <td id="loadedKeybindings" style="display:none;">keybindings.v1.0.js loaded.</td>
                     </tr>
                   </table>
 								</td>
@@ -820,6 +481,19 @@
 			</table>
 		</div>
     <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
-		<div class="footer">Realm of Decay &copy; Martin Hayward (Psychemaster) 2014-2015 - Version 0.244a (7th July 2015)</div>
+    <script type="text/javascript" src="shims.v1.0.js"></script>
+    <script type="text/javascript" src="init.v1.0.js"></script>
+    <script type="text/javascript" src="strings.v1.0.js"></script>
+    <script type="text/javascript" src="zones.v1.0.js"></script>
+    <script type="text/javascript" src="powers.v1.0.js"></script>
+    <script type="text/javascript" src="combat.v1.0.js"></script>
+    <script type="text/javascript" src="inventory.v1.0.js"></script>
+    <script type="text/javascript" src="player.v1.0.js"></script>
+    <script type="text/javascript" src="tickers.v1.0.js"></script>
+    <script type="text/javascript" src="ui.v1.0.js"></script>
+    <script type="text/javascript" src="uipanels.v1.0.js"></script>
+    <script type="text/javascript" src="badges.v1.0.js"></script>
+    <script type="text/javascript" src="keybindings.v1.0.js"></script>
+    <script type="text/javascript">document.onkeypress = keyBindings;</script>
 	</body>
 </html>
