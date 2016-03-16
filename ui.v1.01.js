@@ -478,7 +478,7 @@ Game.updatePlayerTab = function() {
   var scrapSection = document.getElementById("player_UIScrap");
   scrapSection.innerHTML = "<strong>Scrap:</strong> " + Game.p_Scrap;
   // Stat Point Panel (available points)
-  var statPointPanel = document.getElementById("player_UISP");
+  var statPointPanel = document.getElementById("player_statPointsLeft");
   if(statPointPanel !== null) { statPointPanel.innerHTML = "Stat Points (" + Game.p_SkillPoints + " left)"; }
   // Tracking panel values
   var statPanel = document.getElementById("statsOut");
