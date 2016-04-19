@@ -50,17 +50,9 @@ Game.idleHeal = function() {
 Game.autoBattleFunc = function() {
   // TODO: Change these to read from new variables.
   if(Game.p_State == Game.STATE_IDLE) {
-    if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) {
+    if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY || Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) {
       Game.automaticInventoryClear();
-      if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY) { Game.toggleAutoBattle(); }
-    }
-    else if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) {
-      if(document.getElementById("ab_armfull").options[ab_armfull.selectedIndex].value == "SELL") {
-        Game.sellAllArmour();
-      } else {
-        Game.scrapAllArmour();
-      }
-      if(Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.toggleAutoBattle(); }
+      if(Game.p_WeaponInventory.length >= Game.MAX_INVENTORY || Game.p_ArmourInventory.length >= Game.MAX_INVENTORY) { Game.toggleAutoBattle(); }
     }
     else {
     var repairThreshold = Game.autoBattle_repair;
