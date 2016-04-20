@@ -8,7 +8,7 @@
 		<div id="main">
       <table id="topBar">
         <tr>
-          <td style="text-align:center;width:125px;"><span><strong>Realm of Decay</strong> <br /><span style="font-size:10px;">Version 1.0 RC1</span></span></td>
+          <td style="text-align:center;width:125px;"><span><strong>Realm of Decay</strong> <br /><span style="font-size:10px;">Version 1.0 RC2</span></span></td>
           <td class="topBarButton" id="playerTab">Player</td>
           <td class="topBarButton" id="combatTab">Combat</td>
           <td class="topBarButton" id="zoneTab">Zones</td>
@@ -311,7 +311,7 @@
 
                         <div class="powerHeader">Badges</div>
 
-                        <p>To be added</p>
+                        <p>During your time in the Realm, you'll make progress towards the earning of 'badges' - one time rewards for reaching milestones and performing certain feats within the game world. Each of these badges grants a 2% boost to seeds and experience gained from combat.</p>
 
                         <div class="powerHeader">Key Bindings</div>
 
@@ -339,6 +339,29 @@
                     <tr>
                       <td>
                         <div class="powerHeader">Update News</div>
+                        <p><strong>Version 1.0 RC2</strong></p>
+                        <p>Changes in this version:</p>
+                        <ul>
+                          <li>Quality of Life<ul>
+                            <li>The Inventory Clean button and the auto-battle function now provide a summary of the resources gained from processing all of the player's items, instead of a single message for each item.</li>
+                            <li>Clicking on a toast notification will dismiss it and display the next one in the queue, if there is one.</li>
+                          </ul></li>
+                          <li>Bug Fixes<ul>
+                            <li>Fixed an issue wherein the automatic clearing of the inventory by the auto-battle function was not triggering.</li>
+                            <li>Fixed an issue wherein the keybinding for Burst Attack was placing it on cooldown without performing the attack.</li>
+                            <li>You can no longer change zones while in combat.</li>
+                            <li>Fixed an edge case where the 'Wherefore Art Thou, Romeo?' badge could be unlocked by inflicting Sleep with a killing blow.</li>
+                          </ul></li>
+                          <li>Badges and Tracking<ul>
+                            <li>The descriptions and flavour text on badges are now permanetly visible, even if the badge has not yet been earned.</li>
+                            <li>The boost to seed and experience gains from badges have been increased to 2% per badge.</li>
+                          </ul></li>
+                          <li>Balance Changes<ul>
+                            <li>The shop stock is now level capped to the lower value out of your character's level and the level cap for your current zone.</li>
+                            <li>To accompany the above change, the shop inventory now regenerates when changing zones.</li>
+                            <li>The Sleep debuff is now much more likely to break as a result of incoming damage.</li>
+                          </ul></li>
+                        </ul>
                         <p><strong>Version 1.0 RC1</strong></p>
                         <p>Changes in this version:</p>
                         <ul>
@@ -405,7 +428,7 @@
                             <li>Buttons have been added to the stat point interface to assign up to 10 points per click.</li>
                             <li>The options in the autobattle interface now use percentile values.</li>
                             <li>A new set of options have been added for fine-grained control of the new 'Clean Inventory' button, which replaces the previous four management buttons on the Items tab.</li>
-                            <li>The maximum size of the player's inventory is now 12 slots (up from 10)</li>
+                            <li>The maximum size of the player's inventory is now 18 slots (up from 10)</li>
                             <li>Players can now reset their stat point allocations, at the cost of 1 scrap per 5 points assigned (rounded up).</li>
                           </ul></li>
                           <li>Balance Changes: <ul>
@@ -420,7 +443,6 @@
                             <li>The activation of Reflective Shield or Absorption Shield will no longer trigge Divine Shield messages.</li>
                             <li>Fixed some edge cases where the Wild Swings ending message would appear in the wrong place.</li>
                             <li>Fixed an issue where the auto-battle routine would attempt to run away from combat while sleeping and spam notifications.</li>
-                            <li>Fixed an issue wherein the automatic clearing of the inventory by the auto-battle function was not triggering.</li>
                           </ul></li>
                           <li>Miscellaneous Changes<ul>
                             <li>The player's name can now be changed.</li>
@@ -449,29 +471,29 @@
                     <tr>
                       <td>Loading...</td>
                     </tr><tr>
-                      <td id="loadedInit" style="display:none;">init.v1.0.js loaded.</td>
+                      <td id="loadedInit" style="display:none;">init.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedStrings" style="display:none;">strings.v1.0.js loaded.</td>
+                      <td id="loadedStrings" style="display:none;">strings.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedZones" style="display:none;">zones.v1.0.js loaded.</td>
+                      <td id="loadedZones" style="display:none;">zones.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedPowers" style="display:none;">powers.v1.0.js loaded.</td>
+                      <td id="loadedPowers" style="display:none;">powers.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedCombat" style="display:none;">combat.v1.0.js loaded.</td>
+                      <td id="loadedCombat" style="display:none;">combat.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedInventory" style="display:none;">inventory.v1.0.js loaded.</td>
+                      <td id="loadedInventory" style="display:none;">inventory.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedPlayer" style="display:none;">player.v1.0.js loaded.</td>
+                      <td id="loadedPlayer" style="display:none;">player.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedTickers" style="display:none;">tickers.v1.0.js loaded.</td>
+                      <td id="loadedTickers" style="display:none;">tickers.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedUI" style="display:none;">ui.v1.0.js loaded.</td>
+                      <td id="loadedUI" style="display:none;">ui.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedUIPanels" style="display:none;">uipanels.v1.0.js loaded.</td>
+                      <td id="loadedUIPanels" style="display:none;">uipanels.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedBadges" style="display:none;">badges.v1.0.js loaded.</td>
+                      <td id="loadedBadges" style="display:none;">badges.js loaded.</td>
                     </tr><tr>
-                      <td id="loadedKeybindings" style="display:none;">keybindings.v1.0.js loaded.</td>
+                      <td id="loadedKeybindings" style="display:none;">keybindings.js loaded.</td>
                     </tr>
                   </table>
 								</td>
@@ -481,20 +503,20 @@
 				</tr>
 			</table>
 		</div>
-    <div id="saveToast" class="savePopup" style="display:none;"><span id="toastContent"></span></div>
+    <div id="saveToast" class="savePopup" style="display:none;" onclick="Game.showMessage()"><span id="toastContent"></span></div>
     <script type="text/javascript" src="shims.v1.0.js"></script>
-    <script type="text/javascript" src="init.v1.0.js"></script>
-    <script type="text/javascript" src="strings.v1.0.js"></script>
-    <script type="text/javascript" src="zones.v1.01.js"></script>
+    <script type="text/javascript" src="init.v1.01.js"></script>
+    <script type="text/javascript" src="strings.v1.01.js"></script>
+    <script type="text/javascript" src="zones.v1.02.js"></script>
     <script type="text/javascript" src="powers.v1.0.js"></script>
-    <script type="text/javascript" src="combat.v1.0.js"></script>
-    <script type="text/javascript" src="inventory.v1.0.js"></script>
+    <script type="text/javascript" src="combat.v1.01.js"></script>
+    <script type="text/javascript" src="inventory.v1.01.js"></script>
     <script type="text/javascript" src="player.v1.0.js"></script>
     <script type="text/javascript" src="tickers.v1.02.js"></script>
-    <script type="text/javascript" src="ui.v1.01.js"></script>
-    <script type="text/javascript" src="uipanels.v1.0.js"></script>
+    <script type="text/javascript" src="ui.v1.02.js"></script>
+    <script type="text/javascript" src="uipanels.v1.01.js"></script>
     <script type="text/javascript" src="badges.v1.0.js"></script>
-    <script type="text/javascript" src="keybindings.v1.0.js"></script>
+    <script type="text/javascript" src="keybindings.v1.01.js"></script>
     <script type="text/javascript">document.onkeypress = keyBindings;</script>
 	</body>
 </html>

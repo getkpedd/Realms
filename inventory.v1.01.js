@@ -33,19 +33,20 @@ Game.discardWeapon = function(index) {
   Game.badgeCheck(Game.BADGE_DISCARDS);
   Game.drawActivePanel();
 }
-Game.sellWeapon = function(index) {
+Game.sellWeapon = function(index, loud) {
   var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_WeaponInventory[index][7]-Game.QUALITY_NORMAL))/10);
   var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
-  Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + soldWepName + "</span> sold for " + salePrice + " seeds.");
+  if(loud) { Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + soldWepName + "</span> sold for " + salePrice + " seeds."); }
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInventory = true;
   Game.p_Currency += salePrice;
   Game.TRACK_ITEM_SALES++;
   Game.TRACK_SALE_SEEDS += salePrice;
   Game.drawActivePanel();
+  if(!loud) { return salePrice; }
 }
-Game.scrapWeapon = function(index) {
+Game.scrapWeapon = function(index, loud) {
   // Breaking things willingly.
   var salePrice = 0;
   var scrappedWepName = Game.p_WeaponInventory[index][0].split("|")[0];
@@ -67,7 +68,7 @@ Game.scrapWeapon = function(index) {
       break;
   }
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
-  Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + scrappedWepName + "</span> converted into " + salePrice + " scrap.");
+  if(loud) { Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + scrappedWepName + "</span> converted into " + salePrice + " scrap."); }
   Game.p_WeaponInventory.splice(index,1);
   Game.updateInventory = true;
   Game.p_Scrap += salePrice;
@@ -75,6 +76,7 @@ Game.scrapWeapon = function(index) {
   Game.TRACK_CONVERT_SCRAP += salePrice;
   Game.badgeCheck(Game.BADGE_SCRAPPING);
   Game.drawActivePanel();
+  if(!loud) { return salePrice; }
 }
 Game.equipArmour = function(index) {
   var currentArm = Game.p_Armour.slice(0);
@@ -101,19 +103,20 @@ Game.discardArmour = function(index) {
   Game.badgeCheck(Game.BADGE_DISCARDS);
   Game.drawActivePanel();
 }
-Game.sellArmour = function(index) {
+Game.sellArmour = function(index, loud) {
   var salePrice = Math.floor(25*Math.pow(1.1,Game.p_ArmourInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_ArmourInventory[index][2]-Game.QUALITY_NORMAL))/10);
   var soldArmName = Game.p_ArmourInventory[index][0].split("|")[0];
-  Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + soldArmName + "</span> sold for " + salePrice + " seeds.");
+  if(loud) { Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + soldArmName + "</span> sold for " + salePrice + " seeds."); }
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInventory = true;
   Game.p_Currency += salePrice;
   Game.TRACK_ITEM_SALES++;
   Game.TRACK_SALE_SEEDS += salePrice;
   Game.drawActivePanel();
+  if(!loud) { return salePrice; }
 }
-Game.scrapArmour = function(index) {
+Game.scrapArmour = function(index, loud) {
   var salePrice = 0;
   var scrappedArmName = Game.p_ArmourInventory[index][0].split("|")[0];
   switch(Game.p_ArmourInventory[index][2]) {
@@ -134,7 +137,7 @@ Game.scrapArmour = function(index) {
       break;
   }
   if(Game.powerLevel(Game.BOOST_MORESCRAP) == 1) { salePrice++; }
-  Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + scrappedArmName + "</span> converted into " + salePrice + " scrap.");
+  if(loud) { Game.toastNotification("<span class='q" + Game.p_ArmourInventory[index][2] + "'>" + scrappedArmName + "</span> converted into " + salePrice + " scrap."); }
   Game.p_ArmourInventory.splice(index,1);
   Game.updateInventory = true;
   Game.p_Scrap += salePrice;
@@ -142,6 +145,7 @@ Game.scrapArmour = function(index) {
   Game.TRACK_CONVERT_SCRAP += salePrice;
   Game.badgeCheck(Game.BADGE_SCRAPPING);
   Game.drawActivePanel();
+  if(!loud) { return salePrice; }
 }
 Game.makeWeapon = function(level) {
 	// Returns a weapon as an array with the form
@@ -624,23 +628,26 @@ Game.buyArmourQualityUpgrade = function() {
 // Let's mop up by combining four functions into one.
 Game.automaticInventoryClear = function() {
   // Weapons first
+  var seedsGained = 0;
+  var scrapGained = 0;
   for(var i = Game.p_WeaponInventory.length-1; i >= 0; i--) {
     switch(Game.autoSell_options[Game.p_WeaponInventory[i][7]-Game.QUALITY_POOR]) {
       case "SELL":
-        Game.sellWeapon(i); break;
+        seedsGained += Game.sellWeapon(i, false); break;
       case "SCRAP":
-        Game.scrapWeapon(i); break;
+        scrapGained += Game.scrapWeapon(i, false); break;
     }
   }
   // Now armour
   for(var i = Game.p_ArmourInventory.length-1; i >= 0; i--) {
     switch(Game.autoSell_options[Game.p_ArmourInventory[i][2]-Game.QUALITY_POOR]) {
       case "SELL":
-        Game.sellArmour(i); break;
+        seedsGained += Game.sellArmour(i, false); break;
       case "SCRAP":
-        Game.scrapArmour(i); break;
+        scrapGained += Game.scrapArmour(i, false); break;
     }
   }
+  Game.toastNotification("Inventory cleaning gave " + prettifyNumber(seedsGained) + " seeds and " + prettifyNumber(scrapGained) + " scrap.");
 }
 // These two don't get called often, because they're only for the lazy who don't sell their stuff.
 Game.takeWeapon = function() {
@@ -758,15 +765,16 @@ Game.repopulateWeaponShop = function() {
   Game.p_WeaponShopStock = [];
   var isGreat = false;
   var firstItem = [];
+  var levelCap = Math.min(Game.p_Level, Game.p_currentZone*10);
   while(!isGreat) {
-    firstItem = Game.makeWeapon(Game.p_Level);
+    firstItem = Game.makeWeapon(levelCap);
     if(firstItem[7] >= Game.QUALITY_GREAT) { isGreat = true; }
   }
   Game.p_WeaponShopStock.push(firstItem)
   for(var x = 1; x <= Game.p_ShopStockLimit; x++) {
-    var nextItem = Game.makeWeapon(Game.p_Level);
+    var nextItem = Game.makeWeapon(levelCap);
     while(nextItem[7] < Game.QUALITY_GOOD) {
-      nextItem = Game.makeWeapon(Game.p_Level);
+      nextItem = Game.makeWeapon(levelCap);
     }
     Game.p_WeaponShopStock.push(nextItem);
   }
@@ -775,15 +783,16 @@ Game.repopulateArmourShop = function() {
   Game.p_ArmourShopStock = [];
   var isGreat = false;
   var firstItem = [];
+  var levelCap = Math.min(Game.p_Level, Game.p_currentZone*10);
   while(!isGreat) {
-    firstItem = Game.makeArmour(Game.p_Level);
+    firstItem = Game.makeArmour(levelCap);
     if(firstItem[2] >= Game.QUALITY_GREAT) { isGreat = true; }
   }
   Game.p_ArmourShopStock.push(firstItem)
   for(var x = 1; x <= Game.p_ShopStockLimit; x++) {
-    var nextItem = Game.makeArmour(Game.p_Level);
+    var nextItem = Game.makeArmour(levelCap);
     while(nextItem[2] < Game.QUALITY_GOOD) {
-      nextItem = Game.makeArmour(Game.p_Level);
+      nextItem = Game.makeArmour(levelCap);
     }
     Game.p_ArmourShopStock.push(nextItem);
   }

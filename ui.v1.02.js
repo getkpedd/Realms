@@ -348,6 +348,7 @@ Game.showMessage = function() {
   var toastFrame = document.getElementById("saveToast");
   if(Game.toastQueue.length == 0) {
 		toastFrame.style.display = "none";
+    window.clearTimeout(Game.toastTimer);
     Game.toastTimer = null;
 	}
   else {

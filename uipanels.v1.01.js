@@ -102,14 +102,14 @@ Game.createWeaponUIPanel = function(weapon, sourcePanel, itemSlot) {
     var sellButton = document.createElement("span");
     sellButton.setAttribute("class", "itemPanelButton");
     sellSection.setAttribute("style", "text-align:center;vertical-align:middle;border:1px solid #b0b0b0;");
-    sellButton.onclick = function(a){ return function() { Game.sellWeapon(a); }; }(itemSlot);
+    sellButton.onclick = function(a,b){ return function() { Game.sellWeapon(a,b); }; }(itemSlot, true);
     sellButton.innerHTML= "Sell";
     sellSection.appendChild(sellButton);
     row5.appendChild(sellSection);
     var scrapButton = document.createElement("span");
     scrapButton.setAttribute("class", "itemPanelButton");
     scrapSection.setAttribute("style", "text-align:center;vertical-align:middle;border:1px solid #b0b0b0;");
-    scrapButton.onclick = function(a){ return function() { Game.scrapWeapon(a); }; }(itemSlot);
+    scrapButton.onclick = function(a,b){ return function() { Game.scrapWeapon(a,b); }; }(itemSlot, true);
     scrapButton.innerHTML= "Scrap";
     scrapSection.appendChild(scrapButton);
     row5.appendChild(scrapSection);
@@ -267,14 +267,14 @@ Game.createArmourUIPanel = function(armour, sourcePanel, itemSlot) {
     var sellButton = document.createElement("span");
     sellButton.setAttribute("class", "itemPanelButton");
     sellSection.setAttribute("style", "text-align:center;vertical-align:middle;border:1px solid #b0b0b0;");
-    sellButton.onclick = function(a){ return function() { Game.sellArmour(a); }; }(itemSlot);
+    sellButton.onclick = function(a,b){ return function() { Game.sellArmour(a,b); }; }(itemSlot, true);
     sellButton.innerHTML= "Sell";
     sellSection.appendChild(sellButton);
     row5.appendChild(sellSection);
     var scrapButton = document.createElement("span");
     scrapButton.setAttribute("class", "itemPanelButton");
     scrapSection.setAttribute("style", "text-align:center;vertical-align:middle;border:1px solid #b0b0b0;");
-    scrapButton.onclick = function(a){ return function() { Game.scrapArmour(a); }; }(itemSlot);
+    scrapButton.onclick = function(a,b){ return function() { Game.scrapArmour(a,b); }; }(itemSlot, true);
     scrapButton.innerHTML= "Scrap";
     scrapSection.appendChild(scrapButton);
     row5.appendChild(scrapSection);
@@ -1397,21 +1397,14 @@ Game.createBadgePanel = function(index) {
   var descSection = document.createElement("td");
   var row3 = document.createElement("tr");
   var flavourSection = document.createElement("td");
+  descSection.innerHTML = Game.BADGE_LIST[index][1];
+  flavourSection.innerHTML = "\"" + Game.BADGE_LIST[index][2] + "\"";
+  row2.appendChild(descSection);
+  panel.appendChild(row2);
+  row3.appendChild(flavourSection);
+  panel.appendChild(row3);
   if(Game.playerBadges.indexOf(Game.BADGE_LIST[index][3]) < 0) {
-    descSection.innerHTML = "???";
-    flavourSection.innerHTML = "???";
-    row2.appendChild(descSection);
-    panel.appendChild(row2);
-    row3.appendChild(flavourSection);
-    panel.appendChild(row3);
     panel.setAttribute("style", "opacity:0.4;-ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=40)';");
-  } else {
-    descSection.innerHTML = Game.BADGE_LIST[index][1];
-    flavourSection.innerHTML = "\"" + Game.BADGE_LIST[index][2] + "\"";
-    row2.appendChild(descSection);
-    panel.appendChild(row2);
-    row3.appendChild(flavourSection);
-    panel.appendChild(row3);
   }
   descSection.setAttribute("style", "width:100% !important");
   flavourSection.setAttribute("style", "width:100% !important;font-style:italic;");

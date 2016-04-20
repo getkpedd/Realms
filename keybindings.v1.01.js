@@ -40,7 +40,6 @@ function keyBindings(key) {
       break;
     case "b":
       if(Game.p_State == Game.STATE_COMBAT && !Game.p_specUsed) {
-        Game.p_specUsed = true;
         Game.burstAttack();
         Game.PROGRESS_KEYBINDING++;
       }

@@ -24,7 +24,7 @@ Game.debuffs_generic = [[241, "Ruthlessness", 10, -1],
                         [247, "Nerve Strike", 10, 15],
                         [248, "Mounting Dread", 5, 5],
                         [249, "Disarmed", 10, -1],
-                        [250, "Comatose", 10, 20]];
+                        [250, "Comatose", 10, 15]];
 Game.debuffs_potion_normal = [[241, "Acidic Solution", 15, -1],
                         [242, "Twinstrike Tonic", 10, 50],
                         [243, "Vampiric Infusion", 10, 20],
@@ -34,7 +34,7 @@ Game.debuffs_potion_normal = [[241, "Acidic Solution", 15, -1],
                         [247, "Mind-Numbing Mix", 10, 15],
                         [248, "Bottled Heart Attack", 5, 5],
                         [249, "Butterfinger Brew", 10, -1],
-                        [250, "Chloroform Concoction", 10, 20]];
+                        [250, "Chloroform Concoction", 10, 15]];
 Game.debuffs_potion_superior = [[241, "Enhanced Acidic Solution", 15, -1],
                         [242, "Enhanced Twinstrike Tonic", 15, 70],
                         [243, "Enhanced Vampiric Infusion", 15, 30],
@@ -64,7 +64,7 @@ Game.debuff_descriptions = ["Causes your attacks to ignore the target's armour s
                             "Causes the victim's attacks to fail 15% (25%) of the time for 10 (15) seconds.",
                             "Grants a 5% (7%) chance to kill the victim outright. Deals 250% (350%) weapon DPS if it fails to kill.",
                             "Cuts damage dealt by the victim by 50% and prevents the victim applying debuffs for 10 (15) seconds.",
-                            "Prevents the victim from attacking for 10 (15) seconds. Has a 20% (10%) chance to break on hit."];
+                            "Prevents the victim from attacking for 10 (15) seconds. Has a 60% (40%) chance to break on hit."];
 Game.potions = [[[0, "Lesser Healing Potion", 0.2],
                 [1, "Healing Potion", 0.3],
                 [2, "Greater Healing Potion", 0.4]],

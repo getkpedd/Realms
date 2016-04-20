@@ -677,6 +677,15 @@ Game.load = function() {
     else { Game.bossChance = g.bossChance; }
     if(g.prestigeLevel === undefined) { Game.prestigeLevel = 0; }
     else { Game.prestigeLevel = g.prestigeLevel; }
+    // Fix for weapons with the old weaker sleep debuff circa V1.0 RC2
+    if(Game.p_Weapon[9][0] == 250 && Game.p_Weapon[9][3] == 20) {
+      Game.p_Weapon[9][3] = 15;
+    }
+    for(var x = 0; x < Game.p_WeaponInventory.length; x++) {
+      if(Game.p_WeaponInventory[x][9][0] == 250 && Game.p_WeaponInventory[x][9][3] == 20) {
+        Game.p_WeaponInventory[x][9][3] = 15;
+      }
+    }
     return true;
 	}
 	else { return false; }

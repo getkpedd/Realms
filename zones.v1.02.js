@@ -108,8 +108,14 @@ Game.ZONE_BOSSES = [
 ]
 Game.changeZone = function(zoneID) {
   if(zoneID <= Game.p_maxZone && zoneID !== Game.p_currentZone) {
-    Game.p_currentZone = zoneID;
-    Game.toastNotification("Moved to " + Game.ZONE_NAMES[zoneID] + ".");
+    if(Game.p_State == Game.STATE_IDLE) {
+      Game.p_currentZone = zoneID;
+      Game.toastNotification("Moved to " + Game.ZONE_NAMES[zoneID] + ".");
+      Game.repopulateShop();
+    }
+    else {
+      Game.toastNotification("Cannot change zones during combat.");
+    }
   }
 }
 

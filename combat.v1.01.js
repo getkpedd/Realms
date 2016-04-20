@@ -259,7 +259,7 @@ Game.playerCombatTick = function(isBurst) {
           }
           if(Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
             // Waking the beast. Maybe.
-            if(Game.RNG(1,100) <= Game.e_Debuff[3]) {
+            if(Game.RNG(1,25) <= Game.e_Debuff[3]) {
               Game.enemy_debuffTimer = 0;
               Game.TRACK_SLEEPBREAK_OUT++;
             }
@@ -476,7 +476,7 @@ Game.enemyCombatTick = function() {
 					}
           if(Game.getPlayerDebuff()[0] == Game.DEBUFF_SLEEP) {
             // Waking the beast. Maybe.
-            if(Game.RNG(1,100) <= Game.p_Debuff[3]) {
+            if(Game.RNG(1,25) <= Game.p_Debuff[3]) {
               Game.player_debuffTimer = 0;
               Game.TRACK_SLEEPBREAK_IN++;
             }
@@ -633,7 +633,7 @@ Game.endCombat = function() {
     Game.player_debuffInterval = null;
     Game.player_debuffTimer = 0; }
   // Wherefore art thou Romeo?
-  if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DOT && Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP) {
+  if(Game.getPlayerDebuff()[0] == Game.DEBUFF_DOT && Game.getEnemyDebuff()[0] == Game.DEBUFF_SLEEP && Game.p_HP <= 0) {
     Game.giveBadge(Game.BADGE_ROMEO); // WHerefore Art Thou, Romeo?
   }
   Game.p_Debuff = [];
@@ -685,7 +685,7 @@ Game.endCombat = function() {
     if(!Game.canLoot) { xpToAdd *= 2; }
     else if(Game.e_isBoss) { xpToAdd *= 1.5; }
     xpToAdd = Math.floor(xpToAdd*(1+(0.05*Game.powerLevel(Game.BOOST_XP))));
-    var badgeBonus = Math.floor(xpToAdd * (0.01 * Game.playerBadges.length));
+    var badgeBonus = Math.floor(xpToAdd * (0.02 * Game.playerBadges.length));
 		Game.combatLog("info","You gained <span class='q222'>" + xpToAdd + "</span> (<span class='q223'>+" + badgeBonus + "</span>) (<span class='q224'>+" + Game.prestigeLevel + "</span>) experience.");
     // Overflow
     if(Game.powerLevel(Game.BOOST_OVERFLOW) > 0) {
