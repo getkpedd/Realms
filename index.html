@@ -361,95 +361,8 @@
                             <li>To accompany the above change, the shop inventory now regenerates when changing zones.</li>
                             <li>The Sleep debuff is now much more likely to break as a result of incoming damage.</li>
                           </ul></li>
-                        </ul>
-                        <p><strong>Version 1.0 RC1</strong></p>
-                        <p>Changes in this version:</p>
-                        <ul>
-                          <li>Repair Mechanics: <ul>
-                            <li>The Repair function now restores a set amount of durability per second (5 plus 1 per 3 item levels).</li>
-                            <li>Weapons and armour can now be freely exchanged while the repair function is running - the newly equipped items will be repaired instead.</li>
-                            <li>The repair function will stop once both equipped items are fully repaired.</li>
-                            <li>Entering combat is now possible while the repair operation is running - upon initiating combat, the repair function stops. The auto-battle function will still wait for repairs to conclude before entering combat.</li>
-                          </ul></li>
-                          <li>Zones and Enemy Changes<ul>
-                            <li>Monsters that were previously considered 'bosses' are now considered 'elites'. The calculation of their stats and equipment remains the same as before.</li>
-                            <li>The game world is now split into 12 distinct zones, whose inhabitants fit a certain level range (1-10, 11-20 etc.)</li>
-                            <li>Each zone has a small piece of backstory, a specific set of enemies and a boss to encounter there.</li>
-                            <li>A zone's boss is accessible once you reach the level cap for that zone.</li>
-                            <li>Bosses have fixed stats higher than enemies in the zone, and specialised equipment that they do not drop on death.</li>
-                            <li>Defeating a zone's boss is required to progress to the next zone.</li>
-                          </ul></li>
-                          <li>Tracking and Badges: <ul>
-                            <li>A large number of stats and values are now tracked on the Player tab. Some of these include damage dealt (split by type), debuffs applied, sleeping foes awoken, win streak length, and many more.</li>
-                            <li>Some of the tracked statistics are checked for earning badges - effectively achievements by another name.</li>
-                            <li>Badges are one-time rewards for performing some in-game feats, of varying degrees of difficulty.</li>
-                            <li>Each badge confers a 1% increase to experience and seed gains from combat.</li>
-                          </ul></li>
-                          <li>New Powers: <ul>
-                            <li>'Reclaimed Knowledge' increases experience gained by up to 50% by draining the experience overflow pool. The experience overflow pool contains any surplus experience remaining when the player levels up with more experience than the level requires. This power has one rank and no pre-requisites.</li>
-                            <li>'Master Tinkerer' increases the amount of durability restored per repair tick by 20% per rank. This power has 5 ranks available, requires maximum rank in 'Proper Care', and cannot be used alongside 'High Maintenance' or 'Hanging by a Thread'.</li>
-                          </ul></li>
-                          <li>The Store:<ul>
-                            <li>The Store tab has been re-implemented and combined with the Forge, becoming a one-stop shop for equipment management and upgrades.</li>
-                            <li>The store's stock consists of 6 weapons and 6 armour pieces of at least Good quality, with at least one guaranteed to be Great or better.</li>
-                            <li>The store's stock of items is replenished when the player levels up.</li>
-                            <li>Items in the store are priced at twice the amount required to upgrade an equivalent item of the same level and quality.</li>
-                            <li>The 'Bartering' power affects the price of all store items.</li>
-                          </ul></li>
-                          <li>UI Changes: <ul>
-                            <li>The game no longer runs in a fixed width configuration. There is a minimum width requirement of 825px and the game will fill the full width of the window where possible.</li>
-                            <li>The tab bar is now placed permanently at the top of the game window, and features seed and scrap counters.</li>
-                            <li>The sidebar on the left side has been removed.</li>
-                            <li>Nearly all UI elements are now rendered as modular panels. When a tab contains a large number of panels, they will tile sideways to fit the browser window width.</li>
-                            <li>Many tabs have had contents changed, as follows:<ul>
-                              <li>Player (NEW) - Player information, stat point allocation, equipped items, game stats.</li>
-                              <li>Combat - Fighter health bars, player information, enemy information, combat log.</li>
-                              <li>Zones (NEW) - Listing of available zones and the means to switch between them.</li>
-                              <li>Powers - List of available and selected powers, reset function.</li>
-                              <li>Items - List of items held, inventory clean button.</li>
-                              <li>Store - Item upgrade functions, debuff purchasing, buying items</li>
-                              <li>Save, reset, prestige, autobattle configuration, bulk item actions.</li>
-                              <li>Help - Information on game elements and mechanics.</li>
-                              <li>Updates - Patch notes for game changes.</li>
-                              <li>Badges (NEW) - Listing of badges, unearned badges are greyed out.</li>
-                            </ul></li>
-                            <li>A loading message now appears before all the scripts have initialised, showing which files have been loaded.</li>
-                            <li>Toast notifications are now added to a queue instead of overriding each other. Each notification lasts 2 seconds.</li>
-                            <li>Damage numbers and debuff/power names in the Combat Log are now shown in white instead of grey.</li>
-                          </ul></li>
-                          <li>Prestige:<ul>
-                            <li>Player can, at any point after defeating the first zone boss, perform a prestige reset.</li>
-                            <li>Upon prestiging, players will gain prestige level equal to their character's level before the reset.</li>
-                            <li>The prestige level is added to all experience and seed gains from combat, after all other modifiers.</li>
-                            <li>After a reset, the player gets 50% of their prestige level as stat points and 25% of their prestige level as power points (rounded down).</li>
-                            <li>Badges and statistics are preserved across prestige resets. All currency and items are lost.</li>
-                          </ul></li>
-                          <li>Quality Of Life<ul>
-                            <li>Buttons have been added to the stat point interface to assign up to 10 points per click.</li>
-                            <li>The options in the autobattle interface now use percentile values.</li>
-                            <li>A new set of options have been added for fine-grained control of the new 'Clean Inventory' button, which replaces the previous four management buttons on the Items tab.</li>
-                            <li>The maximum size of the player's inventory is now 18 slots (up from 10)</li>
-                            <li>Players can now reset their stat point allocations, at the cost of 1 scrap per 5 points assigned (rounded up).</li>
-                          </ul></li>
-                          <li>Balance Changes: <ul>
-                            <li>The effects of the powers 'Luck of the Draw' and 'Lucky Star' have been swapped - 'Luck of the Draw' now provides the chance of a stat point, and 'Lucky Star' provides the chance of a power point.</li>
-                            <li>Elites have had their experience and seed rewards reduced to 150% of the normal values (down from 200%).</li>
-                            <li>The Constitution stat has had its effect boosted - it now provides an additional 15 health per assigned point on top of increasing per-level health gains.</li>
-                            <li>Normal enemies now have less variation in the values for their main stats.</li>
-                            <li>The experience curve has been considerably lowered.</li>
-                            <li>The pricing curve for item level upgrades (and by extension item prices) has been considerably lowered.</li>
-                          </ul></li>
-                          <li>Bug Fixes: <ul>
-                            <li>The activation of Reflective Shield or Absorption Shield will no longer trigge Divine Shield messages.</li>
-                            <li>Fixed some edge cases where the Wild Swings ending message would appear in the wrong place.</li>
-                            <li>Fixed an issue where the auto-battle routine would attempt to run away from combat while sleeping and spam notifications.</li>
-                          </ul></li>
-                          <li>Miscellaneous Changes<ul>
-                            <li>The player's name can now be changed.</li>
-                            <li>A number of new items have been added.</li>
-                          </ul></li>
                           <li>Known Issues<ul>
-                            <li>The badges 'Trust Me, I'm a Doctor', 'Dirty Tactics', 'Potion Hoarder' and 'Full House' are not currently attainable due to the postponement of the Potions mechanic.</li>
+                            <li>The badges 'Alchemical Bombardment', 'Trust Me, I'm a Doctor', 'Dirty Tactics', 'Potion Hoarder' and 'Full House' are still unattainable due to the postponement of the Potions mechanic.</li>
                             </ul></li>
                         </ul>
                       </td>
@@ -510,7 +423,7 @@
     <script type="text/javascript" src="zones.v1.02.js"></script>
     <script type="text/javascript" src="powers.v1.0.js"></script>
     <script type="text/javascript" src="combat.v1.01.js"></script>
-    <script type="text/javascript" src="inventory.v1.01.js"></script>
+    <script type="text/javascript" src="inventory.v1.02.js"></script>
     <script type="text/javascript" src="player.v1.0.js"></script>
     <script type="text/javascript" src="tickers.v1.02.js"></script>
     <script type="text/javascript" src="ui.v1.02.js"></script>
