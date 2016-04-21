@@ -524,6 +524,7 @@ Game.upgradeWeaponQuality = function(weapon) {
     var userWeaponName = "";
     while(!validWeaponName) {
       userWeaponName = prompt("Please provide a name for your upgraded weapon.\n\n(Max 40 characters)");
+      if(userWeaponName == null) { userWeaponName = ""; }
       if(userWeaponName.length > 40) { alert("The text provided was too long, please try something shorter."); }
       else if(/[<>|]/g.test(userWeaponName)) { alert("The text provided contained invalid characters, please try something else."); }
       else { userWeaponName = userWeaponName.replace(/[<>|]/g,""); validWeaponName = true; }
@@ -532,6 +533,7 @@ Game.upgradeWeaponQuality = function(weapon) {
     var userFlavourText = "";
     while(!validFlavourText) {
       userFlavourText = prompt("Please provide some flavour text for your upgraded weapon.\n\n(Max 60 characters)");
+      if(userFlavourText == null) { userFlavourText = ""; }
       if(userFlavourText.length > 60) { alert("The text provided was too long, please try something shorter."); }
       else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
       else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
@@ -579,6 +581,7 @@ Game.upgradeArmourQuality = function(armour) {
       var userArmourName = "";
       while(!validArmourName) {
         userArmourName = prompt("Please provide a name for your upgraded armour.\n\n(Max 40 characters)");
+        if(userArmourName == null) { userArmourName = ""; }
         if(userArmourName.length > 40) { alert("The text provided was too long, please try something shorter."); }
         else if(/[<>|]/g.test(userArmourName)) { alert("The text provided contained invalid characters, please try something else."); }
         else { userArmourName = userArmourName.replace(/[<>|]/g,""); validArmourName = true; }
@@ -587,6 +590,7 @@ Game.upgradeArmourQuality = function(armour) {
       var userFlavourText = "";
       while(!validFlavourText) {
         userFlavourText = prompt("Please provide some flavour text for your upgraded armour.\n\n(Max 60 characters)");
+        if(userFlavourText == null) { userFlavourText = ""; }
         if(userFlavourText.length > 60) { alert("The text provided was too long, please try something shorter."); }
         else if(/[<>|]/g.test(userFlavourText)) { alert("The text provided contained invalid characters, please try something else."); }
         else { userFlavourText = userFlavourText.replace(/[<>|]/g,""); validFlavourText = true; }
