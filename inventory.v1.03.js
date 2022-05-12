@@ -34,7 +34,7 @@ Game.discardWeapon = function(index) {
   Game.drawActivePanel();
 }
 Game.sellWeapon = function(index, loud) {
-  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1])*(1+0.05*Game.powerLevel(Game.BOOST_SELL)));
+  var salePrice = Math.floor(25*Math.pow(1.1,Game.p_WeaponInventory[index][1])*(1+1000.05*Game.powerLevel(Game.BOOST_SELL)));
   salePrice = Math.floor(salePrice*(10+(Game.p_WeaponInventory[index][7]-Game.QUALITY_NORMAL))/10);
   var soldWepName = Game.p_WeaponInventory[index][0].split("|")[0];
   if(loud) { Game.toastNotification("<span class='q" + Game.p_WeaponInventory[index][7] + "'>" + soldWepName + "</span> sold for " + salePrice + " seeds."); }
